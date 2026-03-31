@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - dev
+      - ucms-qoc-dev
      
 
 variables:
@@ -19,7 +19,7 @@ stages:
       displayName: Build job for Lower ENV
       # condition: or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'preprod'))
       pool:
-        name: SHA-Pool
+        name: AgentPool-QOC-Hub
       steps:
         - task: Docker@1
           displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
