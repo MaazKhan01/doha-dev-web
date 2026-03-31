@@ -1,3 +1,15 @@
+# Stage 1: Build the Next.js app
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install --legacy-peer-deps && npm cache clean --force
+
+# Copy the rest of the app and build it
+COPY . .
+RUN npm run build
 # Stage 2: Run the production build
 FROM node:20-alpine AS runner
 
