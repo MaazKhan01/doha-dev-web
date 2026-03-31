@@ -1,12 +1,12 @@
 trigger:
   branches:
     include:
-      - ucms-qoc-dev
+      - dev
      
 
 variables:
   dockerfilePath: Dockerfile
-  imageName: ucms-dev
+  imageName: ucms
   nonProdhubServiceConnection: spn-ucms-dev-secret
   nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
 
