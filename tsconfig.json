@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/ui/CountdownTimer.js",
+    "components/ui/logo.js",
+    "components/ui/mobile-nav.js",
+    "components/ui/nav-left.js",
+    "components/ui/nav-rgt.js",
+    "components/module/Banner.js",
+    "components/module/Fans.js",
+    "components/module/match.js",
+    "components/module/Partners.js",
+    "components/module/schedule.js",
+    "components/layout/footer.js",
+    "components/layout/header.js",
+    "components/ui/sheet.tsx",
+    "app/[lang]/loading.js"
+, "app/[lang]/page.js", "app/[lang]/terms-of-use/TermsOfUse.js", "app/[lang]/privacy-policy/PrivacyPolicy.js", "app/[lang]/cookie-policy/CookiePolicy.js"  ],
+  "exclude": ["node_modules"]
+}
