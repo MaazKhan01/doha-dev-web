@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - dev
+     
+
+variables:
+  dockerfilePath: Dockerfile
+  imageName: ucms-dev
+  nonProdhubServiceConnection: spn-ucms-dev-secret
+  nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+    # ==================== Lower ENV JOB ====================
+    - job: BuildDev
+      displayName: Build job for Lower ENV
+      # condition: or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'preprod'))
+      pool:
+        name: SHA-Pool
+      steps:
+        - task: Docker@1
+          displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+          inputs:
+            containerregistrytype: 'Azure Container Registry'
+            azureSubscriptionEndpoint: $(nonProdhubServiceConnection)
+            azureContainerRegistry: $(nonProdHubContainerRepository)
+            command: 'Build an image'
+            dockerFile: '$(dockerfilePath)'
+            imageName: '$(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+        - task: Docker@1
+          displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+          inputs:
+            command: 'Push an image'
+            containerregistrytype: 'Azure Container Registry'
+            azureSubscriptionEndpoint: $(nonProdhubServiceConnection)
+            azureContainerRegistry: $(nonProdHubContainerRepository)
+            dockerFile: $(dockerfilePath)
+            imageName: '$(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
