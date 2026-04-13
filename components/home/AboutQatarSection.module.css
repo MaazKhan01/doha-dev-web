@@ -35,9 +35,9 @@
 }
 
 .mainTabBtn {
-  background: rgba(0, 0, 0, 0.15);
+  background: #fff;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.8);
+  color: #C0392B;
   padding: 0.75rem 1.5rem;
   border-radius: 4px;
   font-weight: 600;
@@ -51,16 +51,15 @@
 }
 
 .mainTabBtnActive {
-  background: white;
-  color: #C0392B;
-  border-color: white;
+  background: #a96c3d;
+  color: #fff;
+  border-color: #a96c3d;
 }
 
 .contentArea {
   display: flex;
   flex: 1;
   min-height: 0;
-  background: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   overflow: hidden;
   margin: 0 1rem 2rem 1rem;
@@ -82,7 +81,7 @@
 .tabsCol {
   width: 270px;
   flex-shrink: 0;
-  background: rgba(0,0,0,0.18);
+  /* background: rgba(0,0,0,0.18); */
   overflow-y: auto;
   z-index: 2;
   scrollbar-width: thin;
@@ -112,10 +111,10 @@
   border-left-color: rgba(255,255,255,0.4);
 }
 .tabBtnActive {
-  color: white !important;
+  color: #C0392B !important;
   font-weight: 700;
   border-left-color: white !important;
-  background: rgba(255,255,255,0.14) !important;
+  background: #fff !important;
 }
 
 /* Content column */
