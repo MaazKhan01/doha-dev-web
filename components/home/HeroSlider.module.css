@@ -1,0 +1,171 @@
+.section {
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+/* Slick full-height */
+.sliderWrap { height: 100%; }
+.sliderWrap :global(.slick-slider),
+.sliderWrap :global(.slick-list),
+.sliderWrap :global(.slick-track) { height: 100%; }
+.sliderWrap :global(.slick-slide) > div { height: 100%; }
+
+/* Slide */
+.slide { position: relative; height: 100vh; overflow: hidden; }
+.slideBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  animation: heroZoom 8s ease-in-out infinite alternate;
+}
+.slideVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+@keyframes heroZoom {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1.0);  }
+}
+.slideOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0,0,0,0.55) 0%,
+    rgba(0,0,0,0.18) 55%,
+    transparent 100%
+  );
+}
+
+/* Slide copy */
+.slideContent {
+  position: absolute;
+  bottom: 9%;
+  left: 4%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.headlineLine {
+  display: block;
+  font-size: 70px;
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: white;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.45);
+}
+.slideSub {
+  margin: 0.85rem 0 0;
+  font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Emblem + logo overlay */
+.logoOverlay {
+  position: absolute;
+  top: 15%;
+  left: 3%;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  pointer-events: none;
+  z-index: 10;
+}
+.emblem {
+  width: clamp(140px, 16vw, 240px);
+  height: auto;
+  flex-shrink: 0;
+}
+.logoText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.logoDoha {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  color: white;
+  line-height: 1;
+}
+.logo2030 {
+  font-size: clamp(2.5rem, 5vw, 5.5rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: white;
+  line-height: 0.85;
+}
+.logoAsian {
+  font-size: clamp(0.55rem, 0.9vw, 0.8rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  margin-top: 0.5rem;
+  display: block;
+}
+.logoHost {
+  font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.9);
+  display: block;
+}
+.logoSun { color: white; font-size: 1.25rem; margin-top: 0.4rem; }
+
+/* Controls */
+.controls {
+  position: absolute;
+  right: 2rem;
+  bottom: 6rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.controlBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.controlBtn:hover { background: rgba(0,0,0,0.75); }
+
+/* Slick dots */
+.sliderWrap :global(.slick-dots) { bottom: 1.5rem; }
+.sliderWrap :global(.slick-dots li button:before) {
+  color: white;
+  font-size: 10px;
+  opacity: 0.6;
+}
+.sliderWrap :global(.slick-dots li.slick-active button:before) {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .headlineLine { font-size: 40px; }
+  .logoDoha { font-size: clamp(1.2rem, 3vw, 3rem); }
+  .logo2030 { font-size: clamp(2rem, 5vw, 5.5rem); }
+  .logoOverlay { top: 10%; gap: 1rem; }
+  .slideContent { bottom: 12%; }
+}

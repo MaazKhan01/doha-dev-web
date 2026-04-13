@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useLoader } from "@/context/LoadingProvider";
 import Loading from "@/components/module/Loading";
+import HomePage from "@/components/home/HomePage";
 
 export default function Home() {
   const { load, setLoad } = useLoader();
@@ -14,9 +15,7 @@ export default function Home() {
   return (
     <>
       {load && <Loading />}
-      <div className="flex items-center justify-center min-h-screen">
-        <h1 className="text-3xl font-bold">QOC UCMS</h1>
-      </div>
+      <HomePage />
     </>
   );
 }

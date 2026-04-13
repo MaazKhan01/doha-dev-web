@@ -1,0 +1,122 @@
+.section {
+  height: 100vh;
+  scroll-snap-align: start;
+  background: #EEECEB;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Diagonal stripe emblem */
+.emblem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.header {
+  padding: calc(72px + 1rem) 2.5rem 0.85rem;
+  position: relative;
+  z-index: 2;
+}
+.title {
+  color: #C0392B;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+.subtitle {
+  color: #555;
+  font-size: 0.875rem;
+  margin: 0;
+}
+.link { color: #C0392B; text-decoration: none; font-weight: 600; }
+.link:hover { text-decoration: underline; }
+
+/* Slider */
+.sliderWrap {
+  flex: 1;
+  padding: 0.5rem 3rem 1.5rem;
+  position: relative;
+  z-index: 2;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Slick arrow overrides */
+.sliderWrap :global(.slick-prev),
+.sliderWrap :global(.slick-next) {
+  z-index: 10;
+  width: 44px;
+  height: 100%;
+  top: 0;
+  transform: none;
+  background: rgba(192,57,43,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.sliderWrap :global(.slick-prev) { left: -3rem; }
+.sliderWrap :global(.slick-next) { right: -3rem; }
+.sliderWrap :global(.slick-prev:hover),
+.sliderWrap :global(.slick-next:hover) { background: rgba(192,57,43,0.22); }
+.sliderWrap :global(.slick-prev:before),
+.sliderWrap :global(.slick-next:before) { color: #C0392B; font-size: 1.2rem; }
+
+.slide { padding: 0 0.4rem; height: 100%; }
+
+.card {
+  background: white;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s, transform 0.3s;
+  height: 100%;
+}
+.card:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
+}
+
+.cardImg {
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.cardImgBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.42s ease;
+}
+.card:hover .cardImgBg { transform: scale(1.06); }
+
+.cardBody { padding: 1rem; flex: 1; }
+.cardTitle {
+  font-size: 0.875rem;
+  color: #1a1a1a;
+  line-height: 1.5;
+  margin: 0 0 0.5rem;
+  font-weight: 500;
+}
+.cardDate {
+  font-size: 0.72rem;
+  color: #999;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .header { padding: calc(100px + 1rem) 1rem 0.85rem; }
+  .sliderWrap { padding: 0.5rem 1rem 1.5rem; }
+  .sliderWrap :global(.slick-prev) { left: -1rem; }
+  .sliderWrap :global(.slick-next) { right: -1rem; }
+}

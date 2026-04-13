@@ -1,0 +1,100 @@
+.section {
+  height: 100vh;
+  scroll-snap-align: start;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Geo emblem */
+.emblem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.035;
+}
+
+.header {
+  padding: calc(72px + 1rem) 2.5rem 0.85rem;
+  position: relative;
+  z-index: 2;
+}
+.title {
+  color: #C0392B;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+.subtitle {
+  color: #666;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Image collage grid */
+.collage {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 5px;
+  padding: 0 2.5rem 1.75rem;
+  position: relative;
+  z-index: 2;
+  min-height: 0;
+}
+.card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.cardWide { grid-column: span 2; }
+
+.cardBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s ease;
+}
+.card:hover .cardBg { transform: scale(1.06); }
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 45%, rgba(0,0,0,0.65));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover .cardOverlay { opacity: 1; }
+
+.cardLabel {
+  position: absolute;
+  bottom: 0.8rem;
+  left: 1rem;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover .cardLabel { opacity: 1; }
+
+@media (max-width: 768px) {
+  .header { padding: calc(100px + 1rem) 1rem 0.85rem; }
+  .collage {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    padding: 0 1rem 1rem;
+    overflow-y: auto;
+  }
+  .cardWide { grid-column: span 1; }
+  .card { min-height: 200px; }
+}
