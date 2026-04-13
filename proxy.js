@@ -22,7 +22,7 @@ function getLocale(request) {
   return locale;
 }
 
-export function middleware(request) {
+export function proxy(request) {
   const pathname = request.nextUrl.pathname;
   let temp = i18n.locales.find((locale) => pathname.startsWith(`/${locale}`));
 

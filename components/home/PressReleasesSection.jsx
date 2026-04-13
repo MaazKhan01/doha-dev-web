@@ -44,68 +44,44 @@ const slickSettings = {
   arrows: true,
   responsive: [
     { breakpoint: 1280, settings: { slidesToShow: 3 } },
-    { breakpoint: 900,  settings: { slidesToShow: 2 } },
-    { breakpoint: 600,  settings: { slidesToShow: 1 } },
+    { breakpoint: 900, settings: { slidesToShow: 2 } },
+    { breakpoint: 600, settings: { slidesToShow: 1 } },
   ],
 };
-
-/* Diagonal stripe SVG background */
-function StripeEmblem() {
-  return (
-    <svg
-      viewBox="0 0 1536 900"
-      xmlns="http://www.w3.org/2000/svg"
-      className={styles.emblem}
-      preserveAspectRatio="none"
-    >
-      {[...Array(30)].map((_, i) => (
-        <line
-          key={i}
-          x1={i * 60 - 200}
-          y1="0"
-          x2={i * 60 + 400}
-          y2="900"
-          stroke="#C0C0C0"
-          strokeWidth="18"
-          opacity="0.55"
-        />
-      ))}
-    </svg>
-  );
-}
 
 export default function PressReleasesSection() {
   return (
     <section id="press-releases" className={styles.section}>
-      <StripeEmblem />
+      {/* <StripeEmblem /> */}
+      <div className="container">
+        <div className={styles.header}>
+          <h2 className={styles.title}>Press Releases</h2>
+          <p className={styles.subtitle}>
+            Journalists can download the Asian Games Doha 2030 Bid Media Kit by clicking{" "}
+            <a href="#" className={styles.link}>here</a>
+          </p>
+        </div>
 
-      <div className={styles.header}>
-        <h2 className={styles.title}>Press Releases</h2>
-        <p className={styles.subtitle}>
-          Journalists can download the Asian Games Doha 2030 Bid Media Kit by clicking{" "}
-          <a href="#" className={styles.link}>here</a>
-        </p>
-      </div>
-
-      <div className={styles.sliderWrap}>
-        <Slider {...slickSettings}>
-          {articles.map((a) => (
-            <div key={a.id} className={styles.slide}>
-              <div className={styles.card}>
-                <div className={styles.cardImg}>
-                  <div
-                    className={styles.cardImgBg}
-                    style={{ backgroundImage: `url(${a.image})` }}
-                  />
-                </div>
-                <div className={styles.cardBody}>
-                  <p className={styles.cardTitle}>{a.title}</p>
-                  <span className={styles.cardDate}>{a.date}</span>
+        <div className={styles.sliderWrap}>
+          <Slider {...slickSettings}>
+            {articles.map((a) => (
+              <div key={a.id} className={styles.slide}>
+                <div className={styles.card}>
+                  <div className={styles.cardImg}>
+                    <div
+                      className={styles.cardImgBg}
+                      style={{ backgroundImage: `url(${a.image})` }}
+                    />
+                  </div>
+                  <div className={styles.cardBody}>
+                    <p className={styles.cardTitle}>{a.title}</p>
+                    <span className={styles.cardDate}>{a.date}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </Slider>
+            ))}
+          </Slider>
+        </div>
       </div>
     </section>
   );

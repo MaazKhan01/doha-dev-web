@@ -81,11 +81,11 @@ const mainTabKeys = Object.keys(tabData);
 function WavyEmblem() {
   return (
     <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" className={styles.emblem}>
-      {[1,2,3,4,5,6,7,8].map((n) => (
-        <circle key={n} cx="80" cy="300" r={n * 55} fill="none" stroke="white" strokeWidth="1" opacity={0.18 - n * 0.015}/>
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+        <circle key={n} cx="80" cy="300" r={n * 55} fill="none" stroke="white" strokeWidth="1" opacity={0.18 - n * 0.015} />
       ))}
-      {[1,2,3,4,5,6,7,8].map((n) => (
-        <circle key={`b${n}`} cx="80" cy="300" r={n * 55 - 27} fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="3 5" opacity={0.1}/>
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+        <circle key={`b${n}`} cx="80" cy="300" r={n * 55 - 27} fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="3 5" opacity={0.1} />
       ))}
     </svg>
   );
@@ -120,23 +120,22 @@ export default function AboutQatarSection() {
 
   return (
     <section id="about-qatar" className={styles.section}>
-      <div className={styles.container}>
-        <WavyEmblem />
+      <WavyEmblem />
 
-        {/* Inner layout with main tabs on top */}
-        <div className={styles.innerWrapper}>
-          <div className={styles.mainTabsHeader}>
-            {mainTabKeys.map(key => (
-              <button
-                key={key}
-                className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
-                onClick={() => handleMainTabChange(key)}
-              >
-                {tabData[key].label}
-              </button>
-            ))}
-          </div>
-
+      {/* Inner layout with main tabs on top */}
+      <div className={styles.innerWrapper}>
+        <div className={styles.mainTabsHeader}>
+          {mainTabKeys.map(key => (
+            <button
+              key={key}
+              className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
+              onClick={() => handleMainTabChange(key)}
+            >
+              {tabData[key].label}
+            </button>
+          ))}
+        </div>
+        <div className={styles.container}>
           <div className={styles.contentArea}>
             {/* Vertical Tabs Column */}
             <div className={styles.tabsCol}>

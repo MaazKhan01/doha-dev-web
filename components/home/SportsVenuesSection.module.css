@@ -3,7 +3,7 @@
   scroll-snap-align: start;
   background: white;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   position: relative;
   overflow: hidden;
 }
@@ -18,20 +18,28 @@
   opacity: 0.035;
 }
 
-.header {
+.content {
   padding: calc(72px + 1rem) 2.5rem 0.85rem;
   position: relative;
   z-index: 2;
+  width: 50%;
+}
+.btn {
+  background-color: #b3331d;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 12px;
+  
 }
 .title {
   color: #C0392B;
-  font-size: 1.75rem;
+  font-size: 40px;
   font-weight: 700;
   margin: 0 0 0.2rem;
 }
 .subtitle {
-  color: #666;
-  font-size: 0.875rem;
+  /* color: #666; */
+  font-size: 16px;
   margin: 0;
 }
 

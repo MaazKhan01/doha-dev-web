@@ -150,7 +150,7 @@ export default function HeroSlider() {
 
       {/* Doha 2030 logo emblem overlay */}
       <div className={styles.logoOverlay}>
-        <img src="/en/images/logoWhite.svg" alt="Logo" width={275} className="hidden md:block mt-16" />
+        <img src="/en/images/logoWhite.svg" alt="Logo" width={375} className="hidden md:block" />
       </div>
 
       {/* Mute / play controls */}

@@ -49,7 +49,6 @@
   flex: 1;
   display: flex;
   align-items: stretch;
-  height: 90px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.16);
   border-radius: 2px;
@@ -66,7 +65,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(192,57,43,0.55);
+  background: #fff;
   flex-shrink: 0;
 }
 .cardIconCircle {
@@ -89,15 +88,17 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
+  background-color: #fff;
+  padding: 40px;
 }
 .cardTitle {
   color: #C0392B;
   font-size: 1.05rem;
   font-weight: 700;
-  margin: 0 0 0.2rem;
+    margin: 0 0 0.2rem;
 }
 .cardDesc {
-  color: rgba(255,255,255,0.65);
+  color: #000;
   font-size: 0.8rem;
   margin: 0;
 }

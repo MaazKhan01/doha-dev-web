@@ -1,7 +1,7 @@
 .section {
   height: 100vh;
   scroll-snap-align: start;
-  background: #EEECEB;
+  /* background: #EEECEB; */
   display: flex;
   flex-direction: column;
   position: relative;
@@ -24,13 +24,12 @@
 }
 .title {
   color: #C0392B;
-  font-size: 1.75rem;
+  font-size: 40px;
   font-weight: 700;
   margin: 0 0 0.25rem;
 }
 .subtitle {
-  color: #555;
-  font-size: 0.875rem;
+  font-size: 16px;
   margin: 0;
 }
 .link { color: #C0392B; text-decoration: none; font-weight: 600; }
@@ -50,11 +49,13 @@
 .sliderWrap :global(.slick-prev),
 .sliderWrap :global(.slick-next) {
   z-index: 10;
-  width: 44px;
-  height: 100%;
+  width: 60px;
+  height: 140px;
   top: 0;
+  bottom: 0;
+  margin: auto;
   transform: none;
-  background: rgba(192,57,43,0.1);
+  background: #b3331d;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,7 +87,7 @@
 
 .cardImg {
   width: 100%;
-  aspect-ratio: 16/9;
+  height: 240px;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
@@ -102,11 +103,17 @@
 
 .cardBody { padding: 1rem; flex: 1; }
 .cardTitle {
-  font-size: 0.875rem;
-  color: #1a1a1a;
-  line-height: 1.5;
-  margin: 0 0 0.5rem;
-  font-weight: 500;
+    color: #1a1a1a;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    margin: 0 0 .5rem;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
 }
 .cardDate {
   font-size: 0.72rem;

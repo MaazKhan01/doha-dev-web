@@ -1,14 +1,15 @@
 .footer {
-  background: #EEECEB;
-  padding: 1.25rem 2.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid rgba(0,0,0,0.08);
+
+   background: #f5f4f2;
+    padding: 60px 0;
+    font-size: 15px;
 }
 .copy {
   font-size: 0.75rem;
-  color: #888;
   margin: 0;
 }
 .links { display: flex; align-items: center; gap: 0.6rem; }

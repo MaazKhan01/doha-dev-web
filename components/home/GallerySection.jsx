@@ -56,14 +56,14 @@ export default function GallerySection() {
     <section id="gallery" className={styles.section}>
       <ArabesqueEmblem />
 
-      <div className={styles.header}>
+      <div className={styles.header + " container"}>
         <h2 className={styles.title}>Gallery</h2>
         <p className={styles.subtitle}>
           Checkout the latest gallery related to Doha 2030 AG Bid
         </p>
       </div>
 
-      <div className={styles.cards}>
+      <div className={styles.cards + " container"}>
         {cards.map((c) => (
           <div key={c.id} id={c.id} className={styles.card}>
             <div className={styles.cardIconCol}>
