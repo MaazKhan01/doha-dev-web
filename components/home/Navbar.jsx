@@ -43,7 +43,7 @@ export default function Navbar({ onSectionClick }) {
       <div className={styles.container}>
         {/* Logo */}
         <div className={styles.logo} onClick={() => window.location.href = "/"}>
-          <img src="/en/images/logo.svg" alt="Logo" width={175} />
+          <img src="/en/images/logo.svg" alt="Logo" width={175} style={{padding: '10px 0'}}/>
         </div>
 
         {/* Hamburger */}

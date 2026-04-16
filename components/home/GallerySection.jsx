@@ -64,7 +64,7 @@ export default function GallerySection() {
       <ArabesqueEmblem />
 
       <div className={styles.header + " container"}>
-        <h2 className={styles.title}>Gallery</h2>
+        <h2 className="header-title" style={{color: "#fff"}}>Gallery</h2>
         <p className={styles.subtitle}>
           Checkout the latest gallery related to Doha 2030 AG Bid
         </p>

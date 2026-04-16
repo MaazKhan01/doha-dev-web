@@ -3,7 +3,7 @@
   flex-direction: column;
   min-height: 100vh;
   background: var(--light-bg, #f5f4f2);
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .mainContent {

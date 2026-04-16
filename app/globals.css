@@ -3,22 +3,22 @@
 @tailwind utilities;
 
 :root {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "DM Sans", sans-serif;
 }
 
 body {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 400;
   direction: ltr;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 700;
 }
 
 p {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 400;
 }
 
@@ -32,13 +32,13 @@ p {
 [lang="ar"] h4,
 [lang="ar"] h5,
 [lang="ar"] h6 {
-  font-family: "Noto Sans Arabic", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-style: normal;
   font-weight: 700;
 }
 
 [lang="ar"] p {
-  font-family: "Noto Sans Arabic", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-style: normal;
   font-weight: 400;
 }
@@ -55,4 +55,10 @@ html {
 
 .main-container .content {
   flex: 1;
+}
+.header-title {
+  font-size: 40px;
+  font-weight: 700;
+  color: #C0392B;
+  margin-bottom: 20px;
 }

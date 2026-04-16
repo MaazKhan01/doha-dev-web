@@ -61,7 +61,7 @@ export default function SportsVenuesSection() {
       <GeoEmblem />
       <div className="flex items-center">
         <div className={styles.content}>
-          <h2 className={styles.title}>Sports and Venues</h2>
+          <h2 className="header-title">Sports and Venues</h2>
           <p className={styles.subtitle}>
             Doha&apos;s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports and facilities requirements, been strategically located within the city network for ease of access and above all, are &ldquo;tested&rdquo; facilities, used in previous staged World Championships and Games (Doha 2006 Asian Games / Doha 2011 Arab Games / 2019 ANOC World Beach Games).
           </p>

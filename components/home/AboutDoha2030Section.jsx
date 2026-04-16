@@ -24,7 +24,7 @@ export default function AboutDoha2030Section() {
       <section id="doha2030" className={styles.section}>
         {/* Section header band */}
         <div className={`${styles.header} container mx-auto`}>
-          <h2 className={styles.headerTitle}>About Doha 2030</h2>
+          <h2 className="header-title">About Doha 2030</h2>
         </div>
 
         {/* Main body */}

@@ -124,46 +124,52 @@ export default function AboutQatarSection() {
 
       {/* Inner layout with main tabs on top */}
       <div className={styles.innerWrapper}>
-        <div className={styles.container}>
-          <div className={styles.mainTabsHeader}>
-            {mainTabKeys.map(key => (
-              <button
-                key={key}
-                className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
-                onClick={() => handleMainTabChange(key)}
-              >
-                {tabData[key].label}
-              </button>
-            ))}
-          </div>
-          <div className={styles.contentArea}>
-            {/* Vertical Tabs Column */}
-            <div className={styles.tabsCol}>
-              {currentTabs.map((t, i) => (
-                <button
-                  key={t.id}
-                  className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
-                  onClick={() => handleSubTabChange(i)}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+        <div className={`container mx-auto`}>
+          <h2 className="header-title" >About Doha</h2>
+        </div>
+        <div className={`${styles.mainTabsHeader} container mx-auto`}>
+          {mainTabKeys.map(key => (
+            <button
+              key={key}
+              className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
+              onClick={() => handleMainTabChange(key)}
+            >
+              {tabData[key].label}
+            </button>
+          ))}
+        </div>
+        <div className={styles.mainContent}>
+          <div className={styles.container}>
 
-            {/* Content Column */}
-            <div className={styles.contentCol}>
-              {/* Image */}
-              <div className={styles.imageWrap}>
-                <div
-                  className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
-                  style={{ backgroundImage: `url(${currentTab.image})` }}
-                />
-                <div className={styles.imageLabel}>{currentTab.label}</div>
+            <div className={styles.contentArea}>
+              {/* Vertical Tabs Column */}
+              <div className={styles.tabsCol}>
+                {currentTabs.map((t, i) => (
+                  <button
+                    key={t.id}
+                    className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
+                    onClick={() => handleSubTabChange(i)}
+                  >
+                    {t.label}
+                  </button>
+                ))}
               </div>
 
-              {/* Description */}
-              <div className={`${styles.descBox} ${animating ? styles.descOut : styles.descIn}`}>
-                {currentTab.description}
+              {/* Content Column */}
+              <div className={styles.contentCol}>
+                {/* Image */}
+                <div className={styles.imageWrap}>
+                  <div
+                    className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
+                    style={{ backgroundImage: `url(${currentTab.image})` }}
+                  />
+                  <div className={styles.imageLabel}>{currentTab.label}</div>
+                </div>
+
+                {/* Description */}
+                <div className={`${styles.descBox} ${animating ? styles.descOut : styles.descIn}`}>
+                  {currentTab.description}
+                </div>
               </div>
             </div>
           </div>

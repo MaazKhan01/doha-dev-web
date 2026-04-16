@@ -95,7 +95,7 @@ export default function PressReleasesSection() {
       <section id="press-releases" className={styles.section}>
         <div className="container">
           <div className={styles.header}>
-            <h2 className={styles.title}>Press Releases</h2>
+            <h2 className="header-title">Press Releases</h2>
             <p className={styles.subtitle}>
               Journalists can download the Asian Games Doha 2030 Bid Media Kit by clicking{" "}
               <a href="#" className={styles.link}>here</a>

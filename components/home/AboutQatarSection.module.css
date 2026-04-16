@@ -1,7 +1,7 @@
 .section {
   height: 100%;
   scroll-snap-align: start;
-  background-color: #C0392B;
+  background-color: #fff;
   display: flex;
   align-items: stretch;
   position: relative;
@@ -27,7 +27,11 @@
   padding-top: calc(85px + 1rem);
   /* Nav clearance */
 }
-
+.mainContent {
+  background-color: #C0392B;
+  padding: 2rem 0;
+  height: 100%;
+}
 .mainTabsHeader {
   display: flex;
   gap: 1rem;
@@ -44,10 +48,15 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 13px 20px rgba(0, 0, 0, .08);
 }
-
+.headerTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+}
 .mainTabBtn:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: #a96c3d;
   color: white;
 }
 
