@@ -18,22 +18,32 @@
 }
 
 .header {
-  padding: calc(72px + 1rem) 2.5rem 0.85rem;
+  padding: calc(85px + 1rem) 2.5rem 0.85rem;
   position: relative;
   z-index: 2;
 }
+
 .title {
   color: #C0392B;
   font-size: 40px;
   font-weight: 700;
   margin: 0 0 0.25rem;
 }
+
 .subtitle {
   font-size: 16px;
   margin: 0;
 }
-.link { color: #C0392B; text-decoration: none; font-weight: 600; }
-.link:hover { text-decoration: underline; }
+
+.link {
+  color: #C0392B;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
 
 /* Slider */
 .sliderWrap {
@@ -61,14 +71,30 @@
   justify-content: center;
   transition: background 0.2s;
 }
-.sliderWrap :global(.slick-prev) { left: -3rem; }
-.sliderWrap :global(.slick-next) { right: -3rem; }
-.sliderWrap :global(.slick-prev:hover),
-.sliderWrap :global(.slick-next:hover) { background: rgba(192,57,43,0.22); }
-.sliderWrap :global(.slick-prev:before),
-.sliderWrap :global(.slick-next:before) { color: #C0392B; font-size: 1.2rem; }
 
-.slide { padding: 0 0.4rem; height: 100%; }
+.sliderWrap :global(.slick-prev) {
+  left: -3rem;
+}
+
+.sliderWrap :global(.slick-next) {
+  right: -3rem;
+}
+
+.sliderWrap :global(.slick-prev:hover),
+.sliderWrap :global(.slick-next:hover) {
+  background: rgba(192, 57, 43, 0.22);
+}
+
+.sliderWrap :global(.slick-prev:before),
+.sliderWrap :global(.slick-next:before) {
+  color: #C0392B;
+  font-size: 1.2rem;
+}
+
+.slide {
+  padding: 0 0.4rem;
+  height: 100%;
+}
 
 .card {
   background: white;
@@ -76,12 +102,13 @@
   overflow: hidden;
   display: flex !important;
   flex-direction: column;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.3s, transform 0.3s;
   height: 100%;
 }
+
 .card:hover {
-  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
   transform: translateY(-3px);
 }
 
@@ -92,6 +119,7 @@
   position: relative;
   flex-shrink: 0;
 }
+
 .cardImgBg {
   position: absolute;
   inset: 0;
@@ -99,22 +127,72 @@
   background-position: center;
   transition: transform 0.42s ease;
 }
-.card:hover .cardImgBg { transform: scale(1.06); }
 
-.cardBody { padding: 1rem; flex: 1; }
-.cardTitle {
-    color: #1a1a1a;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-    margin: 0 0 .5rem;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 1.5;
+.card:hover .cardImgBg {
+  transform: scale(1.06);
 }
+
+/* "View more" overlay button — visible on card hover */
+.viewMoreBtn {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(179, 51, 29, 0);
+  color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.28s ease, color 0.28s ease;
+}
+
+.card:hover .viewMoreBtn {
+  background: rgba(179, 51, 29, 0.72);
+  color: white;
+}
+
+.viewMoreBtn::after {
+  content: '';
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, 200%);
+  width: 32px;
+  height: 2px;
+  background: white;
+  opacity: 0;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.card:hover .viewMoreBtn::after {
+  opacity: 1;
+  transform: translate(-50%, 180%);
+}
+
+
+.cardBody {
+  padding: 1rem;
+  flex: 1;
+}
+
+.cardTitle {
+  color: #1a1a1a;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  margin: 0 0 .5rem;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
 .cardDate {
   font-size: 0.72rem;
   color: #999;
@@ -122,8 +200,19 @@
 }
 
 @media (max-width: 768px) {
-  .header { padding: calc(100px + 1rem) 1rem 0.85rem; }
-  .sliderWrap { padding: 0.5rem 1rem 1.5rem; }
-  .sliderWrap :global(.slick-prev) { left: -1rem; }
-  .sliderWrap :global(.slick-next) { right: -1rem; }
+  .header {
+    padding: calc(100px + 1rem) 1rem 0.85rem;
+  }
+
+  .sliderWrap {
+    padding: 0.5rem 1rem 1.5rem;
+  }
+
+  .sliderWrap :global(.slick-prev) {
+    left: -1rem;
+  }
+
+  .sliderWrap :global(.slick-next) {
+    right: -1rem;
+  }
 }

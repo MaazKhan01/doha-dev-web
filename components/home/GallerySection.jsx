@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import styles from "./GallerySection.module.css";
 import { FaPlay, FaImages, FaChevronRight } from "react-icons/fa";
 
@@ -8,12 +10,14 @@ const cards = [
     icon: <FaPlay />,
     title: "Videos",
     desc: "Checkout the latest Video Gallery",
+    hrefTarget: "video-gallery"
   },
   {
     id: "gallery-images",
     icon: <FaImages />,
     title: "Image Gallery",
     desc: "Checkout the latest Image Gallery",
+    hrefTarget: "image-gallery"
   },
 ];
 
@@ -52,6 +56,9 @@ function ArabesqueEmblem() {
 }
 
 export default function GallerySection() {
+  const params = useParams();
+  const lang = params?.lang || "en";
+
   return (
     <section id="gallery" className={styles.section}>
       <ArabesqueEmblem />
@@ -65,20 +72,23 @@ export default function GallerySection() {
 
       <div className={styles.cards + " container"}>
         {cards.map((c) => (
-          <div key={c.id} id={c.id} className={styles.card}>
-            <div className={styles.cardIconCol}>
-              <div className={styles.cardIconCircle}>{c.icon}</div>
-            </div>
-            <div className={styles.cardBody}>
-              <div>
-                <h3 className={styles.cardTitle}>{c.title}</h3>
-                <p className={styles.cardDesc}>{c.desc}</p>
+          <Link href={`/${lang}/${c.hrefTarget}`} key={c.id} style={{ textDecoration: "none", flex: 1, display: "flex" }}>
+            <div id={c.id} className={styles.card} style={{ width: "100%" }}>
+              <div className={styles.cardIconCol}>
+                <div className={styles.cardIconCircle}>{c.icon}</div>
               </div>
-              <FaChevronRight className={styles.cardArrow} />
+              <div className={styles.cardBody}>
+                <div>
+                  <h3 className={styles.cardTitle}>{c.title}</h3>
+                  <p className={styles.cardDesc}>{c.desc}</p>
+                </div>
+                <FaChevronRight className={styles.cardArrow} />
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
   );
 }
+

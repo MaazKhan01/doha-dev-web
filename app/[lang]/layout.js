@@ -10,6 +10,7 @@ import {
   HttpLink,
 } from "@apollo/client";
 import { LoadingProvider } from "@/context/LoadingProvider";
+import SiteShell from "@/components/layout/SiteShell";
 
 const client = new ApolloClient({
   link: new HttpLink({
@@ -47,7 +48,11 @@ export default function RootLayout({ children, params }) {
         <ApolloProvider client={client}>
           <LanguageProvider>
             <LoadingProvider>
-              {children}
+              {/* SiteShell auto-injects Navbar + Footer on every inner page.
+                  The homepage is excluded — it manages its own nav/footer. */}
+              <SiteShell lang={lang}>
+                {children}
+              </SiteShell>
             </LoadingProvider>
           </LanguageProvider>
         </ApolloProvider>

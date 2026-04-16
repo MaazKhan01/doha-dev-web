@@ -124,18 +124,18 @@ export default function AboutQatarSection() {
 
       {/* Inner layout with main tabs on top */}
       <div className={styles.innerWrapper}>
-           <div className={styles.container}>
-     <div className={styles.mainTabsHeader}>
-          {mainTabKeys.map(key => (
-            <button
-              key={key}
-              className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
-              onClick={() => handleMainTabChange(key)}
-            >
-              {tabData[key].label}
-            </button>
-          ))}
-        </div>
+        <div className={styles.container}>
+          <div className={styles.mainTabsHeader}>
+            {mainTabKeys.map(key => (
+              <button
+                key={key}
+                className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
+                onClick={() => handleMainTabChange(key)}
+              >
+                {tabData[key].label}
+              </button>
+            ))}
+          </div>
           <div className={styles.contentArea}>
             {/* Vertical Tabs Column */}
             <div className={styles.tabsCol}>

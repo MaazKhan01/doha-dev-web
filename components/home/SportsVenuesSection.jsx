@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import styles from "./SportsVenuesSection.module.css";
 
 const venues = [
@@ -51,42 +53,27 @@ function GeoEmblem() {
 }
 
 export default function SportsVenuesSection() {
+  const params = useParams();
+  const lang = params?.lang || "en";
+
   return (
     <section id="sports-venues" className={styles.section + " container"}>
       <GeoEmblem />
-      <div className="flex items-center">  
-            <div className={styles.content}>
-        <h2 className={styles.title}>Sports and Venues</h2>
-        <p className={styles.subtitle}>
-          Doha’s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports and facilities requirements, been strategically located within the city network for ease access and above all, are “tested’ facilities, used in previous staged World Championships and Games (Doha 2006 Asian Games / Doha 2011 Arab Games /2019 ANOC World Beach Games).
-        </p>
-        <div className="flex justify-end bg-[#b3331d]">
-          <button className={styles.btn}>Find out more</button>
+      <div className="flex items-center">
+        <div className={styles.content}>
+          <h2 className={styles.title}>Sports and Venues</h2>
+          <p className={styles.subtitle}>
+            Doha&apos;s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports and facilities requirements, been strategically located within the city network for ease of access and above all, are &ldquo;tested&rdquo; facilities, used in previous staged World Championships and Games (Doha 2006 Asian Games / Doha 2011 Arab Games / 2019 ANOC World Beach Games).
+          </p>
+          <div className="flex justify-end bg-[#b3331d]">
+            <Link href={`/${lang}/venues`}>
+              <button className={styles.btn}>Find out more</button>
+            </Link>
+          </div>
         </div>
-      </div>
         <div className="w-1/2">
           <img src="/en/images/img-venue.png" alt="" />
         </div>
-      </div>
-
-      {/* <div className={styles.collage}>
-        {venues.map((v) => (
-          <div
-            key={v.id}
-            id={v.id}
-            className={`${styles.card} ${v.wide ? styles.cardWide : ""}`}
-          >
-            <div
-              className={styles.cardBg}
-              style={{ backgroundImage: `url(${v.image})` }}
-            />
-            <div className={styles.cardOverlay} />
-            <span className={styles.cardLabel}>{v.label}</span>
-          </div>
-        ))}
-      </div> */}
-      <div>
-
       </div>
     </section>
   );

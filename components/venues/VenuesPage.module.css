@@ -1,0 +1,342 @@
+/* =============================================
+   Venues Page – content area styles only.
+   Hero banner  → components/ui/InnerPageBanner.module.css
+   Navbar/Footer → handled by SiteShell in layout
+   ============================================= */
+
+:root {
+  --red-primary: #C0392B;
+  --light-bg:    #F5F4F2;
+  --white:       #FFFFFF;
+  --text-dark:   #1A1A1A;
+  --text-muted:  #555555;
+  --gold:        #C9A84C;
+}
+
+/* ─── Main Content ───────────────────────────── */
+.mainContent {
+  padding: 3rem 4rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contentLayout {
+  display: flex;
+  align-items: flex-start;
+  background: var(--white);
+  border-radius: 4px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  overflow: hidden;
+  min-height: 560px;
+}
+
+/* ─── Left Vertical Tabs ─────────────────────── */
+.tabsColumn {
+  width: 270px;
+  flex-shrink: 0;
+  /* background: #1a0a0a; */
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.tabsSectionTitle {
+  padding: 1rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background-color: #b3331d;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.tabBtn {
+  width: 100%;
+  text-align: left;
+  padding: 0.9rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0);
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  position: relative;
+}
+
+.tabBtn:hover {
+  color: #b3331d;
+  background: rgba(255,255,255,0.06);
+  border-left-color: rgba(201,168,76,0.5);
+}
+
+.tabBtnActive {
+  color: #b3331d !important;
+  font-weight: 700;
+  border-left-color: var(--gold) !important;
+  background: rgba(206,200,190,.4) !important;
+}
+
+.tabBtnActive::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-style: solid;
+  border-width: 7px 0 7px 8px;
+  border-color: transparent transparent transparent white;
+}
+
+/* Sub-venue accordion */
+.subTabList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.subTabListOpen {
+  max-height: 600px;
+}
+
+.subTabBtn {
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 1.5rem 0.65rem 2.5rem;
+  font-size: 0.78rem;
+  color: rgba(0, 0, 0);
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.4;
+}
+
+.subTabBtn:hover {
+  color: #b3331d;
+  background: rgba(255,255,255,0.05);
+}
+
+.subTabBtnActive {
+  color: #b3331d !important;
+  border-left-color: var(--gold) !important;
+  background: rgba(201,168,76,0.08) !important;
+}
+
+/* ─── Right Content Panel ─────────────────────── */
+.contentPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.contentInner {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.contentFading {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Panel image */
+.contentImageWrap {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.contentImageBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s ease;
+}
+
+.contentImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 50%, rgba(0,0,0,0.55));
+}
+
+.contentImageLabel {
+  position: absolute;
+  bottom: 1rem;
+  left: 1.75rem;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* Body text */
+.contentBody {
+  padding: 2rem 2.5rem 2.5rem;
+  flex: 1;
+}
+
+.contentSectionTag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+
+.contentTitle {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--red-primary);
+  margin: 0 0 1.25rem;
+  line-height: 1.25;
+}
+
+.contentText {
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* Stats */
+.statsRow {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(0,0,0,0.07);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--red-primary);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Sub-venue grid */
+.venueGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.venueCard {
+  background: var(--light-bg);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 4px;
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  border-left: 3px solid transparent;
+}
+
+.venueCard:hover {
+  border-left-color: var(--red-primary);
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transform: translateX(2px);
+}
+
+.venueCardActive {
+  border-left-color: var(--gold) !important;
+  background: white !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08) !important;
+}
+
+.venueCardName {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+.venueCardTag {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ─── Responsive ───────────────────────────── */
+@media (max-width: 1024px) {
+  .mainContent {
+    padding: 2rem 2rem 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentLayout {
+    flex-direction: column;
+  }
+
+  .tabsColumn {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabsSectionTitle { display: none; }
+
+  .tabBtn {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .tabBtnActive {
+    border-left-color: transparent !important;
+    border-bottom-color: var(--gold) !important;
+  }
+
+  .tabBtnActive::before { display: none; }
+
+  .subTabList { display: none; }
+
+  .mainContent { padding: 1.5rem 1rem 2rem; }
+
+  .contentBody { padding: 1.5rem 1.25rem; }
+
+  .venueGrid { grid-template-columns: 1fr; }
+
+  .statsRow { gap: 1.5rem; }
+}

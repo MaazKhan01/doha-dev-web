@@ -1,7 +1,7 @@
 .section {
   height: 100vh;
   scroll-snap-align: start;
-  background-color: #6B0F0F;
+  background-color: rgb(121, 10, 42);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -19,18 +19,20 @@
 }
 
 .header {
-  padding: calc(72px + 1rem) 2.5rem 1.5rem;
+  padding: calc(85px + 1rem) 2.5rem 1.5rem;
   position: relative;
   z-index: 2;
 }
+
 .title {
   color: white;
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0 0 0.2rem;
 }
+
 .subtitle {
-  color: rgba(255,255,255,0.62);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -45,21 +47,24 @@
   flex: 1;
   align-items: center;
 }
+
 .card {
   flex: 1;
   display: flex;
   align-items: stretch;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 2px;
   overflow: hidden;
   cursor: pointer;
   transition: background 0.28s, transform 0.28s;
 }
+
 .card:hover {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateY(-3px);
 }
+
 .cardIconCol {
   width: 90px;
   display: flex;
@@ -68,6 +73,7 @@
   background: #fff;
   flex-shrink: 0;
 }
+
 .cardIconCircle {
   width: 50px;
   height: 50px;
@@ -80,7 +86,10 @@
   font-size: 1.15rem;
   transition: transform 0.25s;
 }
-.card:hover .cardIconCircle { transform: scale(1.1); }
+
+.card:hover .cardIconCircle {
+  transform: scale(1.1);
+}
 
 .cardBody {
   flex: 1;
@@ -91,17 +100,20 @@
   background-color: #fff;
   padding: 40px;
 }
+
 .cardTitle {
   color: #C0392B;
   font-size: 1.05rem;
   font-weight: 700;
-    margin: 0 0 0.2rem;
+  margin: 0 0 0.2rem;
 }
+
 .cardDesc {
   color: #000;
   font-size: 0.8rem;
   margin: 0;
 }
+
 .cardArrow {
   color: #C0392B;
   font-size: 1.1rem;
@@ -109,11 +121,19 @@
 }
 
 @media (max-width: 768px) {
-  .header { padding: calc(100px + 1rem) 1rem 1.5rem; }
+  .header {
+    padding: calc(100px + 1rem) 1rem 1.5rem;
+  }
+
   .cards {
     flex-direction: column;
     padding: 0 1rem 1.5rem;
     overflow-y: auto;
   }
-  .card { width: 100%; flex: none; height: 80px; }
+
+  .card {
+    width: 100%;
+    flex: none;
+    height: 80px;
+  }
 }
