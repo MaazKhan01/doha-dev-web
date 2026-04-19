@@ -68,7 +68,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
     console.warn("AboutQatarSection: No guide nodes found in guideRelation");
     return null;
   }
-
+console.log(`${currentTab.imageEn?.node?.filePath || ''}`)
   return (
     <section id="about-qatar" className={styles.section}>
       <WavyEmblem />
@@ -118,7 +118,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
                           backgroundImage: `url(${
                             currentTab.imageEn?.node?.sourceUrl?.startsWith('http') 
                               ? currentTab.imageEn.node.sourceUrl 
-                              : `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${currentTab.imageEn?.node?.sourceUrl || ''}`
+                              : `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${currentTab.imageEn?.node?.filePath || ''}`
                           })` 
                         }}
                       />

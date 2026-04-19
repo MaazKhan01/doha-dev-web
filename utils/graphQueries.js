@@ -12,25 +12,37 @@ export const PAGES_QUERY = `query PAGES_QUERY($id: ID!) {
 }`;
 
 export const HEADER = `query GetHeader {
-  # headerSettings {
-  #   headerFields {
-  #     logoEn {
-  #       sourceUrl
-  #     }
-  #     logoAr {
-  #       sourceUrl
-  #     }
-  #     menus {
-  #       nameEn
-  #       nameAr
-  #       urlEn
-  #       urlAr
-  #     }
-  #   }
-  # }
-  generalSettings {
-    title
-    description
+  header {
+    headerFields {
+      logoEn {
+        node {
+          sourceUrl
+          filePath
+          altText
+        }
+      }
+      logoAr {
+        node {
+          sourceUrl
+          altText
+        }
+      }
+      menus {
+        connectTo
+        nameEn
+        nameAr
+        urlEn
+        urlAr
+        subMenuDropdown
+        subMenu {
+          connectTo
+          nameEn
+          nameAr
+          urlEn
+          urlAr
+        }
+      }
+    }
   }
 }`;
 
@@ -39,23 +51,27 @@ export const ABOUT_QATAR = `query GetAboutQatar($id: ID!) {
     flexibleContent {
       component {
         ... on FlexibleContentComponentGuideSectionLayout {
-          fieldGroupName
+          sectionTitleEn
+          sectionTitleAr
           guideRelation {
             nodes {
+              __typename
               id
-              title
               uri
               ... on Guide {
+                title
                 guideContent {
                   steps {
                     descEn
                     headingEn
                     imageEn {
                       node {
-                        sourceUrl
+                        filePath
+                        mediaItemUrl
                       }
                     }
                   }
+                  fieldGroupName
                 }
               }
             }
@@ -216,3 +232,17 @@ export const MEDIA_GRID_QUERY = `query GetMediaGrid($id: ID!) {
     }
   }
 }`;
+export const FOOTER = `query GetFooter {
+  footer {
+    footerFields {
+      footerText
+      footerTextAr
+      footerLinks {
+        textEn
+        textAr
+        urlEn
+        urlAr
+      }
+    }
+  }
+}`

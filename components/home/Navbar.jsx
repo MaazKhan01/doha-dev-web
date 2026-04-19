@@ -13,44 +13,50 @@ import {
 import { gql, useQuery } from "@apollo/client";
 import { HEADER } from "@/utils/graphQueries";
 
-const navLinks = [
-  { label: "About Qatar", href: "#about-qatar" },
-  { label: "Doha 2030", href: "#doha2030" },
-  { label: "Sports & Venues", href: "#sports-venues" },
-  { label: "Press Releases", href: "#press-releases" },
-  { label: "Gallery", href: "#gallery" },
-];
-
-const socialLinks = [
-  { icon: <FaYoutube />, href: "#" },
-  { icon: <FaInstagram />, href: "#" },
-  { icon: <FaTwitter />, href: "#" },
-  { icon: <FaFacebookF />, href: "#" },
-  { icon: <FaSnapchatGhost />, href: "#" },
-];
-
-
 export default function Navbar({ onSectionClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleNav = (e, href) => {
-    e.preventDefault();
-    setIsMenuOpen(false);
-    if (onSectionClick) onSectionClick(href.replace("#", ""));
-  };
   const { loading, data } = useQuery(
     gql`
       ${HEADER}
     `
   );
+
+  const headerData = data?.header?.headerFields;
+  const logo = `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${headerData?.logoEn?.node?.filePath}` || "/en/images/logo.svg";
+  const navLinks = headerData?.menus?.map(menu => ({
+    label: menu.nameEn,
+    href: menu.urlEn
+  })) || [];
+
+  const socialLinks = [
+    { icon: <FaYoutube />, href: "#" },
+    { icon: <FaInstagram />, href: "#" },
+    { icon: <FaTwitter />, href: "#" },
+    { icon: <FaFacebookF />, href: "#" },
+    { icon: <FaSnapchatGhost />, href: "#" },
+  ];
+
+  const handleNav = (e, href) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    if (onSectionClick && href.startsWith("#")) {
+      onSectionClick(href.replace("#", ""));
+    } else {
+      window.location.href = href;
+    }
+  };
+
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-  console.log("data ", data);
+
+  if (loading) return null;
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
         {/* Logo */}
         <div className={styles.logo} onClick={() => window.location.href = "/"}>
-          <img src="/en/images/logo.svg" alt="Logo" width={175} style={{padding: '10px 0'}}/>
+          <img src={logo} alt="Logo" width={175} style={{padding: '10px 0'}}/>
         </div>
 
         {/* Hamburger */}
@@ -64,8 +70,8 @@ export default function Navbar({ onSectionClick }) {
 
         {/* Desktop Links */}
         <ul className={styles.links}>
-          {navLinks.map((l) => (
-            <li key={l.label}>
+          {navLinks.map((l, index) => (
+            <li key={index}>
               <a href={l.href} onClick={(e) => handleNav(e, l.href)}>
                 {l.label}
               </a>
@@ -87,8 +93,8 @@ export default function Navbar({ onSectionClick }) {
       {isMenuOpen && (
         <div className={styles.mobileMenu}>
           <ul className={styles.mobileLinks}>
-            {navLinks.map((l) => (
-              <li key={l.label}>
+            {navLinks.map((l, index) => (
+              <li key={index}>
                 <a href={l.href} onClick={(e) => handleNav(e, l.href)}>
                   {l.label}
                 </a>
