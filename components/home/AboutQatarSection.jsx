@@ -126,7 +126,7 @@ console.log(`${currentTab.imageEn?.node?.filePath || ''}`)
                     </div>
 
                     <div className={`${styles.descBox} ${animating ? styles.descOut : styles.descIn}`}>
-                      {currentTab.descEn}
+                      <div dangerouslySetInnerHTML={{ __html: currentTab.descEn }} />
                     </div>
                   </>
                 )}
