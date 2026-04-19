@@ -15,7 +15,7 @@ export default function Home({ params }) {
       query MyQuery {
         pages(first: 100) {
           nodes {
-            flexibleComponent {
+            flexibleContent {
               slug
             }
             pageId
@@ -30,7 +30,7 @@ export default function Home({ params }) {
     if (!loading) {
       let temp = data?.pages?.nodes?.find(
         (item) =>
-          item?.flexibleComponent?.slug ===
+          item?.flexibleContent?.slug ===
           `${params?.slug}/${params?.slug2}/${params?.slug3}`
       );
       if (temp === undefined) {

@@ -10,6 +10,8 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { gql, useQuery } from "@apollo/client";
+import { HEADER } from "@/utils/graphQueries";
 
 const navLinks = [
   { label: "About Qatar", href: "#about-qatar" },
@@ -27,6 +29,7 @@ const socialLinks = [
   { icon: <FaSnapchatGhost />, href: "#" },
 ];
 
+
 export default function Navbar({ onSectionClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -35,9 +38,13 @@ export default function Navbar({ onSectionClick }) {
     setIsMenuOpen(false);
     if (onSectionClick) onSectionClick(href.replace("#", ""));
   };
-
+  const { loading, data } = useQuery(
+    gql`
+      ${HEADER}
+    `
+  );
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-
+  console.log("data ", data);
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>

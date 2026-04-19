@@ -1,81 +1,8 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useMemo } from "react";
 import styles from "./AboutQatarSection.module.css";
-
-const tabData = {
-  "practical-info": {
-    label: "Practical Information",
-    tabs: [
-      {
-        id: "business-hours",
-        label: "Business Hours",
-        image: "https://images.unsplash.com/photo-1555374018-13a8994ab246?w=1200&q=80",
-        description: "The work week is from Sunday to Thursday, with most offices closed on Friday (the Islamic holy day) and Saturday. Government offices open and close early – generally from around 07:00 to 14:00. Commercial offices typically run from 08:00 to 17:00 during the week.",
-      },
-      {
-        id: "climate",
-        label: "Climate",
-        image: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=1200&q=80",
-        description: "Qatar has a hot desert climate. Summers (June–September) are extremely hot and humid with temperatures soaring above 40°C. Winters (December–February) are mild and pleasant, averaging around 18°C. The Asian Games will be held during the cooler months to ensure athlete and spectator comfort.",
-      },
-      {
-        id: "language",
-        label: "Language",
-        image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80",
-        description: "Arabic is the official language of Qatar. English is widely spoken and understood in hotels, restaurants, malls, and tourist areas making it easy for international visitors to navigate. Official signage across Doha is bilingual in Arabic and English.",
-      },
-      {
-        id: "time",
-        label: "Time",
-        image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1200&q=80",
-        description: "Qatar operates on AST (Arabia Standard Time) which is UTC+3. Qatar does not observe daylight saving time, meaning the time offset remains constant throughout the year. This makes scheduling across time zones straightforward for international visitors and media.",
-      },
-      {
-        id: "national",
-        label: "National Profile – Key Facts",
-        image: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?w=1200&q=80",
-        description: "Qatar is a sovereign Arab state in the Middle East with a population of approximately 3 million. It is one of the world's largest exporters of liquefied natural gas (LNG). Doha is the capital and largest city. Qatar is renowned for its modern infrastructure and ambitious vision for the future.",
-      },
-    ]
-  },
-  "guidelines-safety": {
-    label: "Guidelines & Safety",
-    tabs: [
-      {
-        id: "disability",
-        label: "Visitors With A Disability",
-        image: "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=1200&q=80",
-        description: "Qatar is committed to ensuring all visitors enjoy the Games experience. Venues are fully accessible with ramps, elevators, and dedicated viewing areas. Special transportation services and assistance programmes are available for visitors with disabilities.",
-      },
-      {
-        id: "dress-code",
-        label: "Dress Code",
-        image: "https://images.unsplash.com/photo-1542596594-649edbc13630?w=1200&q=80",
-        description: "Qatar is a Muslim country and modest dress is expected, especially in public spaces, malls, and religious sites. At sporting venues a more relaxed dress code applies. Visitors are encouraged to respect local customs by avoiding overly revealing attire in public spaces.",
-      },
-      {
-        id: "female",
-        label: "Female Visitors",
-        image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-        description: "Female visitors are welcome and safe in Qatar. Qatar has invested heavily in safety infrastructure and female tourists visit freely without restrictions. Women can dress according to Islamic norms but there are no laws requiring non-Muslim women to wear a hijab.",
-      },
-      {
-        id: "religion",
-        label: "Religion",
-        image: "https://images.unsplash.com/photo-1518730878755-08cb3e42e2e8?w=1200&q=80",
-        description: "Islam is the state religion of Qatar. Residents and visitors of all faiths are welcome and respected. During Ramadan, eating, drinking, and smoking in public during daylight hours is prohibited. Places of worship for non-Muslims are also available in Doha.",
-      },
-      {
-        id: "safety",
-        label: "Safety",
-        image: "https://images.unsplash.com/photo-1493514789931-586cb221d7a7?w=1200&q=80",
-        description: "Qatar is one of the safest countries in the world. Crime rates are extremely low and solo travel is considered very safe. The government maintains a strong security presence in public areas and has a zero-tolerance policy on drugs. Emergency services respond swiftly.",
-      },
-    ]
-  }
-};
-
-const mainTabKeys = Object.keys(tabData);
+import { gql, useQuery } from "@apollo/client";
+import { ABOUT_QATAR } from "@/utils/graphQueries";
 
 /* Wavy circular background emblem */
 function WavyEmblem() {
@@ -91,20 +18,36 @@ function WavyEmblem() {
   );
 }
 
-export default function AboutQatarSection() {
-  const [activeMainTab, setActiveMainTab] = useState(mainTabKeys[0]);
+export default function AboutQatarSection({ pageNo, idx }) {
+  const [activeMainTab, setActiveMainTab] = useState(0);
   const [activeSubTab, setActiveSubTab] = useState(0);
   const [animating, setAnimating] = useState(false);
 
-  const currentTabs = tabData[activeMainTab].tabs;
-  const currentTab = currentTabs[activeSubTab];
+  const { loading, data } = useQuery(gql`
+    ${ABOUT_QATAR}
+  `, {
+    variables: { id: pageNo.toString() },
+    skip: !pageNo
+  });
 
-  const handleMainTabChange = (key) => {
-    if (key === activeMainTab) return;
+  const guides = useMemo(() => {
+    return data?.page?.flexibleContent?.component?.[idx]?.guideRelation?.nodes || [];
+  }, [data, idx]);
+
+  const currentTabs = useMemo(() => {
+    return guides[activeMainTab]?.guideContent?.steps || [];
+  }, [guides, activeMainTab]);
+
+  const currentTab = useMemo(() => {
+    return currentTabs[activeSubTab] || null;
+  }, [currentTabs, activeSubTab]);
+
+  const handleMainTabChange = (idx) => {
+    if (idx === activeMainTab) return;
     setAnimating(true);
     setTimeout(() => {
-      setActiveMainTab(key);
-      setActiveSubTab(0); // Reset nested tab when main tab changes
+      setActiveMainTab(idx);
+      setActiveSubTab(0);
       setAnimating(false);
     }, 300);
   };
@@ -118,58 +61,75 @@ export default function AboutQatarSection() {
     }, 300);
   };
 
+  console.log("Guide Data:", guides);
+
+  if (loading && guides.length === 0) return null;
+  if (!loading && guides.length === 0) {
+    console.warn("AboutQatarSection: No guide nodes found in guideRelation");
+    return null;
+  }
+
   return (
     <section id="about-qatar" className={styles.section}>
       <WavyEmblem />
 
-      {/* Inner layout with main tabs on top */}
       <div className={styles.innerWrapper}>
         <div className={`container mx-auto`}>
-          <h2 className="header-title" >About Doha</h2>
+          <h2 className="header-title">About Doha</h2>
         </div>
+
+        {/* Main Tabs Header */}
         <div className={`${styles.mainTabsHeader} container mx-auto`}>
-          {mainTabKeys.map(key => (
+          {guides.map((guide, idx) => (
             <button
-              key={key}
-              className={`${styles.mainTabBtn} ${activeMainTab === key ? styles.mainTabBtnActive : ""}`}
-              onClick={() => handleMainTabChange(key)}
+              key={guide.id}
+              className={`${styles.mainTabBtn} ${activeMainTab === idx ? styles.mainTabBtnActive : ""}`}
+              onClick={() => handleMainTabChange(idx)}
             >
-              {tabData[key].label}
+              {guide.title}
             </button>
           ))}
         </div>
+
         <div className={styles.mainContent}>
           <div className={styles.container}>
-
             <div className={styles.contentArea}>
               {/* Vertical Tabs Column */}
               <div className={styles.tabsCol}>
                 {currentTabs.map((t, i) => (
                   <button
-                    key={t.id}
+                    key={i}
                     className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
                     onClick={() => handleSubTabChange(i)}
                   >
-                    {t.label}
+                    {t.headingEn}
                   </button>
                 ))}
               </div>
 
               {/* Content Column */}
               <div className={styles.contentCol}>
-                {/* Image */}
-                <div className={styles.imageWrap}>
-                  <div
-                    className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
-                    style={{ backgroundImage: `url(${currentTab.image})` }}
-                  />
-                  <div className={styles.imageLabel}>{currentTab.label}</div>
-                </div>
+                {currentTab && (
+                  <>
+                    <div className={styles.imageWrap}>
+                      <div
+                        className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
+                        style={{ 
+                          backgroundImage: `url(${
+                            currentTab.imageEn?.node?.sourceUrl?.startsWith('http') 
+                              ? currentTab.imageEn.node.sourceUrl 
+                              : `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${currentTab.imageEn?.node?.sourceUrl || ''}`
+                          })` 
+                        }}
+                      />
+                      <div className={styles.imageLabel}>{currentTab.headingEn}</div>
+                    </div>
 
-                {/* Description */}
-                <div className={`${styles.descBox} ${animating ? styles.descOut : styles.descIn}`}>
-                  {currentTab.description}
-                </div>
+                    <div className={`${styles.descBox} ${animating ? styles.descOut : styles.descIn}`}>
+                      {currentTab.descEn}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

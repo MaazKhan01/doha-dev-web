@@ -11,20 +11,21 @@ import {
 } from "@apollo/client";
 import { LoadingProvider } from "@/context/LoadingProvider";
 import SiteShell from "@/components/layout/SiteShell";
+import { use } from "react";
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`,
-    useGETForQueries: true,
+    uri: `${process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")}/graphql`,
   }),
   cache: new InMemoryCache(),
 });
 
 export default function RootLayout({ children, params }) {
-  const lang = params.lang || "en";
+  const { lang } = use(params);
+  const currentLang = lang || "en";
 
   return (
-    <html lang={lang}>
+    <html lang={currentLang}>
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -49,7 +50,7 @@ export default function RootLayout({ children, params }) {
             <LoadingProvider>
               {/* SiteShell auto-injects Navbar + Footer on every inner page.
                   The homepage is excluded — it manages its own nav/footer. */}
-              <SiteShell lang={lang}>
+              <SiteShell lang={currentLang}>
                 {children}
               </SiteShell>
             </LoadingProvider>

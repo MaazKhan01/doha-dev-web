@@ -2,7 +2,7 @@
 "use client";
 
 import { gql, useQuery } from "@apollo/client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, use } from "react";
 import { useLoader } from "@/context/LoadingProvider";
 import dynamic from "next/dynamic";
 import Loading from "@/components/module/Loading";
@@ -14,9 +14,10 @@ const GET_PAGES = gql`
   query GetPages {
     pages(first: 100) {
       nodes {
-        flexibleComponent {
+        flexibleContent {
           slug
         }
+        slug
         pageId
       }
     }
@@ -24,6 +25,7 @@ const GET_PAGES = gql`
 `;
 
 export default function Home({ params }) {
+  const { slug } = use(params);
   const { load, setLoad } = useLoader();
   const [pages, setPages] = useState(null);
 
@@ -31,7 +33,7 @@ export default function Home({ params }) {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       setPages(data);
-        setLoad(false);
+      setLoad(false);
     },
     onError: () => {
       setLoad(false);
@@ -44,9 +46,11 @@ export default function Home({ params }) {
 
   const currentPage = useMemo(() => {
     return pages?.pages?.nodes.find(
-      (item) => item?.flexibleComponent?.slug === params.slug
+      (item) =>
+        (item?.flexibleContent?.slug === slug) ||
+        (item?.slug === slug)
     );
-  }, [pages, params.slug]);
+  }, [pages, slug]);
 
   const pageId = currentPage?.pageId || null;
 
