@@ -6,7 +6,7 @@ trigger:
 
 variables:
   dockerfilePath: Dockerfile
-  imageName: ucms
+  imageName: asiangames-fe
   nonProdhubServiceConnection: spn-ucms-dev-secret
   nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
 
@@ -31,7 +31,7 @@ stages:
             dockerFile: '$(dockerfilePath)'
             imageName: '$(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
         - task: Docker@1
-          displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+          displayName: 'Push Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
           inputs:
             command: 'Push an image'
             containerregistrytype: 'Azure Container Registry'
