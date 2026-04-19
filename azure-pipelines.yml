@@ -6,7 +6,7 @@ trigger:
 
 variables:
   dockerfilePath: Dockerfile
-  imageName: ucms
+  imageName: asiangames-fe
   nonProdhubServiceConnection: spn-ucms-dev-secret
   nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
 
