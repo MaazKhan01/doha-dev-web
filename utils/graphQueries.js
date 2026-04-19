@@ -17,6 +17,7 @@ export const HEADER = `query GetHeader {
       logoEn {
         node {
           sourceUrl
+
           filePath
           altText
         }
@@ -41,6 +42,15 @@ export const HEADER = `query GetHeader {
           urlEn
           urlAr
         }
+      }
+      socialIcons {
+        icon {
+          node {
+            mediaItemUrl
+          }
+        }
+        link
+        title
       }
     }
   }

@@ -29,13 +29,11 @@ export default function Navbar({ onSectionClick }) {
     href: menu.urlEn
   })) || [];
 
-  const socialLinks = [
-    { icon: <FaYoutube />, href: "#" },
-    { icon: <FaInstagram />, href: "#" },
-    { icon: <FaTwitter />, href: "#" },
-    { icon: <FaFacebookF />, href: "#" },
-    { icon: <FaSnapchatGhost />, href: "#" },
-  ];
+  const socialLinks = headerData?.socialIcons?.map(social => ({
+    icon: social.icon?.node?.mediaItemUrl ? `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${social.icon?.node?.mediaItemUrl}` : null,
+    href: social.link,
+    title: social.title
+  })) || [];
 
   const handleNav = (e, href) => {
     e.preventDefault();
@@ -82,8 +80,8 @@ export default function Navbar({ onSectionClick }) {
         {/* Desktop Social */}
         <div className={styles.social}>
           {socialLinks.map((s, i) => (
-            <a key={i} href={s.href} target="_blank" rel="noreferrer">
-              {s.icon}
+            <a key={i} href={s.href} target="_blank" rel="noreferrer" title={s.title}>
+              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} /> : s.title}
             </a>
           ))}
         </div>
@@ -104,8 +102,8 @@ export default function Navbar({ onSectionClick }) {
 
           <div className={styles.mobileSocial}>
             {socialLinks.map((s, i) => (
-              <a key={i} href={s.href} target="_blank" rel="noreferrer">
-                {s.icon}
+              <a key={i} href={s.href} target="_blank" rel="noreferrer" title={s.title}>
+                {s.icon ? <img src={s.icon} alt={s.title} width={24} height={24} /> : s.title}
               </a>
             ))}
           </div>
