@@ -78,8 +78,8 @@ export default function SportsVenuesSection({ pageNo, idx }) {
           <h2 className="header-title">{heading || "Sports and Venues"}</h2>
 
           <p className={styles.subtitle}>
-            {content ||
-              "Doha&apos;s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports..."
+            {
+              content ? <div dangerouslySetInnerHTML={{ __html: content }} /> : "Doha&apos;s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports..."
             }
           </p>
 
@@ -89,8 +89,8 @@ export default function SportsVenuesSection({ pageNo, idx }) {
                 <button
                   className={styles.btn}
                   style={{
-                    color: button.textColor || "#fff",
-                    backgroundColor: button.backgroundColor || "#b3331d",
+                    color: button.textColor || "#000",
+                    backgroundColor: button.backgroundColor || "#fff",
                   }}
                 >
                   {button.title || "Find out more"}

@@ -87,14 +87,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: 2px solid white;
-  color: white;
+  /* border: 2px solid white; */
+  color: #C0392B;
   padding: 0.65rem 1.75rem;
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   cursor: pointer;
-  background: transparent;
+  background: #fff;
   transition: all 0.25s ease;
   width: fit-content;
   font-family: inherit;

@@ -25,13 +25,14 @@
 .bgLeft {
   position: absolute;
   inset: 0;
-  width: 50%;
+  width: 30%;
   height: 100%;
   pointer-events: none;
-  background-size: cover;
-  background-position: left;
+  background-size: contain;
+  background-position: bottom left;
   background-repeat: no-repeat;
   left: 0;
+  bottom: 0;
 }
 
 .content {

@@ -80,7 +80,8 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
 
   return (
     <>
-      <section className={styles.section}>
+      <section className={styles.section} >
+        <div className={styles.bgImage} style={{ backgroundImage: `url(/en/images/press-emblem.png)` }}></div>
         <div className="container">
           <div className={styles.header}>
             <h2 className={styles.headerTitle + " header-title"}>

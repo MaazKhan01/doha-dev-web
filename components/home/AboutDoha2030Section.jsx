@@ -89,7 +89,7 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
         tag={sectionData.tag}
         heading={sectionData.heading}
       >
-        <p>{sectionData.description}</p>
+        <div dangerouslySetInnerHTML={{ __html: sectionData.description }} />
       </RightOffcanvas>
     </>
   );

@@ -2,22 +2,55 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid rgba(0,0,0,0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 
-   background: #f5f4f2;
-    padding: 60px 0;
-    font-size: 15px;
+  background: #f5f4f2;
+  padding: 60px 0;
+  font-size: 15px;
 }
+
 .copy {
-  font-size: 0.75rem;
+  font-size: 15px;
   margin: 0;
+  font-weight: 500;
+  padding-bottom: 5px;
 }
-.links { display: flex; align-items: center; gap: 0.6rem; }
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  position: relative;
+}
+
 .link {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 15px;
+  color: #221e1f;
   text-decoration: none;
   transition: color 0.2s;
+  position: relative;
 }
-.link:hover { color: #C0392B; }
-.divider { color: #bbb; font-size: 0.75rem; }
+
+.link:hover {
+  color: #C0392B;
+}
+
+.divider {
+  color: #bbb;
+  font-size: 0.75rem;
+}
+
+.links a:hover:after {
+  width: 100%;
+}
+
+.links a:after {
+  content: "";
+  background: #c0392b;
+  width: 0;
+  height: 2px;
+  transition: width .25s;
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+}

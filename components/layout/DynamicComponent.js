@@ -101,11 +101,42 @@ const DynamicComponent = ({ id }) => {
     }
   }, [dataset.length]);
 
+  const scrollTimeRef = useRef(0);
+
   const handleWheel = useCallback((e) => {
+    if (isScrollingRef.current) {
+      e.preventDefault();
+      return;
+    }
+
+    const activeSlideEl = containerRef.current?.querySelector(`[data-slide-index="${activeIndex}"]`);
+
+    if (activeSlideEl) {
+      const { scrollTop, scrollHeight, clientHeight } = activeSlideEl;
+      if (scrollHeight > clientHeight + 2) {
+        const atBottom = scrollHeight - clientHeight - scrollTop <= 2;
+        const atTop = scrollTop <= 2;
+
+        // If native scrolling is possible in the wheel's direction
+        if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
+          scrollTimeRef.current = Date.now(); 
+          return; // Let browser scroll it naturally
+        }
+
+        // We hit the boundary. If the user was just scrolling within the last 500ms,
+        // it's likely the inertial tail of the trackpad. Swallow it.
+        if (Date.now() - scrollTimeRef.current < 500) {
+          e.preventDefault();
+          scrollTimeRef.current = Date.now(); // keep swallowing as long as inertia continues
+          return;
+        }
+      }
+    }
+
     e.preventDefault();
     if (e.deltaY > 0) navigate("down");
     else navigate("up");
-  }, [navigate]);
+  }, [navigate, activeIndex]);
 
   const handleTouchStart = useCallback((e) => {
     touchStartYRef.current = e.touches[0].clientY;
@@ -116,9 +147,25 @@ const DynamicComponent = ({ id }) => {
     const deltaY = touchStartYRef.current - e.changedTouches[0].clientY;
     touchStartYRef.current = null;
     if (Math.abs(deltaY) < 30) return;
+
+    if (isScrollingRef.current) return;
+
+    const activeSlideEl = containerRef.current?.querySelector(`[data-slide-index="${activeIndex}"]`);
+    if (activeSlideEl) {
+      const { scrollTop, scrollHeight, clientHeight } = activeSlideEl;
+      if (scrollHeight > clientHeight + 2) {
+        const atBottom = scrollHeight - clientHeight - scrollTop <= 2;
+        const atTop = scrollTop <= 2;
+
+        if ((deltaY > 0 && !atBottom) || (deltaY < 0 && !atTop)) {
+          return; // Browser handled the swipe natively
+        }
+      }
+    }
+
     if (deltaY > 0) navigate("down");
     else navigate("up");
-  }, [navigate]);
+  }, [navigate, activeIndex]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -225,6 +272,7 @@ const DynamicComponent = ({ id }) => {
         {dataset.map((item, idx) => (
           <div
             key={idx}
+            data-slide-index={idx}
             className={styles.slideItem}
             style={{
               position: "fixed",
