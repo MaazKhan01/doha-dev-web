@@ -67,7 +67,7 @@ export default function SportsVenuesSection({ pageNo, idx }) {
   return (
     <section id="sports-venues" className={styles.section + " container"}>
       <GeoEmblem />
-      <div className="flex items-center">
+      <div className="flex items-center flex-wrap">
         <div className={styles.content}>
           <h2 className="header-title">Sports and Venues</h2>
           <p className={styles.subtitle}>

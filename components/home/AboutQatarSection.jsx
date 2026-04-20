@@ -99,7 +99,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
                     className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
                     onClick={() => handleSubTabChange(i)}
                   >
-                    {t.headingEn}
+                  <span> {t.headingEn}</span> 
                   </button>
                 ))}
               </div>
