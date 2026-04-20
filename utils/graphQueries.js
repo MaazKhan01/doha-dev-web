@@ -127,8 +127,8 @@ export const CONTENT_SECTION_QUERY = `query GetContentSection($id: ID!) {
           theContentEn
           subheadingEn
           popoutContent {
-            heading
-            content
+            headingEn
+            contentEn
             fieldGroupName
           }
           buttonEn {
@@ -252,6 +252,68 @@ export const FOOTER = `query GetFooter {
         textAr
         urlEn
         urlAr
+      }
+    }
+  }
+}`
+
+  // ... on FlexibleContentComponentContentSection2Layout {
+  //         fieldGroupName
+  //         headingAr
+  //         backgroundImageEn {
+  //           node {
+  //             filePath
+  //             mediaItemUrl
+  //           }
+  //         }
+  //         buttonEn {
+  //           title
+  //           textColor
+  //           link
+  //           fieldGroupName
+  //           backgroundColor
+  //         }
+  //         headingEn
+  //         imageEn {
+  //           node {
+  //             mediaItemUrl
+  //           }
+  //         }
+  //         theContentEn
+  //         theContentAr
+  //       }
+  //     }
+
+export const CONTENT_SECTION_2_QUERY = `query GetContentSection2($id: ID!) {
+  page(id: $id, idType: DATABASE_ID) {
+    flexibleContent {
+      component {
+        ... on FlexibleContentComponentContentSection2Layout {
+          fieldGroupName
+          headingAr
+          backgroundImageEn {
+            node {
+              filePath
+              mediaItemUrl
+            }
+          }
+          buttonEn {
+            title
+            textColor
+            link
+            fieldGroupName
+            backgroundColor
+          }
+          headingEn
+          imageEn {
+            node {
+              mediaItemUrl
+              filePath
+            }
+          }
+          theContentEn
+          theContentAr
+        }
       }
     }
   }

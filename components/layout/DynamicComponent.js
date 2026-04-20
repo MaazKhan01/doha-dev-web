@@ -19,7 +19,7 @@ const MediaGridLayout = dynamic(() => import("../home/MediaGridLayout"));
 const GallerySection = dynamic(() => import("../home/GallerySection"));
 const ContentGridSectionLayout = dynamic(() => import("../home/ContentGridSectionLayout"));
 const TabsContentLayout = dynamic(() => import("../home/TabsContentLayout"));
-
+const SportsVenuesSection = dynamic(() => import("../home/SportsVenuesSection"));
 const DynamicComponent = ({ id }) => {
   const [dataset, setDataset] = useState([]);
   const { setLoad } = useLoader();
@@ -63,7 +63,7 @@ const DynamicComponent = ({ id }) => {
     else if (type === "FlexibleContentComponentContentSectionLayout") { id = "doha2030"; label = "Doha 2030"; }
     else if (type === "FlexibleContentComponentCallToActionLayout") { id = "gallery"; label = "Gallery"; }
     else if (type === "FlexibleContentComponentContentGridSectionLayout") { id = "grid"; label = "Updates"; }
-
+    else if (type === "FlexibleContentComponentContentSection2Layout") { id = "sports-venues"; label = "Sports and Venues"; }
     return { id, label, type };
   });
 
@@ -124,6 +124,8 @@ const DynamicComponent = ({ id }) => {
         return <ContentGridSectionLayout pageNo={id} idx={idx} />;
       case "FlexibleContentComponentTabsContentLayout":
         return <TabsContentLayout pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentContentSection2Layout":
+        return <SportsVenuesSection pageNo={id} idx={idx} />;
       default:
         console.warn(`No mapping found for component: ${typename}`);
         return null;

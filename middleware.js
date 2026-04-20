@@ -10,7 +10,12 @@ export function middleware(request) {
   );
 
   // Redirect if there is no locale
-
+  if (pathnameIsMissingLocale) {
+    const locale = i18n.defaultLocale;
+    return NextResponse.redirect(
+      new URL(`/${locale}${pathname}`, request.url)
+    );
+  }
 }
 
 export const config = {

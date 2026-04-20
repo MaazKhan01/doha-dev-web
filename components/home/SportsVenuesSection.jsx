@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import styles from "./SportsVenuesSection.module.css";
+import { gql, useQuery } from "@apollo/client";
+import { CONTENT_SECTION_2_QUERY } from "@/utils/graphQueries";
 
 const venues = [
   {
@@ -52,10 +54,17 @@ function GeoEmblem() {
   );
 }
 
-export default function SportsVenuesSection() {
+export default function SportsVenuesSection({ pageNo, idx }) {
   const params = useParams();
   const lang = params?.lang || "en";
-
+  const { loading, data } = useQuery(gql`
+    ${CONTENT_SECTION_2_QUERY}
+  `, {
+    variables: { id: pageNo.toString() },
+    skip: !pageNo
+  });
+  const content = data?.page?.flexibleContent?.component?.[idx];
+  console.log(content)
   return (
     <section id="sports-venues" className={styles.section + " container"}>
       <GeoEmblem />
