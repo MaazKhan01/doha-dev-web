@@ -35,7 +35,9 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
         image: absoluteImg || "https://agdoha2030.qa/themes/doha2030/images/MIA_Museum-011.jpg",
         description: cmsData.theContentEn || "",
         linkText: cmsData.buttonEn?.title || "Find out more",
-        linkUrl: cmsData.buttonEn?.link || "#"
+        linkUrl: cmsData.buttonEn?.link || "#",
+        popoutHeading: cmsData.popoutContent?.headingEn || cmsData.headingEn || "Our Home, Your Gateway",
+        popoutDescription: cmsData.popoutContent?.contentEn || cmsData.theContentEn || "",
       };
     }
     return {
@@ -44,7 +46,9 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
       image: "https://agdoha2030.qa/themes/doha2030/images/MIA_Museum-011.jpg",
       description: "A Doha 2030 Asian Games will provide a gateway to a brighter future for the Olympic Council of Asia (OCA), Asian National Olympic Committees (NOCs), the Asian Sports Federations and Qatar. The Games will deliver a lasting, sustainable Asian Olympic legacy through a celebration of sport for life, peaceful diversity, excellence and certainty.",
       linkText: "Find out more",
-      linkUrl: "#"
+      linkUrl: "#",
+      popoutHeading: "Our Home, Your Gateway",
+      popoutDescription: "A Doha 2030 Asian Games will provide a gateway to a brighter future for the Olympic Council of Asia (OCA), Asian National Olympic Committees (NOCs), the Asian Sports Federations and Qatar. The Games will deliver a lasting, sustainable Asian Olympic legacy through a celebration of sport for life, peaceful diversity, excellence and certainty."
     };
   }, [cmsData]);
 
@@ -53,7 +57,7 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
   return (
     <>
       <section id="doha2030" className={styles.section}>
-        <div className={`${styles.header} container mx-auto`}>
+        <div className={`${styles.header} container mx-auto mt-10`}>
           <h2 className="header-title">{sectionData.tag}</h2>
         </div>
 
@@ -87,9 +91,9 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
         onClose={() => setOpen(false)}
         image={sectionData.image}
         tag={sectionData.tag}
-        heading={sectionData.heading}
+        heading={sectionData.popoutHeading}
       >
-        <div dangerouslySetInnerHTML={{ __html: sectionData.description }} />
+        <div dangerouslySetInnerHTML={{ __html: sectionData.popoutDescription }} />
       </RightOffcanvas>
     </>
   );
