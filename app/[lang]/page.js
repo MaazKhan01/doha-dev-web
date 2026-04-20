@@ -46,7 +46,6 @@ export default function Home({ params }) {
   }, [pagesData]);
 
   const pageId = currentPage?.pageId || null;
-  console.log(pageId,data );
   if (load || loading) {
     return <Loading />;
   }

@@ -15,7 +15,7 @@ import { use } from "react";
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: `${process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")}/graphql`,
+    uri: `${process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "")}/graphql`,
   }),
   cache: new InMemoryCache(),
 });

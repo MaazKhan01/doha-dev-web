@@ -23,14 +23,14 @@ export default function Navbar({ onSectionClick }) {
   );
 
   const headerData = data?.header?.headerFields;
-  const logo = `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${headerData?.logoEn?.node?.filePath}` || "/en/images/logo.svg";
+  const logo = `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${headerData?.logoEn?.node?.filePath}` || "/en/images/logo.svg";
   const navLinks = headerData?.menus?.map(menu => ({
     label: menu.nameEn,
     href: menu.urlEn
   })) || [];
 
   const socialLinks = headerData?.socialIcons?.map(social => ({
-    icon: social.icon?.node?.mediaItemUrl ? `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${social.icon?.node?.mediaItemUrl}` : null,
+    icon: social.icon?.node?.mediaItemUrl ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${social.icon?.node?.mediaItemUrl}` : null,
     href: social.link,
     title: social.title
   })) || [];
@@ -39,7 +39,7 @@ export default function Navbar({ onSectionClick }) {
     e.preventDefault();
     setIsMenuOpen(false);
     if (onSectionClick && href.startsWith("#")) {
-      onSectionClick(href.replace("#", ""));
+      onSectionClick(href?.replace("#", ""));
     } else {
       window.location.href = href;
     }
@@ -54,7 +54,7 @@ export default function Navbar({ onSectionClick }) {
       <div className={styles.container}>
         {/* Logo */}
         <div className={styles.logo} onClick={() => window.location.href = "/"}>
-          <img src={logo} alt="Logo" width={175} style={{padding: '10px 0'}}/>
+          <img src={logo} alt="Logo" width={175} style={{ padding: '10px 0' }} />
         </div>
 
         {/* Hamburger */}

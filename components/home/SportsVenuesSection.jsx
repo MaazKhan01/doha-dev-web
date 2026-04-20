@@ -64,7 +64,6 @@ export default function SportsVenuesSection({ pageNo, idx }) {
     skip: !pageNo
   });
   const content = data?.page?.flexibleContent?.component?.[idx];
-  console.log(content)
   return (
     <section id="sports-venues" className={styles.section + " container"}>
       <GeoEmblem />

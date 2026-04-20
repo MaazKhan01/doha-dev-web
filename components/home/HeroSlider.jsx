@@ -40,17 +40,17 @@ export default function HeroSlider({ pageNo, idx }) {
       const videos = document.querySelectorAll('video');
       videos.forEach((vid) => {
         if (nextPlay) {
-          vid.play().catch(() => {});
+          vid.play().catch(() => { });
         } else {
           vid.pause();
         }
       });
-      
+
       if (sliderRef.current) {
         if (nextPlay) sliderRef.current.slickPlay();
         else sliderRef.current.slickPause();
       }
-      
+
       return nextPlay;
     });
   };
@@ -58,8 +58,8 @@ export default function HeroSlider({ pageNo, idx }) {
   const slides = useMemo(() => {
     if (cmsData) {
       const videoPath = cmsData.videoUrlDesktop?.node?.mediaItemUrl || cmsData.videoUrlDesktop?.node?.filePath;
-      const absoluteVideo = (videoPath && !videoPath.startsWith('http')) 
-        ? `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${videoPath}` 
+      const absoluteVideo = (videoPath && !videoPath.startsWith('http'))
+        ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${videoPath}`
         : videoPath;
 
       return [{

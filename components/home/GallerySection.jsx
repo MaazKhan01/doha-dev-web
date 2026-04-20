@@ -83,7 +83,7 @@ export default function GallerySection({ pageNo, idx }) {
   const desc = cmsData?.descriptionEn || "Checkout the latest gallery related to Doha 2030 AG Bid";
   const bgPath = cmsData?.backgroundImageEn?.node?.mediaItemUrl || cmsData?.backgroundImageEn?.node?.filePath;
   const absoluteBg = (bgPath && !bgPath.startsWith('http'))
-    ? `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${bgPath}`
+    ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${bgPath}`
     : bgPath;
   const linkText = cmsData?.ctaLinkEn?.title || "Explore";
   const linkUrl = cmsData?.ctaLinkEn?.link || "#";
@@ -100,7 +100,7 @@ export default function GallerySection({ pageNo, idx }) {
       </div>
 
       <div className={styles.cards + " container"}>
-        
+
         {cards.map((c) => (
           <Link href={`/${lang}/${c.hrefTarget}`} key={c.id} style={{ textDecoration: "none", flex: 1, display: "flex" }}>
             <div id={c.id} className={styles.card} style={{ width: "100%" }}>
@@ -108,7 +108,7 @@ export default function GallerySection({ pageNo, idx }) {
                 <div className={styles.cardIconCircle}>{c.icon}</div>
               </div>
               <div className={styles.cardBody}>
-                <div style={{padding: "0px 20px"}}>
+                <div style={{ padding: "0px 20px" }}>
                   <h3 className={styles.cardTitle} style={{ fontSize: "24px" }}>{c.title}</h3>
                   <p className={styles.cardDesc}>{c.desc}</p>
                 </div>

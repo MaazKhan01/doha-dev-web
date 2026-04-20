@@ -61,14 +61,11 @@ export default function AboutQatarSection({ pageNo, idx }) {
     }, 300);
   };
 
-  console.log("Guide Data:", guides);
 
   if (loading && guides.length === 0) return null;
   if (!loading && guides.length === 0) {
-    console.warn("AboutQatarSection: No guide nodes found in guideRelation");
     return null;
   }
-console.log(`${currentTab.imageEn?.node?.filePath || ''}`)
   return (
     <section id="about-qatar" className={styles.section}>
       <WavyEmblem />
@@ -114,12 +111,11 @@ console.log(`${currentTab.imageEn?.node?.filePath || ''}`)
                     <div className={styles.imageWrap}>
                       <div
                         className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
-                        style={{ 
-                          backgroundImage: `url(${
-                            currentTab.imageEn?.node?.sourceUrl?.startsWith('http') 
-                              ? currentTab.imageEn.node.sourceUrl 
-                              : `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${currentTab.imageEn?.node?.filePath || ''}`
-                          })` 
+                        style={{
+                          backgroundImage: `url(${currentTab.imageEn?.node?.sourceUrl?.startsWith('http')
+                              ? currentTab.imageEn.node.sourceUrl
+                              : `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${currentTab.imageEn?.node?.filePath || ''}`
+                            })`
                         }}
                       />
                       <div className={styles.imageLabel}>{currentTab.headingEn}</div>

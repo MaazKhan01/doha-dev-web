@@ -62,7 +62,7 @@ const DynamicComponent = ({ id }) => {
     else if (type === "FlexibleContentComponentGuideSectionLayout") { id = "about-qatar"; label = "About Qatar"; }
     else if (type === "FlexibleContentComponentContentSectionLayout") { id = "doha2030"; label = "Doha 2030"; }
     else if (type === "FlexibleContentComponentCallToActionLayout") { id = "gallery"; label = "Gallery"; }
-    else if (type === "FlexibleContentComponentContentGridSectionLayout") { id = "grid"; label = "Updates"; }
+    else if (type === "FlexibleContentComponentContentGridSectionLayout") { id = "press-releases"; label = "Press Releases"; }
     else if (type === "FlexibleContentComponentContentSection2Layout") { id = "sports-venues"; label = "Sports and Venues"; }
     return { id, label, type };
   });

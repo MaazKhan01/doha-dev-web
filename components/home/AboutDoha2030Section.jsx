@@ -26,7 +26,7 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
     if (cmsData) {
       const imgPath = cmsData.backgroundImageEn?.node?.sourceUrl;
       const absoluteImg = (imgPath && !imgPath.startsWith('http'))
-        ? `${process.env.NEXT_PUBLIC_WP_URL.replace(/\/$/, '')}${imgPath}`
+        ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${imgPath}`
         : imgPath;
 
       return {
@@ -70,10 +70,10 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
               <h3 className={styles.panelTitle}>
                 {sectionData.heading}
               </h3>
-                <div 
-                  className={styles.panelText} 
-                  dangerouslySetInnerHTML={{ __html: sectionData.description }} 
-                />
+              <div
+                className={styles.panelText}
+                dangerouslySetInnerHTML={{ __html: sectionData.description }}
+              />
               <button className={styles.cta} onClick={() => setOpen(true)}>
                 {sectionData.linkText}
               </button>
