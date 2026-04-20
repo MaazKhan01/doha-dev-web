@@ -84,19 +84,12 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
                             className={styles.cardImgBg}
                             style={{ backgroundImage: `url(${cardImg})` }}
                           />
-                          {block.callPopout && (
-                            <button
-                              className={styles.viewMoreBtn}
-                              onClick={() => setSelected(block)}
-                              aria-label={`View more: ${block.headingEn}`}
-                            >
-                              View more
-                            </button>
-                          )}
+                         
                         </div>
                       )}
                       <div className={styles.cardBody}>
                         <h3 className={styles.cardTitle}>{block.headingEn}</h3>
+      
                         {!block.callPopout && block.buttonEn?.title && (
                           <a
                             href={block.buttonEn.link || "#"}
@@ -109,6 +102,15 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
                             {block.buttonEn.title}
                           </a>
                         )}
+                                           {block.callPopout && (
+                            <button
+                              className={styles.viewMoreBtn}
+                              onClick={() => setSelected(block)}
+                              aria-label={`View more: ${block.headingEn}`}
+                            >
+                              View more
+                            </button>
+                          )}
                       </div>
                     </div>
                   </div>
