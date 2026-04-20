@@ -101,42 +101,45 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
 
                 return (
                   <div key={block._meta.id || i} className={styles.slide}>
-                    <div className={styles.card}>
-                      {cardImg && (
-                        <div className={styles.cardImg}>
-                          <div
-                            className={styles.cardImgBg}
-                            style={{ backgroundImage: `url(${cardImg})` }}
-                          />
-                        </div>
-                      )}
-                      <div className={styles.cardBody}>
-                        <h3 className={styles.cardTitle}>{block.headingEn}</h3>
+  <div className={styles.card}>
+    {cardImg && (
+      <div className={styles.cardImg}>
+        <div
+          className={styles.cardImgBg}
+          style={{ backgroundImage: `url(${cardImg})` }}
+        />
+      </div>
+    )}
+    <div className={styles.cardBody}>
+      <h3 className={styles.cardTitle}>{block.headingEn}</h3>
 
-                        {!showPopout && block.buttonEn?.title && (
-                          <a
-                            href={block.buttonEn.link || "#"}
-                            className={styles.button}
-                            style={{
-                              background: block.buttonEn.backgroundColor,
-                              color: block.buttonEn.textColor,
-                            }}
-                          >
-                            {block.buttonEn.title}
-                          </a>
-                        )}
-                        {showPopout && (
-                          <button
-                            className={styles.viewMoreBtn}
-                            onClick={() => setSelected(block)}
-                            aria-label={`Read more: ${block.headingEn}`}
-                          >
-                            Read more
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+      {!showPopout && block.buttonEn?.title && (
+        <a
+          href={block.buttonEn.link || "#"}
+          className={styles.button}
+          style={{
+            background: block.buttonEn.backgroundColor,
+            color: block.buttonEn.textColor,
+          }}
+        >
+          {block.buttonEn.title}
+        </a>
+      )}
+    </div>
+
+    {/* ✅ Moved OUTSIDE cardBody, sits directly in .card */}
+    {showPopout && (
+      <button
+        className={styles.viewMoreBtn}
+        onClick={() => setSelected(block)}
+        aria-label={`Read more: ${block.headingEn}`}
+      >
+        <span className={styles.viewMoreTitle}>{block.headingEn}</span>
+        <span className={styles.readMore}>Read more →</span>
+      </button>
+    )}
+  </div>
+</div>
                 );
               })}
             </Slider>

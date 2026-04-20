@@ -5,7 +5,8 @@ import styles from "./SportsVenuesSection.module.css";
 import { gql, useQuery } from "@apollo/client";
 import { CONTENT_SECTION_2_QUERY } from "@/utils/graphQueries";
 
-const venues = [
+// You can keep this as fallback or fetch venues dynamically later
+const fallbackVenues = [
   {
     id: "venue-1",
     label: "Lusail Iconic Stadium",
@@ -17,72 +18,98 @@ const venues = [
     label: "Al Bayt Stadium",
     image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&q=80",
   },
-  {
-    id: "venue-3",
-    label: "Ahmad Bin Ali Stadium",
-    image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900&q=80",
-  },
-  {
-    id: "venue-4",
-    label: "Khalifa International Stadium",
-    image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=900&q=80",
-    wide: true,
-  },
-  {
-    id: "venue-5",
-    label: "Education City Stadium",
-    image: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=900&q=80",
-  },
+  // ... add more if needed
 ];
-
-/* Faint geometric emblem */
-function GeoEmblem() {
-  return (
-    <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" className={styles.emblem}>
-      {[...Array(12)].map((_, i) => {
-        const x = (i % 4) * 220 + 30;
-        const y = Math.floor(i / 4) * 210 + 30;
-        return (
-          <g key={i} transform={`translate(${x},${y})`}>
-            <polygon points="90,10 170,50 170,130 90,170 10,130 10,50" fill="none" stroke="#8B1A1A" strokeWidth="1.5" />
-            <polygon points="90,30 150,60 150,120 90,150 30,120 30,60" fill="none" stroke="#8B1A1A" strokeWidth="0.75" />
-            <circle cx="90" cy="90" r="20" fill="none" stroke="#8B1A1A" strokeWidth="1" />
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
 
 export default function SportsVenuesSection({ pageNo, idx }) {
   const params = useParams();
-  const lang = params?.lang || "en";
-  const { loading, data } = useQuery(gql`
+  const lang = (params?.lang) || "en";
+
+  const { loading, data, error } = useQuery(gql`
     ${CONTENT_SECTION_2_QUERY}
   `, {
-    variables: { id: pageNo.toString() },
-    skip: !pageNo
+    variables: { id: pageNo?.toString() },
+    skip: !pageNo,
   });
-  const content = data?.page?.flexibleContent?.component?.[idx];
+
+  const component = data?.page?.flexibleContent?.component?.[idx];
+
+  // Dynamic content based on language
+  const heading = lang === "ar" ? component?.headingAr : component?.headingEn;
+  const content = lang === "ar" ? component?.theContentAr : component?.theContentEn;
+
+  const backgroundImage = component?.backgroundImageEn?.node?.mediaItemUrl
+    ? process.env.NEXT_PUBLIC_WP_URL + component.backgroundImageEn.node.mediaItemUrl
+    : "";
+  const backgroundImage2 = component?.backgroundImage2?.node?.mediaItemUrl
+    ? process.env.NEXT_PUBLIC_WP_URL + component.backgroundImage2.node.mediaItemUrl
+    : "";
+  const mainImage = component?.imageEn?.node?.mediaItemUrl
+    ? process.env.NEXT_PUBLIC_WP_URL + component.imageEn.node.mediaItemUrl
+    : "/en/images/img-venue.png";
+
+  const button = component?.buttonEn;
+
+  // You can make venues dynamic later by adding a field in WordPress
+  const venues = fallbackVenues; // Replace with dynamic data when available
+
+  if (loading) return <section className={styles.section}>Loading venues section...</section>;
+  if (error) console.error("Error loading SportsVenuesSection:", error);
+
   return (
-    <section id="sports-venues" className={styles.section + " container"}>
-      <GeoEmblem />
-      <div className="flex items-center flex-wrap">
+    <section id="sports-venues" className={`${styles.section} `}>
+      {/* top image */}
+      {/* {backgroundImage2 && (
+        <div
+          style={{ backgroundImage: `url(${backgroundImage2})` }}
+          className={styles.bgTop}
+        />
+      )} */}
+      {backgroundImage && (
+        <div
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+          className={styles.bgLeft}
+        ></div>
+      )}
+
+      <div className="flex items-center flex-wrap container">
+        {/* Left Content */}
         <div className={styles.content}>
-          <h2 className="header-title">Sports and Venues</h2>
+          <h2 className="header-title">{heading || "Sports and Venues"}</h2>
+
           <p className={styles.subtitle}>
-            Doha&apos;s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports and facilities requirements, been strategically located within the city network for ease of access and above all, are &ldquo;tested&rdquo; facilities, used in previous staged World Championships and Games (Doha 2006 Asian Games / Doha 2011 Arab Games / 2019 ANOC World Beach Games).
+            {content ||
+              "Doha&apos;s competition and non-competition venues are centrally located on a compact Games footprint. Venues have been selected taking into account the technical requirements of their respective International Federation (IF) sports..."
+            }
           </p>
-          <div className="flex justify-end bg-[#b3331d]">
-            <Link href={`/${lang}/venues`}>
-              <button className={styles.btn}>Find out more</button>
-            </Link>
-          </div>
+
+          {button && (
+            <div className="flex justify-end bg-[#b3331d]">
+              <Link href={button.link || `/${lang}/venues`}>
+                <button
+                  className={styles.btn}
+                  style={{
+                    color: button.textColor || "#fff",
+                    backgroundColor: button.backgroundColor || "#b3331d",
+                  }}
+                >
+                  {button.title || "Find out more"}
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
+
+        {/* Right Image */}
         <div className="w-1/2">
-          <img src="/en/images/img-venue.png" alt="" />
+          <img
+            src={mainImage}
+            alt={heading || "Sports Venues"}
+            className="w-full h-auto lg:p-5"
+          />
         </div>
       </div>
+
     </section>
   );
 }

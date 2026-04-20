@@ -352,6 +352,12 @@ export const CONTENT_SECTION_2_QUERY = `query GetContentSection2($id: ID!) {
               mediaItemUrl
             }
           }
+          backgroundImage2 {
+            node {
+              filePath
+              mediaItemUrl
+            }
+          }
           buttonEn {
             title
             textColor

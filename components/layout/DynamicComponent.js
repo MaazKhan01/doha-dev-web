@@ -63,12 +63,12 @@ const DynamicComponent = ({ id }) => {
     const type = item?.__typename;
     let label = "Section";
     let sectionId = `section-${index}`;
-    if (type === "FlexibleContentComponentVideoBannerSectionLayout")     { sectionId = "home";          label = "Home"; }
-    else if (type === "FlexibleContentComponentGuideSectionLayout")      { sectionId = "about-qatar";   label = "About Qatar"; }
-    else if (type === "FlexibleContentComponentContentSectionLayout")    { sectionId = "doha2030";      label = "Doha 2030"; }
-    else if (type === "FlexibleContentComponentCallToActionLayout")      { sectionId = "gallery";       label = "Gallery"; }
-    else if (type === "FlexibleContentComponentPressReleaseSectionLayout"){ sectionId = "press-releases";label = "Press Releases"; }
-    else if (type === "FlexibleContentComponentContentSection2Layout")   { sectionId = "sports-venues"; label = "Sports and Venues"; }
+    if (type === "FlexibleContentComponentVideoBannerSectionLayout") { sectionId = "home"; label = "Home"; }
+    else if (type === "FlexibleContentComponentGuideSectionLayout") { sectionId = "about-qatar"; label = "About Qatar"; }
+    else if (type === "FlexibleContentComponentContentSectionLayout") { sectionId = "doha2030"; label = "Doha 2030"; }
+    else if (type === "FlexibleContentComponentCallToActionLayout") { sectionId = "gallery"; label = "Gallery"; }
+    else if (type === "FlexibleContentComponentPressReleaseSectionLayout") { sectionId = "press-releases"; label = "Press Releases"; }
+    else if (type === "FlexibleContentComponentContentSection2Layout") { sectionId = "sports-venues"; label = "Sports and Venues"; }
     return { id: sectionId, label, type };
   });
 
@@ -158,7 +158,7 @@ const DynamicComponent = ({ id }) => {
    *   - future slides:          parked at translateY(100%)          [instant, no transition]
    */
   const getSlideStyle = (idx) => {
-    const isActive  = idx === activeIndex;
+    const isActive = idx === activeIndex;
     const isLeaving = idx === prevIndex;
 
     if (isActive) {
@@ -197,14 +197,14 @@ const DynamicComponent = ({ id }) => {
   const renderComponent = (item, idx) => {
     const typename = item?.__typename;
     switch (typename) {
-      case "FlexibleContentComponentVideoBannerSectionLayout":    return <HeroSlider pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentGuideSectionLayout":          return <AboutQatarSection pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentContentSectionLayout":        return <AboutDoha2030Section pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentMediaGridLayout":             return <MediaGridLayout pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentCallToActionLayout":          return <GallerySection pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentPressReleaseSectionLayout":    return <ContentGridSectionLayout pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentTabsContentLayout":           return <TabsContentLayout pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentContentSection2Layout":       return <SportsVenuesSection pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentVideoBannerSectionLayout": return <HeroSlider pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentGuideSectionLayout": return <AboutQatarSection pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentContentSectionLayout": return <AboutDoha2030Section pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentMediaGridLayout": return <MediaGridLayout pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentCallToActionLayout": return <GallerySection pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentPressReleaseSectionLayout": return <ContentGridSectionLayout pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentTabsContentLayout": return <TabsContentLayout pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentContentSection2Layout": return <SportsVenuesSection pageNo={id} idx={idx} />;
       default: return null;
     }
   };
@@ -213,7 +213,7 @@ const DynamicComponent = ({ id }) => {
 
   return (
     <div className={styles.outerContainer} ref={containerRef}>
-      <Navbar onSectionClick={scrollToId} />
+      <Navbar onSectionClick={scrollToId} activeSectionId={activeSectionId} />
       <SideNavDots
         sections={SECTIONS}
         activeSection={activeSectionId}

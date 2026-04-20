@@ -9,18 +9,33 @@
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(0,0,0,0.07);
   box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  transition: all 0.4s ease;
 }
 
+.navbar.scrolled {
+  height: 80px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* Container adjusts with navbar height */
 .container {
   width: 100%;
-  /* max-width: 1200px; */
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1rem;
   height: 100%;
+  transition: all 0.4s ease;
 }
+
+/* Logo shrinks smoothly */
+.logo img {
+  transition: all 0.4s ease;
+}
+
+/* Mobile menu position adjusts when navbar shrinks */
 
 /* Logo */
 .logo {
@@ -112,7 +127,7 @@
 /* Mobile Menu Overlay */
 .mobileMenu {
   position: absolute;
-  top: 100px; /* immediately below navbar */
+  top: 100%;           /* This will now be right below the shrunk navbar */
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.98);
@@ -123,7 +138,6 @@
   border-bottom: 1px solid rgba(0,0,0,0.07);
   box-shadow: 0 10px 20px rgba(0,0,0,0.05);
 }
-
 .mobileLinks {
   list-style: none;
   padding: 0;

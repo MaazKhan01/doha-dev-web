@@ -10,6 +10,8 @@ body {
   font-family: "DM Sans", sans-serif;
   font-weight: 400;
   direction: ltr;
+    background: rgba(212, 208, 203, 0.2);
+
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Navbar.module.css";
 import {
   FaYoutube,
@@ -13,24 +13,40 @@ import {
 import { gql, useQuery } from "@apollo/client";
 import { HEADER } from "@/utils/graphQueries";
 
-export default function Navbar({ onSectionClick }) {
+export default function Navbar({ 
+  onSectionClick, 
+  activeSectionId 
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const { loading, data } = useQuery(
-    gql`
-      ${HEADER}
-    `
-  );
+  // Detect scroll state based on active section instead of window.scrollY
+  useEffect(() => {
+    if (!activeSectionId) return;
+
+    // Make navbar small starting from the second section onwards
+    const shouldBeScrolled = activeSectionId !== "home";
+
+    setIsScrolled(shouldBeScrolled);
+  }, [activeSectionId]);
+
+  const { loading, data } = useQuery(gql`${HEADER}`);
 
   const headerData = data?.header?.headerFields;
-  const logo = `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${headerData?.logoEn?.node?.filePath}` || "/en/images/logo.svg";
+
+  const logoUrl = headerData?.logoEn?.node?.filePath 
+    ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${headerData.logoEn.node.filePath}`
+    : "/en/images/logo.svg";
+
   const navLinks = headerData?.menus?.map(menu => ({
     label: menu.nameEn,
     href: menu.urlEn
   })) || [];
 
   const socialLinks = headerData?.socialIcons?.map(social => ({
-    icon: social.icon?.node?.mediaItemUrl ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${social.icon?.node?.mediaItemUrl}` : null,
+    icon: social.icon?.node?.mediaItemUrl 
+      ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${social.icon.node.mediaItemUrl}` 
+      : null,
     href: social.link,
     title: social.title
   })) || [];
@@ -39,7 +55,7 @@ export default function Navbar({ onSectionClick }) {
     e.preventDefault();
     setIsMenuOpen(false);
     if (onSectionClick && href.startsWith("#")) {
-      onSectionClick(href?.replace("#", ""));
+      onSectionClick(href.replace("#", ""));
     } else {
       window.location.href = href;
     }
@@ -50,11 +66,22 @@ export default function Navbar({ onSectionClick }) {
   if (loading) return null;
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         {/* Logo */}
-        <div className={styles.logo} onClick={() => window.location.href = "/"}>
-          <img src={logo} alt="Logo" width={180} style={{ padding: '10px 0' }} />
+        <div 
+          className={styles.logo} 
+          onClick={() => window.location.href = "/"}
+        >
+          <img 
+            src={logoUrl} 
+            alt="Logo" 
+            width={isScrolled ? 140 : 180} 
+            style={{ 
+              padding: isScrolled ? '6px 0' : '10px 0',
+              transition: 'all 0.35s ease'
+            }}
+          />
         </div>
 
         {/* Hamburger */}
@@ -80,8 +107,14 @@ export default function Navbar({ onSectionClick }) {
         {/* Desktop Social */}
         <div className={styles.social}>
           {socialLinks.map((s, i) => (
-            <a key={i} href={s.href} target="_blank" rel="noreferrer" title={s.title}>
-              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{height: "20px"}}/> : s.title}
+            <a 
+              key={i} 
+              href={s.href} 
+              target="_blank" 
+              rel="noreferrer" 
+              title={s.title}
+            >
+              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{height: "20px"}} /> : s.title}
             </a>
           ))}
         </div>

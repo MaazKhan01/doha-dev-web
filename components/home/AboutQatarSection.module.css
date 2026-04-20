@@ -27,11 +27,13 @@
   padding-top: calc(85px + 1rem);
   /* Nav clearance */
 }
+
 .mainContent {
   background-color: #C0392B;
   padding: 2rem 0;
   height: 100%;
 }
+
 .mainTabsHeader {
   display: flex;
   gap: 1rem;
@@ -50,11 +52,13 @@
   transition: all 0.2s ease;
   box-shadow: 0 13px 20px rgba(0, 0, 0, .08);
 }
+
 .headerTitle {
   font-size: 24px;
   font-weight: 600;
   color: #fff;
 }
+
 .mainTabBtn:hover {
   background: #a96c3d;
   color: white;
@@ -71,7 +75,7 @@
   flex: 1;
   min-height: 0;
   border-radius: 4px;
-  overflow: hidden;
+  overflow: visible;
   margin: 0 1rem 2rem 1rem;
 }
 
@@ -89,9 +93,10 @@
 
 /* Tabs column */
 .tabsCol {
-  width: 270px;
+  width: 285px;
   flex-shrink: 0;
   /* background: rgba(0,0,0,0.18); */
+    overflow: hidden;        
   overflow-y: auto;
   z-index: 2;
   scrollbar-width: thin;
@@ -128,25 +133,34 @@
   background: rgba(255, 255, 255, 0.09);
   border-left-color: rgba(255, 255, 255, 0.4);
 }
-
 .tabBtnActive {
   color: #C0392B !important;
-  font-weight: 700;
+  font-weight: 500;
   border-left-color: white !important;
-  background: #fff !important;
+  /* background: #fff !important; */
   position: relative;
 }
-/* .tabBtnActive::before {
-
-      content: "";
-    position: absolute;
-     top: 0;
-    left: -1500px;
-    right: 0px;
+.tabBtnActive::after {
+  content: "";
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  display: block;
+}
+.tabBtnActive::before {
+  content: "";
+  position: absolute;
+  top: 0;
   bottom: 0;
-    z-index: 0;
-    background: rgb(255, 255, 255);
-} */
+  right: 0;
+  left: -9999px;
+  background: #fff;
+  z-index: -1;
+}
 /* Content column */
 .contentCol {
   flex: 1;
@@ -228,6 +242,14 @@
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   border-radius: 1px;
 }
+  .tabBtn span {
+    font-size: 17px;
+    font-weight: 400;
+  }
+
+  .tabBtnActive span {
+    color: #000 !important;
+  }
 
 .descIn {
   animation: descFadeIn 0.45s 0.15s ease both;
@@ -258,6 +280,8 @@
     opacity: 0;
   }
 }
+
+
 
 @media (max-width: 768px) {
   .innerWrapper {
@@ -292,7 +316,6 @@
     border-left-color: transparent !important;
     border-bottom-color: white !important;
   }
-
   .imageLabel {
     font-size: 1rem;
     padding: 0.75rem 1rem;

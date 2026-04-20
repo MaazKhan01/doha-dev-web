@@ -33,11 +33,10 @@ export default function AboutQatarSection({ pageNo, idx }) {
   const guides = useMemo(() => {
     return data?.page?.flexibleContent?.component?.[idx]?.guideRelation?.nodes || [];
   }, [data, idx]);
-
+  const heading = data?.page?.flexibleContent?.component?.[idx]?.sectionTitleEn || "";
   const currentTabs = useMemo(() => {
     return guides[activeMainTab]?.guideContent?.steps || [];
   }, [guides, activeMainTab]);
-
   const currentTab = useMemo(() => {
     return currentTabs[activeSubTab] || null;
   }, [currentTabs, activeSubTab]);
@@ -72,7 +71,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
 
       <div className={styles.innerWrapper}>
         <div className={`container mx-auto`}>
-          <h2 className="header-title">About Doha</h2>
+          <h2 className="header-title">{heading}</h2>
         </div>
 
         {/* Main Tabs Header */}
