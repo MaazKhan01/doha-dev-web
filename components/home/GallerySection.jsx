@@ -100,9 +100,7 @@ export default function GallerySection({ pageNo, idx }) {
       </div>
 
       <div className={styles.cards + " container"}>
-        {/* If we have dynamic cards in the future, we can map them. 
-            For now, we render the entry points or follow the user's design. 
-            The user said this layout IS the Gallery section. */}
+        
         {cards.map((c) => (
           <Link href={`/${lang}/${c.hrefTarget}`} key={c.id} style={{ textDecoration: "none", flex: 1, display: "flex" }}>
             <div id={c.id} className={styles.card} style={{ width: "100%" }}>
@@ -110,8 +108,8 @@ export default function GallerySection({ pageNo, idx }) {
                 <div className={styles.cardIconCircle}>{c.icon}</div>
               </div>
               <div className={styles.cardBody}>
-                <div>
-                  <h3 className={styles.cardTitle}>{c.title}</h3>
+                <div style={{padding: "0px 20px"}}>
+                  <h3 className={styles.cardTitle} style={{ fontSize: "24px" }}>{c.title}</h3>
                   <p className={styles.cardDesc}>{c.desc}</p>
                 </div>
                 <FaChevronRight className={styles.cardArrow} />

@@ -32,8 +32,8 @@
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 0.875rem;
+  color: #fff;
+  font-size: 1rem;
   margin: 0;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .cardIconCol {
-  width: 90px;
+  width: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,8 +75,8 @@
 }
 
 .cardIconCircle {
-  width: 50px;
-  height: 50px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   background: #C0392B;
   display: flex;
@@ -98,13 +98,13 @@
   justify-content: space-between;
   padding: 0 1.5rem;
   background-color: #fff;
-  padding: 40px;
+  padding: 40px 20px;
 }
 
 .cardTitle {
   color: #C0392B;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 25px;
+  font-weight: 500;
   margin: 0 0 0.2rem;
 }
 

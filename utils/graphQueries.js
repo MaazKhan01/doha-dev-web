@@ -178,22 +178,31 @@ export const CONTENT_GRID_QUERY = `query GetContentGrid($id: ID!) {
       component {
         ... on FlexibleContentComponentContentGridSectionLayout {
           fieldGroupName
+          sectionHeading
+          sectionDescription
           theBlock {
             buttonEn {
               link
               textColor
-              title
-              fieldGroupName
               backgroundColor
+              title
             }
             callPopout
-            fieldGroupName
-            headingAr
             headingEn
             imageEn {
               node {
                 mediaItemUrl
                 filePath
+              }
+            }
+            popoutContent {
+              content
+              heading
+              image {
+                node {
+                  altText
+                  filePath
+                }
               }
             }
           }
