@@ -81,7 +81,7 @@ export default function Navbar({ onSectionClick }) {
         <div className={styles.social}>
           {socialLinks.map((s, i) => (
             <a key={i} href={s.href} target="_blank" rel="noreferrer" title={s.title}>
-              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} /> : s.title}
+              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{height: "20px"}}/> : s.title}
             </a>
           ))}
         </div>
