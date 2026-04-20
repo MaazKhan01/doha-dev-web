@@ -176,36 +176,82 @@ export const CONTENT_GRID_QUERY = `query GetContentGrid($id: ID!) {
   page(id: $id, idType: DATABASE_ID) {
     flexibleContent {
       component {
-        ... on FlexibleContentComponentContentGridSectionLayout {
+        ... on FlexibleContentComponentPressReleaseSectionLayout {
           fieldGroupName
-          sectionHeading
-          sectionDescription
-          theBlock {
-            buttonEn {
-              link
-              textColor
-              backgroundColor
-              title
-            }
-            callPopout
-            headingEn
-            imageEn {
-              node {
-                mediaItemUrl
-                filePath
-              }
-            }
-            popoutContent {
-              content
-              heading
-              image {
+          sectionDescriptionAr
+          pressReleaseSelection {
+            nodes {
+              contentTypeName
+              uri
+              contentType {
                 node {
-                  altText
-                  filePath
+                  id
                 }
+              }
+              ... on PressRelease {
+                id
+                contentTypeName
+                uri
+                title
+                slug
+                pressReleaseContent {
+                  backgroundImageAr {
+                    node {
+                      link
+                      mediaItemUrl
+                    }
+                  }
+                  buttonAr {
+                    textColor
+                    title
+                    link
+                    fieldGroupName
+                    backgroundColor
+                  }
+                  buttonEn {
+                    backgroundColor
+                    fieldGroupName
+                    link
+                    textColor
+                    title
+                  }
+                  callPopout
+                  fieldGroupName
+                  headingAr
+                  headingEn
+                  imageEn {
+                    node {
+                      filePath
+                      mediaItemUrl
+                    }
+                  }
+                  popoutContent {
+                    contentAr
+                    contentEn
+                    fieldGroupName
+                    headingAr
+                    headingEn
+                    image {
+                      node {
+                        mediaItemUrl
+                        filePath
+                      }
+                    }
+                    imageAr {
+                      node {
+                        filePath
+                        mediaItemUrl
+                      }
+                    }
+                  }
+                }
+                pressReleaseId
               }
             }
           }
+          sectionDescriptionEn
+          sectionHeadingAr
+          sectionHeadingEn
         }
       }
     }
