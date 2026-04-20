@@ -27,6 +27,10 @@ const slickSettings = {
   ],
 };
 
+// ✅ callPopout comes as ["Yes"] | [] | null from CMS
+const isCallPopout = (value) =>
+  Array.isArray(value) ? value.includes("Yes") : Boolean(value);
+
 export default function ContentGridSectionLayout({ pageNo, idx }) {
   const { data: queryData, loading } = useQuery(
     gql`
@@ -44,12 +48,30 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
 
   const [selected, setSelected] = useState(null);
 
-  const blocks = useMemo(() => cmsData?.theBlock || [], [cmsData]);
+  const blocks = useMemo(() => {
+    if (!cmsData?.pressReleaseSelection?.nodes) return [];
+    return cmsData.pressReleaseSelection.nodes
+      .filter((node) => node?.pressReleaseContent)
+      .map((node) => ({
+        ...node.pressReleaseContent,
+        _meta: {
+          id: node.id,
+          uri: node.uri,
+          title: node.title,
+          slug: node.slug,
+          pressReleaseId: node.pressReleaseId,
+        },
+      }));
+  }, [cmsData]);
 
   if (loading && !cmsData) return null;
   if (!cmsData && !loading) return null;
 
-  const resolveImg = (path) => {
+  // ✅ Both mediaItemUrl and filePath are returning relative paths from this CMS
+  // so we always prepend WP_URL for relative paths
+  const resolveImg = (imageNode) => {
+    if (!imageNode) return null;
+    const path = imageNode.mediaItemUrl || imageNode.filePath;
     if (!path) return null;
     return path.startsWith("http")
       ? path
@@ -62,21 +84,23 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
         <div className="container">
           <div className={styles.header}>
             <h2 className={styles.headerTitle + " header-title"}>
-              {cmsData.sectionHeading}
+              {cmsData.sectionHeadingEn}
             </h2>
             <p
               className={styles.headerDescription}
-              dangerouslySetInnerHTML={{ __html: cmsData.sectionDescription }}
+              dangerouslySetInnerHTML={{ __html: cmsData.sectionDescriptionEn }}
             />
           </div>
 
           <div className={styles.sliderWrap}>
             <Slider {...slickSettings}>
               {blocks.map((block, i) => {
-                const cardImg = resolveImg(block.imageEn?.node?.mediaItemUrl);
+                const cardImg = resolveImg(block.imageEn?.node);
+                // ✅ callPopout is ["Yes"] | [] | null
+                const showPopout = isCallPopout(block.callPopout);
 
                 return (
-                  <div key={i} className={styles.slide}>
+                  <div key={block._meta.id || i} className={styles.slide}>
                     <div className={styles.card}>
                       {cardImg && (
                         <div className={styles.cardImg}>
@@ -84,13 +108,12 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
                             className={styles.cardImgBg}
                             style={{ backgroundImage: `url(${cardImg})` }}
                           />
-                         
                         </div>
                       )}
                       <div className={styles.cardBody}>
                         <h3 className={styles.cardTitle}>{block.headingEn}</h3>
-      
-                        {!block.callPopout && block.buttonEn?.title && (
+
+                        {!showPopout && block.buttonEn?.title && (
                           <a
                             href={block.buttonEn.link || "#"}
                             className={styles.button}
@@ -102,15 +125,15 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
                             {block.buttonEn.title}
                           </a>
                         )}
-                                           {block.callPopout && (
-                            <button
-                              className={styles.viewMoreBtn}
-                              onClick={() => setSelected(block)}
-                              aria-label={`View more: ${block.headingEn}`}
-                            >
-                              View more
-                            </button>
-                          )}
+                        {showPopout && (
+                          <button
+                            className={styles.viewMoreBtn}
+                            onClick={() => setSelected(block)}
+                            aria-label={`Read more: ${block.headingEn}`}
+                          >
+                            Read more
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -121,20 +144,20 @@ export default function ContentGridSectionLayout({ pageNo, idx }) {
         </div>
       </section>
 
-      {/* Offcanvas — content driven entirely by popoutContent from CMS */}
       {selected && (
         <RightOffcanvas
           open={!!selected}
           onClose={() => setSelected(null)}
           image={resolveImg(
-            selected.popoutContent?.image?.node?.filePath ||
-              selected.imageEn?.node?.mediaItemUrl
+            selected.popoutContent?.image?.node || selected.imageEn?.node
           )}
-          heading={selected.popoutContent?.heading || selected.headingEn}
+          heading={selected.popoutContent?.headingEn || selected.headingEn}
         >
-          {selected.popoutContent?.content && (
+          {selected.popoutContent?.contentEn && (
             <div
-              dangerouslySetInnerHTML={{ __html: selected.popoutContent.content }}
+              dangerouslySetInnerHTML={{
+                __html: selected.popoutContent.contentEn,
+              }}
             />
           )}
         </RightOffcanvas>

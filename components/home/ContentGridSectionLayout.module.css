@@ -101,9 +101,17 @@
   background-position: center;
   transition: transform 0.42s ease;
 }
-
-.card:hover .cardImgBg {
-  transform: scale(1.06);
+.cardImg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+.card:hover .cardImg::after {
+  opacity: 1;
 }
 
 /* "View more" overlay — identical to PressReleasesSection */

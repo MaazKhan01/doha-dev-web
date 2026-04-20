@@ -67,7 +67,7 @@ const DynamicComponent = ({ id }) => {
     else if (type === "FlexibleContentComponentGuideSectionLayout")      { sectionId = "about-qatar";   label = "About Qatar"; }
     else if (type === "FlexibleContentComponentContentSectionLayout")    { sectionId = "doha2030";      label = "Doha 2030"; }
     else if (type === "FlexibleContentComponentCallToActionLayout")      { sectionId = "gallery";       label = "Gallery"; }
-    else if (type === "FlexibleContentComponentContentGridSectionLayout"){ sectionId = "press-releases";label = "Press Releases"; }
+    else if (type === "FlexibleContentComponentPressReleaseSectionLayout"){ sectionId = "press-releases";label = "Press Releases"; }
     else if (type === "FlexibleContentComponentContentSection2Layout")   { sectionId = "sports-venues"; label = "Sports and Venues"; }
     return { id: sectionId, label, type };
   });
@@ -202,7 +202,7 @@ const DynamicComponent = ({ id }) => {
       case "FlexibleContentComponentContentSectionLayout":        return <AboutDoha2030Section pageNo={id} idx={idx} />;
       case "FlexibleContentComponentMediaGridLayout":             return <MediaGridLayout pageNo={id} idx={idx} />;
       case "FlexibleContentComponentCallToActionLayout":          return <GallerySection pageNo={id} idx={idx} />;
-      case "FlexibleContentComponentContentGridSectionLayout":    return <ContentGridSectionLayout pageNo={id} idx={idx} />;
+      case "FlexibleContentComponentPressReleaseSectionLayout":    return <ContentGridSectionLayout pageNo={id} idx={idx} />;
       case "FlexibleContentComponentTabsContentLayout":           return <TabsContentLayout pageNo={id} idx={idx} />;
       case "FlexibleContentComponentContentSection2Layout":       return <SportsVenuesSection pageNo={id} idx={idx} />;
       default: return null;
