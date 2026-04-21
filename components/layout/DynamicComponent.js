@@ -117,22 +117,26 @@ const DynamicComponent = ({ id }) => {
         const atBottom = scrollHeight - clientHeight - scrollTop <= 2;
         const atTop = scrollTop <= 2;
 
-        // If native scrolling is possible in the wheel's direction
+        // Mid-content: let the browser scroll naturally and track the time
         if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
-          scrollTimeRef.current = Date.now(); 
-          return; // Let browser scroll it naturally
+          scrollTimeRef.current = Date.now();
+          return;
         }
 
-        // We hit the boundary. If the user was just scrolling within the last 500ms,
-        // it's likely the inertial tail of the trackpad. Swallow it.
-        if (Date.now() - scrollTimeRef.current < 500) {
+        // At boundary: only swallow the inertial tail (brief window after natural scroll ended)
+        // Reset the timer once we're clearly past the inertia window
+        const timeSinceScroll = Date.now() - scrollTimeRef.current;
+        if (timeSinceScroll < 500) {
           e.preventDefault();
-          scrollTimeRef.current = Date.now(); // keep swallowing as long as inertia continues
+          // DON'T update scrollTimeRef here — let it expire naturally
+          // so the next intentional scroll gets through
           return;
         }
       }
     }
 
+    // Reset scroll time on intentional navigation
+    scrollTimeRef.current = 0;
     e.preventDefault();
     if (e.deltaY > 0) navigate("down");
     else navigate("up");
