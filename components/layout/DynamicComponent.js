@@ -118,7 +118,7 @@ const DynamicComponent = ({ id }) => {
         const atTop = scrollTop <= 2;
 
         // Mid-content: let the browser scroll naturally and track the time
-        if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
+      if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
           scrollTimeRef.current = Date.now();
           return;
         }
