@@ -120,12 +120,14 @@ const DynamicComponent = ({ id }) => {
         // If native scrolling is possible in the wheel's direction
         if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
           scrollTimeRef.current = Date.now(); 
-          return; 
+          return; // Let browser scroll it naturally
         }
 
+        // We hit the boundary. If the user was just scrolling within the last 500ms,
+        // it's likely the inertial tail of the trackpad. Swallow it.
         if (Date.now() - scrollTimeRef.current < 500) {
           e.preventDefault();
-          scrollTimeRef.current = Date.now(); 
+          scrollTimeRef.current = Date.now(); // keep swallowing as long as inertia continues
           return;
         }
       }
@@ -192,6 +194,12 @@ const DynamicComponent = ({ id }) => {
     const isLeaving = idx === prevIndex;
 
     if (isActive) {
+      // Where does the entering slide START before animating in?
+      // Down scroll → enters from bottom (100%), Up scroll → enters from top (-100%)
+      // But we can't set the start position here since React batches state.
+      // Solution: active slide always targets translateY(0) with transition.
+      // The "pre-position" is handled by the fact that idle slides are already
+      // parked above/below before they ever become active.
       return {
         zIndex: 2,
         transform: "translateY(0)",
@@ -200,7 +208,9 @@ const DynamicComponent = ({ id }) => {
     }
 
     if (isLeaving) {
-
+      // Leaving slide animates OUT:
+      // Down scroll → old slide stays put (new one covers it from below) — no exit animation needed
+      // Up scroll   → old slide exits DOWN to reveal the one above
       return {
         zIndex: direction === "up" ? 3 : 1,
         transform: direction === "up" ? "translateY(100%)" : "translateY(0)",
