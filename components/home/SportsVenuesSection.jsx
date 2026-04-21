@@ -72,9 +72,9 @@ export default function SportsVenuesSection({ pageNo, idx }) {
         ></div>
       )}
 
-      <div className="flex items-center flex-wrap container">
+      <div className="flex items-center !flex-wrap container">
         {/* Left Content */}
-        <div className={styles.content}>
+        <div className={`${styles.content} lg:w-1/2 w-full`}>
           <h2 className="header-title">{heading || "Sports and Venues"}</h2>
 
           <p className={styles.subtitle}>
@@ -101,7 +101,7 @@ export default function SportsVenuesSection({ pageNo, idx }) {
         </div>
 
         {/* Right Image */}
-        <div className="w-1/2">
+        <div className="lg:w-1/2">
           <img
             src={mainImage}
             alt={heading || "Sports Venues"}

@@ -90,7 +90,7 @@ export default function Navbar({
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isMenuOpen ? <FaTimes /> : <FaBars />}
+          {isMenuOpen ? <FaTimes color="#C0392B"/> : <FaBars color="#C0392B" />}
         </button>
 
         {/* Desktop Links */}

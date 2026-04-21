@@ -67,7 +67,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
   }
   return (
     <section id="about-qatar" className={styles.section}>
-      <WavyEmblem />
+     <div style={{backgroundImage: `url(/en/images/top-emblem.png)`}} className={styles.topEmblem}></div>
 
       <div className={styles.innerWrapper}>
         <div className={`container mx-auto`}>
