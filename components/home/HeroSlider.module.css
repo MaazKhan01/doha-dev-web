@@ -162,10 +162,48 @@
   opacity: 1;
 }
 
+/* Banner bottom image + text overlay */
+.bannerBottom {
+  position: absolute;
+  top: 15%;
+  bottom: 0;
+  left: 4%;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+  text-align: left;
+  pointer-events: none;
+  width: 100%;
+}
+
+.bannerBottomImage {
+  max-width: 50%;
+  height: auto;
+  object-fit: contain;
+}
+
+.bannerBottomText {
+  margin: 0;
+  font-size: 70px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.55);
+  width: 40%;
+}
+
 @media (max-width: 768px) {
   .headlineLine { font-size: 40px; }
   .logoDoha { font-size: clamp(1.2rem, 3vw, 3rem); }
   .logo2030 { font-size: clamp(2rem, 5vw, 5.5rem); }
   .logoOverlay { top: 10%; gap: 1rem; }
   .slideContent { bottom: 12%; }
+  .bannerBottom { left: 5%; gap: 0.6rem; top: 0%; }
+  .bannerBottomImage { max-width: 50%; }
+  .bannerBottomText { font-size: 45px; max-width: 85vw; }
 }

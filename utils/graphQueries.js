@@ -105,6 +105,22 @@ export const HERO_BANNER_QUERY = `query GetHeroBanner($id: ID!) {
               mediaItemUrl
             }
           }
+          bannerTextEn
+          bannerTextAr
+          bannerImageEn {
+            node {
+              mediaItemUrl
+              filePath
+              sourceUrl
+            }
+          }
+          bannerImageAr {
+            node {
+              filePath
+              sourceUrl
+              mediaItemUrl
+            }
+          }
         }
       }
     }
@@ -117,13 +133,14 @@ export const CONTENT_SECTION_QUERY = `query GetContentSection($id: ID!) {
       component {
         ... on FlexibleContentComponentContentSectionLayout {
           fieldGroupName
-          headingEn
+
           backgroundImageEn {
             node {
               id
               sourceUrl
             }
           }
+                      headingEn
           theContentEn
           subheadingEn
           popoutContent {

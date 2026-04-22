@@ -21,7 +21,7 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
   const cmsData = useMemo(() => {
     return queryData?.page?.flexibleContent?.component?.[idx] || null;
   }, [queryData, idx]);
-
+  console.log(cmsData);
   const sectionData = useMemo(() => {
     if (cmsData) {
       const imgPath = cmsData.backgroundImageEn?.node?.sourceUrl;
@@ -30,8 +30,8 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
         : imgPath;
 
       return {
-        tag: "About Doha 2030",
-        heading: cmsData.headingEn || "Our Home, Your Gateway",
+        tag: cmsData.headingEn || "About Doha 2030",
+        heading: cmsData.subheadingEn || "Our Home, Your Gateway",
         image: absoluteImg || "https://agdoha2030.qa/themes/doha2030/images/MIA_Museum-011.jpg",
         description: cmsData.theContentEn || "",
         linkText: cmsData.buttonEn?.title || "Find out more",

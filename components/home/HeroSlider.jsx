@@ -55,6 +55,15 @@ export default function HeroSlider({ pageNo, idx }) {
     });
   };
 
+  const bannerText = cmsData?.bannerTextEn || null;
+  const bannerImageUrl = useMemo(() => {
+    const raw = cmsData?.bannerImageEn?.node?.mediaItemUrl ||
+                cmsData?.bannerImageEn?.node?.sourceUrl ||
+                cmsData?.bannerImageEn?.node?.filePath;
+    if (!raw) return null;
+    return raw.startsWith('http') ? raw : `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${raw}`;
+  }, [cmsData]);
+
   const slides = useMemo(() => {
     if (cmsData) {
       const videoPath = cmsData.videoUrlDesktop?.node?.mediaItemUrl || cmsData.videoUrlDesktop?.node?.filePath;
@@ -114,10 +123,25 @@ export default function HeroSlider({ pageNo, idx }) {
           ))}
         </Slider>
       </div>
-
+{/* 
       <div className={styles.logoOverlay}>
         <img src="/en/images/logoWhite.svg" alt="Logo" width={375} className="hidden md:block" />
-      </div>
+      </div> */}
+
+      {(bannerImageUrl || bannerText) && (
+        <div className={styles.bannerBottom}>
+          {bannerImageUrl && (
+            <img
+              src={bannerImageUrl}
+              alt={bannerText || "Banner"}
+              className={styles.bannerBottomImage}
+            />
+          )}
+          {bannerText && (
+            <p className={styles.bannerBottomText}>{bannerText}</p>
+          )}
+        </div>
+      )}
 
       <div className={styles.controls}>
         <button className={styles.controlBtn} onClick={toggleMute} aria-label="Toggle mute">
