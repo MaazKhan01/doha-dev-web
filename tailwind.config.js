@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,js}',
-    './components/**/*.{ts,js,tsx}',
-    './app/**/*.{ts,js}',
-    './src/**/*.{ts,js}',
+    './pages/**/*.{ts,tsx,js,jsx}',
+    './components/**/*.{ts,tsx,js,jsx}',
+    './app/**/*.{ts,tsx,js,jsx}',
+    './src/**/*.{ts,tsx,js,jsx}',
   ],
   theme: {
     container: {
@@ -15,21 +15,22 @@ module.exports = {
         "2xl": "1400px",
       },
     },
-    backgroundColor: {
-      primary: "#262626",
-      primaryBlur: "#26262690",
-      secondary: "#E75300",
-      ternary: "#8A1538",
-      white: "#fff"
-    },
-    colors: {
-      primary: "#262626",
-      primaryBlur: "#26262660",
-      secondary: "#E75300",
-      ternary: "#8A1538",
-      white: "#fff"
-    },
+
     extend: {
+      backgroundColor: {
+        primary: "#262626",
+        primaryBlur: "#26262690",
+        secondary: "#E75300",
+        ternary: "#8A1538",
+        white: "#fff"
+      },
+      colors: {
+        primary: "#262626",
+        primaryBlur: "#26262660",
+        secondary: "#E75300",
+        ternary: "#8A1538",
+        white: "#fff"
+      },
       colors: {
         'theme-orange': '#e75300',
         'theme-red': '#8a1538',

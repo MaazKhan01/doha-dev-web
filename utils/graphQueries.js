@@ -96,6 +96,25 @@ export const ABOUT_QATAR = `query GetAboutQatar($id: ID!) {
 export const HERO_BANNER_QUERY = `query GetHeroBanner($id: ID!) {
   page(id: $id, idType: DATABASE_ID) {
     flexibleContent {
+    bannerSection {
+        bannerBackgroundColorAr
+        bannerBackgroundColorEn
+        bannerTitleAr
+        bannerTitleEn
+        fieldGroupName
+        bannerBackgroundImageEn {
+          node {
+            filePath
+            mediaItemUrl
+          }
+        }
+        bannerBackgroundImageAr {
+          node {
+            filePath
+            mediaItemUrl
+          }
+        }
+      }
       component {
         ... on FlexibleContentComponentVideoBannerSectionLayout {
           fieldGroupName
@@ -329,33 +348,6 @@ export const FOOTER = `query GetFooter {
   }
 }`
 
-  // ... on FlexibleContentComponentContentSection2Layout {
-  //         fieldGroupName
-  //         headingAr
-  //         backgroundImageEn {
-  //           node {
-  //             filePath
-  //             mediaItemUrl
-  //           }
-  //         }
-  //         buttonEn {
-  //           title
-  //           textColor
-  //           link
-  //           fieldGroupName
-  //           backgroundColor
-  //         }
-  //         headingEn
-  //         imageEn {
-  //           node {
-  //             mediaItemUrl
-  //           }
-  //         }
-  //         theContentEn
-  //         theContentAr
-  //       }
-  //     }
-
 export const CONTENT_SECTION_2_QUERY = `query GetContentSection2($id: ID!) {
   page(id: $id, idType: DATABASE_ID) {
     flexibleContent {
@@ -396,3 +388,93 @@ export const CONTENT_SECTION_2_QUERY = `query GetContentSection2($id: ID!) {
     }
   }
 }`
+
+// Venues Page
+const VENUE_TAB_FIELDS = `
+  titleEn
+  titleAr
+  contentEn
+  isSubtab
+  showDistanceInformation
+   accordion {
+                    headingAr
+                    headingEn
+                    fieldGroupName
+                    accordionItem {
+                      titleEn
+                      titleAr
+                      row {
+                        valueEn
+                        valueAr
+                        labelEn
+                        labelAr
+                      }
+                    }
+                  }
+  distanceInformationSection {
+                    mapImageEn {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    mapLabelEn
+                    sectionTitleEn
+                    distanceItems {
+                      distanceEn
+                      iconEn {
+                        node {
+                          mediaItemUrl
+                        }
+                      }
+                      travelTimeEn
+                      venueNameEn
+                    }
+                  }
+      
+  documentEn {
+    node { filePath file mediaItemUrl }
+  }
+  imageGalleryAr {
+    nodes { filePath file mediaItemUrl }
+  }
+  imageGalleryEn {
+    nodes { filePath file mediaItemUrl }
+  }
+`;
+
+export const VENUES_QUERY = `query VenuesQuery {
+  page(id: "sports-and-venues", idType: URI) {
+    id
+    flexibleContent {
+      component {
+        ... on FlexibleContentComponentTabsContentLayout {
+          fieldGroupName
+          addTab {
+            nodes {
+              id
+              ... on TabContent {
+                id
+                title
+                tabFields {
+                  ${VENUE_TAB_FIELDS}
+                  subTab {
+                    nodes {
+                      id
+                      ... on TabContent {
+                        id
+                        title
+                        tabFields {
+                          ${VENUE_TAB_FIELDS}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}`;

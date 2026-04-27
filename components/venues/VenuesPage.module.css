@@ -45,7 +45,7 @@
 
 .tabsSectionTitle {
   padding: 1rem;
-  font-size: 0.65rem;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -59,7 +59,7 @@
   width: 100%;
   text-align: left;
   padding: 0.9rem 1.5rem;
-  font-size: 0.85rem;
+  font-size: 17px;
   font-weight: 500;
   color: rgba(0, 0, 0);
   background: transparent;
@@ -85,16 +85,7 @@
   background: rgba(206,200,190,.4) !important;
 }
 
-.tabBtnActive::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  border-style: solid;
-  border-width: 7px 0 7px 8px;
-  border-color: transparent transparent transparent white;
-}
+
 
 /* Sub-venue accordion */
 .subTabList {
@@ -113,8 +104,8 @@
 .subTabBtn {
   width: 100%;
   text-align: left;
-  padding: 0.65rem 1.5rem 0.65rem 2.5rem;
-  font-size: 0.78rem;
+  padding: 10px 20px;
+  font-size: 14px;
   color: rgba(0, 0, 0);
   background: transparent;
   border: none;
@@ -122,6 +113,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
   line-height: 1.4;
+  display: flex;
+  justify-content: space-between;
+  align-items:  center;
 }
 
 .subTabBtn:hover {
@@ -208,15 +202,15 @@
 }
 
 .contentTitle {
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 32px;
   color: var(--red-primary);
   margin: 0 0 1.25rem;
   line-height: 1.25;
+  font-weight: 500;
 }
 
 .contentText {
-  font-size: 0.9rem;
+  font-size: 16px;
   line-height: 1.85;
   color: var(--text-muted);
   margin-bottom: 1rem;
@@ -315,7 +309,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .tabsSectionTitle { display: none; }
+  .tabsSectionTitle { display: none; font-size: 16px; }
 
   .tabBtn {
     white-space: nowrap;

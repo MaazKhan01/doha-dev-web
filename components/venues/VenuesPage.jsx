@@ -1,149 +1,121 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { gql, useQuery } from "@apollo/client";
 import InnerPageBanner from "@/components/ui/InnerPageBanner";
+import { useLanguage } from "@/context/LanguageProvider";
+import { languageSelector, imageSelector } from "@/utils/functions";
+import { VENUES_QUERY } from "@/utils/graphQueries";
 import styles from "./VenuesPage.module.css";
+import { buildWpUrl } from "@/utils/buildWpUrl";
+import {  FaSearch,FaAngleRight } from "react-icons/fa";
 
-/* ── Tab / content data ────────────────────────────────── */
-const TABS = [
-  {
-    id: "games-master-plan",
-    label: "Games Master Plan",
-    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1400&q=80",
-    imageLabel: "Games Master Plan – Doha 2030",
-    tag: "Overview",
-    title: "A Compact, World-Class Games Footprint",
-    body: [
-      "Doha's competition and non-competition venues and facilities are strategically located on a compact Games footprint. A prerequisite, an essential element in delivering excellent operations, minimize risks, and enhance the overall Games experience.",
-      "Modern, flexible, and adaptable venues and facilities located within the city network are the key success factors. Doha is ready.",
-    ],
-    stats: [
-      { number: "35+", label: "Competition Venues" },
-      { number: "12", label: "Sports Clusters" },
-      { number: "< 30 min", label: "Between Venues" },
-    ],
-  },
-  {
-    id: "games-training-venues",
-    label: "Games Training Venues",
-    image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1400&q=80",
-    imageLabel: "Training Venues – Doha 2030",
-    tag: "Training",
-    title: "World-Class Training Facilities",
-    body: [
-      "Qatar offers an extensive network of training venues, each fully equipped to international federation standards. Athletes will have access to facilities that match their competition venues in quality, ensuring peak performance preparation.",
-      "Training venues are strategically located close to Athletes' Village and competition clusters to minimize travel time and maximize recovery.",
-    ],
-    stats: [
-      { number: "40+", label: "Training Sites" },
-      { number: "200+", label: "Sports Fields" },
-      { number: "24/7", label: "Availability" },
-    ],
-  },
-  {
-    id: "games-athletes-village",
-    label: "Games Athletes Village",
-    image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=1400&q=80",
-    imageLabel: "Athletes Village – Doha 2030",
-    tag: "Accommodation",
-    title: "A Home Away From Home",
-    body: [
-      "The Athletes' Village will serve as the primary accommodation hub for all athletes and team officials participating in the Doha 2030 Asian Games. Designed with comfort, community, and culture in mind, it will reflect the warmth of Qatari hospitality.",
-      "The village will feature state-of-the-art dining, wellness, and recreational facilities — all within a secure, vibrant community environment.",
-    ],
-    stats: [
-      { number: "15,000+", label: "Athlete Beds" },
-      { number: "500+", label: "Staff Rooms" },
-      { number: "30+", label: "Dining Venues" },
-    ],
-  },
-  {
-    id: "non-competition-venues",
-    label: "Non Competition Venues",
-    image: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=1400&q=80",
-    imageLabel: "Non-Competition Venues – Doha 2030",
-    tag: "Operations",
-    title: "Supporting the Games Experience",
-    body: [
-      "Non-competition venues include the Main Press Centre (MPC), the International Broadcast Centre (IBC), accreditation centres, and official conference facilities — all key to a successful, well-run Games.",
-      "These facilities have been selected for their strategic location, capacity, and connectivity to ensure seamless operations for the media, broadcast community, and Games officials.",
-    ],
-    stats: [
-      { number: "1", label: "Main Press Centre" },
-      { number: "1", label: "Broadcast Centre" },
-      { number: "5", label: "Operations Hubs" },
-    ],
-  },
-  {
-    id: "ceremonies-venue",
-    label: "Ceremonies Venue",
-    image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1400&q=80",
-    imageLabel: "Ceremonies Venue – Doha 2030",
-    tag: "Ceremonies",
-    title: "Unforgettable Opening & Closing Ceremonies",
-    body: [
-      "The Opening and Closing Ceremonies of the Doha 2030 Asian Games will be spectacular celebrations of sport, culture, and the spirit of Asia — staged at a landmark venue in the heart of Doha.",
-      "The ceremonies will showcase Qatar's rich heritage while projecting its bold vision for the future, creating memories that will last a lifetime for athletes and spectators from across the continent.",
-    ],
-    stats: [
-      { number: "80,000+", label: "Spectator Capacity" },
-      { number: "45", label: "OCA Member Nations" },
-      { number: "2", label: "Major Ceremonies" },
-    ],
-  },
-  {
-    id: "competition-venues",
-    label: "Competition Venues",
-    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1400&q=80",
-    imageLabel: "Competition Venues – Doha 2030",
-    tag: "Competition",
-    title: "Premier Competition Venues",
-    body: [
-      "Doha's competition venues represent the pinnacle of sports infrastructure. Each facility has been selected based on the technical requirements of its respective International Federation and has been tested through previous high-profile events.",
-      "Venues are grouped into strategic clusters across the city, ensuring efficient athlete and spectator movement, with all sites accessible within 30 minutes of the Athletes' Village.",
-    ],
-    stats: [
-      { number: "35+", label: "Competition Arenas" },
-      { number: "10", label: "Venue Clusters" },
-      { number: "8", label: "Cities / Zones" },
-    ],
-    subVenues: [
-      { name: "Khalifa Tennis & Squash International Sports Complex", tag: "Tennis · Squash" },
-      { name: "Qatar Foundation Sports Complex", tag: "Multi-sport" },
-      { name: "Al Rayyan Sports Complex", tag: "Football · Athletics" },
-      { name: "Lusail Sports Complex", tag: "Cycling · Archery" },
-      { name: "Al Gharaffa Sports Complex", tag: "Basketball · Handball" },
-      { name: "Al Sadd Sports Complex", tag: "Wrestling · Boxing" },
-      { name: "Aspire Zone", tag: "Athletics · Aquatics" },
-      { name: "Southern Stand-Alone Venues", tag: "Equestrian · Shooting" },
-      { name: "Northern Stand-Alone Venues", tag: "Sailing · Rowing" },
-      { name: "Katara-Lusail Coastal Zone", tag: "Beach Volleyball · Triathlon" },
-    ],
-  },
-];
 
-/* ── Component ─────────────────────────────────────────── */
 export default function VenuesPage() {
-  const [activeTabId, setActiveTabId] = useState(TABS[0].id);
-  const [activeSubVenue, setActiveSubVenue] = useState(null);
+  const { lng } = useLanguage();
+  const isAr = lng === "ar";
+
+  const [activeTabId, setActiveTabId] = useState(null);
+  const [expandedTabIds, setExpandedTabIds] = useState(new Set());
   const [fading, setFading] = useState(false);
+  const [sliderIndex, setSliderIndex] = useState(0);
+  const [popupImage, setPopupImage] = useState(null);
+  const [openAccordionIndex, setOpenAccordionIndex] = useState(null);
 
-  const activeTab = TABS.find((t) => t.id === activeTabId) || TABS[0];
+  const openImagePopup = (url) => {
+    setPopupImage(url);
+  };
 
-  const handleTabChange = (id) => {
+  const closePopup = () => {
+    setPopupImage(null);
+  };
+
+
+  const { data, loading } = useQuery(gql`${VENUES_QUERY}`);
+
+  const tabsComponent = data?.page?.flexibleContent?.component?.find(
+    (c) => c?.fieldGroupName?.includes("TabsContentLayout")
+  );
+  const allNodes = tabsComponent?.addTab?.nodes || [];
+  const mainTabs = allNodes.filter((node) => !node?.tabFields?.isSubtab);
+
+  // Initialise selection when data arrives
+  useEffect(() => {
+    if (mainTabs.length > 0 && !activeTabId) {
+      const first = mainTabs[0];
+      const firstSubs = getValidSubs(first);
+      if (firstSubs.length > 0) {
+        setExpandedTabIds(new Set([first.id]));
+        setActiveTabId(firstSubs[0].id);
+      } else {
+        setActiveTabId(first.id);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allNodes.length]);
+
+  // Resolve active content node (main tab or subtab)
+  const activeContent = (() => {
+    for (const tab of mainTabs) {
+      if (tab.id === activeTabId) return tab;
+      const found = getValidSubs(tab).find((s) => s.id === activeTabId);
+      if (found) return found;
+    }
+    return mainTabs[0] || null;
+  })();
+
+  const changeTab = (id) => {
     if (id === activeTabId) return;
     setFading(true);
     setTimeout(() => {
       setActiveTabId(id);
-      setActiveSubVenue(null);
+      setSliderIndex(0);
+      setOpenAccordionIndex(null);
       setFading(false);
     }, 260);
   };
 
+  const handleMainTabClick = (tab) => {
+    const subs = getValidSubs(tab);
+    if (subs.length > 0) {
+      setExpandedTabIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(tab.id)) {
+          next.delete(tab.id);
+        } else {
+          next.add(tab.id);
+        }
+        return next;
+      });
+      if (!expandedTabIds.has(tab.id)) {
+        changeTab(subs[0].id);
+      }
+    } else {
+      changeTab(tab.id);
+    }
+  };
+
+  const fields = activeContent?.tabFields;
+  const title = fields
+    ? languageSelector(lng, fields.titleEn, fields.titleAr) || activeContent?.title
+    : "";
+  const contentHtml = fields
+    ? languageSelector(lng, fields.contentEn, fields.contentAr) || ""
+    : "";
+  const galleries = fields?.imageGalleryEn?.nodes || [];
+  const extraImages = galleries;
+  const document = fields?.documentEn?.node;
+  const showDistance = fields?.showDistanceInformation;
+  const distanceInfo = fields?.distanceInformationSection;
+  const accordion = fields?.accordion;
+
+
+  const imageUrl = buildWpUrl(
+    distanceInfo?.mapImageEn?.node?.mediaItemUrl
+  );
   return (
     <>
-      {/* ── Generic inner-page banner (eyebrow / title / breadcrumb) ── */}
       <InnerPageBanner
-        title="Sports & Venues"
+        title="Sports &amp; Venues"
         eyebrow="Doha 2030 Asian Games"
         image="https://deweb-519a7.b-cdn.net/post-images/133e3759-278d-4f2e-a543-0a8674294313.webp"
         breadcrumbs={[
@@ -152,110 +124,590 @@ export default function VenuesPage() {
         ]}
       />
 
-      {/* ── Main Content ─────────────────────────── */}
       <main className={styles.mainContent}>
-        <div className={styles.contentLayout}>
+        {loading && mainTabs.length === 0 ? (
+          <div style={{ padding: "4rem", textAlign: "center", color: "#888" }}>Loading…</div>
+        ) : (
+          <div className={styles.contentLayout}>
 
-          {/* ── Left Side Tabs ─────────────────── */}
-          <aside className={styles.tabsColumn} aria-label="Venue categories">
-            <div className={styles.tabsSectionTitle}>Sports &amp; Venues</div>
-            {TABS.map((tab) => (
-              <div key={tab.id}>
-                <button
-                  id={`tab-${tab.id}`}
-                  role="tab"
-                  aria-selected={activeTabId === tab.id}
-                  aria-controls={`panel-${tab.id}`}
-                  className={`${styles.tabBtn} ${activeTabId === tab.id ? styles.tabBtnActive : ""}`}
-                  onClick={() => handleTabChange(tab.id)}
-                >
-                  {tab.label}
-                </button>
+            {/* ── Left vertical tabs ───────────────── */}
+            <aside
+              className={styles.tabsColumn}
+              aria-label="Venue categories"
+              style={isAr ? { order: 1 } : undefined}
+            >
+              <div className={styles.tabsSectionTitle}>Navigation</div>
 
-                {/* Sub-venue accordion — Competition Venues only */}
-                {tab.subVenues && (
-                  <ul
-                    className={`${styles.subTabList} ${activeTabId === tab.id ? styles.subTabListOpen : ""}`}
-                    role="tablist"
-                    aria-label="Competition venues"
-                  >
-                    {tab.subVenues.map((sv, i) => (
-                      <li key={i}>
-                        <button
-                          className={`${styles.subTabBtn} ${activeSubVenue === i ? styles.subTabBtnActive : ""}`}
-                          onClick={() => setActiveSubVenue(activeSubVenue === i ? null : i)}
+              {mainTabs.map((tab) => {
+                const tabLabel =
+                  languageSelector(lng, tab.tabFields?.titleEn, tab.tabFields?.titleAr) ||
+                  tab.title;
+                const subs = getValidSubs(tab);
+                const isExpanded = expandedTabIds.has(tab.id);
+                const isActive = activeTabId === tab.id;
+                const hasActiveSub = subs.some((s) => s.id === activeTabId);
+
+                return (
+                  <div key={tab.id}>
+                    <button
+                      role="tab"
+                      aria-selected={isActive || hasActiveSub}
+                      className={`${styles.tabBtn} ${isActive || hasActiveSub ? styles.tabBtnActive : ""} flex justify-between items-center`}
+                      onClick={() => handleMainTabClick(tab)}
+                    >
+                      <span>{tabLabel}</span>
+                      <span > <FaAngleRight size={19} /></span>
+                      {/* {subs.length > 0 && (
+                        <svg
+                          style={{
+                            width: 14,
+                            height: 14,
+                            marginLeft: isAr ? 0 : "auto",
+                            marginRight: isAr ? "auto" : 0,
+                            paddingLeft: isAr ? 0 : "0.5rem",
+                            flexShrink: 0,
+                            transition: "transform 0.2s ease",
+                            transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                          }}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
                         >
-                          {sv.name}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </aside>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      )} */}
+                    </button>
 
-          {/* ── Right Content Panel ─────────────── */}
-          <section
-            id={`panel-${activeTab.id}`}
-            role="tabpanel"
-            aria-labelledby={`tab-${activeTab.id}`}
-            className={styles.contentPanel}
-          >
-            <div className={`${styles.contentInner} ${fading ? styles.contentFading : ""}`}>
-              {/* Panel image */}
-              <div className={styles.contentImageWrap}>
-                <div
-                  className={styles.contentImageBg}
-                  style={{ backgroundImage: `url(${activeTab.image})` }}
-                />
-                <div className={styles.contentImageOverlay} />
-                <span className={styles.contentImageLabel}>{activeTab.imageLabel}</span>
-              </div>
+                    {/* Sub-tab accordion */}
+                    <ul
+                      className={`${styles.subTabList} ${isExpanded ? styles.subTabListOpen : ""}`}
+                      role="tablist"
+                    >
+                      {subs.map((sub) => {
+                        const subLabel =
+                          languageSelector(lng, sub.tabFields?.titleEn, sub.tabFields?.titleAr) ||
+                          sub.title;
+                        return (
+                          <li key={sub.id}>
+                            <button
+                              className={`${styles.subTabBtn} ${activeTabId === sub.id ? styles.subTabBtnActive : ""}`}
+                              onClick={() => changeTab(sub.id)}
+                            >
+                              <span>{subLabel}</span>
+                              {activeTabId === sub.id && (
+                                <span><FaAngleRight size={19} /></span>
+                              )}
+                            </button>
 
-              {/* Body */}
-              <div className={styles.contentBody}>
-                <span className={styles.contentSectionTag}>{activeTab.tag}</span>
-                <h2 className={styles.contentTitle}>{activeTab.title}</h2>
-                {activeTab.body.map((para, i) => (
-                  <p key={i} className={styles.contentText}>{para}</p>
-                ))}
-
-                {/* Stats */}
-                {activeTab.stats && (
-                  <div className={styles.statsRow}>
-                    {activeTab.stats.map((s, i) => (
-                      <div key={i} className={styles.statItem}>
-                        <span className={styles.statNumber}>{s.number}</span>
-                        <span className={styles.statLabel}>{s.label}</span>
-                      </div>
-                    ))}
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-                )}
+                );
+              })}
+            </aside>
 
-                {/* Sub-venue grid */}
-                {activeTab.subVenues && (
-                  <div className={styles.venueGrid}>
-                    {activeTab.subVenues.map((sv, i) => (
-                      <div
-                        key={i}
-                        className={`${styles.venueCard} ${activeSubVenue === i ? styles.venueCardActive : ""}`}
-                        onClick={() => setActiveSubVenue(activeSubVenue === i ? null : i)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => e.key === "Enter" && setActiveSubVenue(activeSubVenue === i ? null : i)}
+            {/* ── Right content panel ──────────────── */}
+            <section className={styles.contentPanel}>
+              <div className={`${styles.contentInner} ${fading ? styles.contentFading : ""}`}>
+
+                {/* Hero image */}
+                {/* {heroImage && (
+                  <div className={styles.contentImageWrap}>
+                    <div
+                      className={styles.contentImageBg}
+                      style={{
+                        backgroundImage: `url(${imageSelector(
+                          lng,
+                          heroImage.mediaItemUrl || heroImage.filePath || heroImage.file,
+                          heroImage.mediaItemUrl || heroImage.filePath || heroImage.file
+                        )})`,
+                      }}
+                    />
+                    <div className={styles.contentImageOverlay} />
+                    <span className={styles.contentImageLabel}>{title}</span>
+                  </div>
+                )} */}
+
+                {/* Body */}
+                <div className={styles.contentBody} dir={isAr ? "rtl" : "ltr"}>
+                  {title && <h2 className={styles.contentTitle}>{title}</h2>}
+
+                  {/* Distance information section */}
+                  {showDistance && distanceInfo && (
+                    <div style={{
+                      marginTop: "2rem",
+                      border: "1px solid rgba(0,0,0,0.08)",
+                      borderRadius: 6,
+                      overflow: "hidden",
+                    }}>
+                      {/* Section header */}
+                      {distanceInfo.sectionTitleEn && (
+                        <div style={{
+                          background: "#b3331d",
+                          color: "#fff",
+                          padding: "0.7rem 1.25rem",
+                          fontSize: "0.85rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                        }}>
+                          {distanceInfo.sectionTitleEn}
+                        </div>
+                      )}
+
+                      {/* Map + items row */}
+                      <div style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        alignItems: "stretch",
+                        background: "#fafafa",
+                      }}>
+
+
+                        {/* Distance items */}
+                        <div style={{ flex: 1, padding: "1rem 1.25rem", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                          {distanceInfo.distanceItems?.length > 0 && distanceInfo.distanceItems.map((item, i) => (
+                            <div key={i} style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.85rem",
+                              paddingBottom: i < distanceInfo.distanceItems.length - 1 ? "0.85rem" : 0,
+                              borderBottom: i < distanceInfo.distanceItems.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
+                            }}>
+                              {/* Icon */}
+                              {item.iconEn?.node?.mediaItemUrl && (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img
+                                  src={buildWpUrl(item.iconEn.node.mediaItemUrl)}
+                                  alt=""
+                                  style={{ width: 24, height: 24, objectFit: "contain", flexShrink: 0 }}
+                                />
+                              )}
+
+                              {/* Label + distance + time */}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                {item.venueNameEn && (
+                                  <div style={{ fontSize: "15px", color: "#222222", marginBottom: "0.2rem" }}>
+                                    {item.venueNameEn}
+                                  </div>
+                                )}
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                                  {item.distanceEn && (
+                                    <span style={{
+                                      fontSize: "18px",
+                                      color: "#b3331d",
+                                      lineHeight: 1,
+                                    }}>
+                                      {item.distanceEn.trim()} |
+                                    </span>
+                                  )}
+                                  {item.travelTimeEn && (
+                                    <span style={{
+                                      fontSize: "18px",
+                                      color: "#b3331d",
+                                      lineHeight: 1,
+                                    }}>
+                                      {item.travelTimeEn}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Map image */}
+
+                        {distanceInfo.mapImageEn?.node?.mediaItemUrl && (
+                          <div style={{
+                            display: "flex",
+                            alignItems: "center",
+                            borderRight: "1px solid rgba(0,0,0,0.07)",
+                          }}>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <div className="border-1 flex items-center justify-center flex-col">
+                              {distanceInfo.mapLabelEn && (
+                                <div style={{
+                                  padding: "0.45rem 0.75rem",
+                                  fontSize: "18px",
+                                  borderTop: "1px solid rgba(0,0,0,0.07)",
+                                  textAlign: "center",
+                                  color: "#b3331d"
+                                }}>
+                                  {distanceInfo.mapLabelEn}
+                                </div>
+                              )}
+                              <img
+                                src={imageUrl}
+                                alt={distanceInfo.mapLabelEn || ""}
+                                style={{
+                                  width: "100%",
+                                  height: "100px",
+                                  objectFit: "cover",
+                                  display: "block",
+                                  cursor: "pointer"
+                                }}
+                                onClick={() => openImagePopup(imageUrl)}
+                              />
+                            </div>
+
+                            {/* Button */}
+                            <div className="m-4">
+                              <button
+                                style={{ fontSize: "15px", fontWeight: 500, display: "flex", alignItems: "center", gap: "8px", flexDirection: "column", justifyContent: "center" }}
+                                onClick={() => openImagePopup(imageUrl)}
+                              >
+                                <FaSearch color="#b3331d" size={20} />
+                                Click here Open <br /> to view large Map
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Accordion section */}
+                  {accordion?.accordionItem?.length > 0 && (
+                    <div style={{ marginTop: "2rem" }}>
+                      {/* Main heading */}
+                      {(accordion.headingEn || accordion.headingAr) && (
+                        <h3 style={{
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          color: "#b3331d",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                          marginBottom: "0.75rem",
+                          paddingBottom: "0.5rem",
+                          borderBottom: "2px solid #b3331d",
+                        }}>
+                          {languageSelector(lng, accordion.headingEn, accordion.headingAr)}
+                        </h3>
+                      )}
+
+                      {/* Accordion items */}
+                      <div style={{ border: "1px solid rgba(0,0,0,0.09)", borderRadius: 6, overflow: "hidden" }}>
+                        {accordion.accordionItem.map((item, i) => {
+                          const isOpen = openAccordionIndex === i;
+                          const itemTitle = languageSelector(lng, item.titleEn, item.titleAr);
+                          return (
+                            <div key={i}>
+                              {/* Item header */}
+                              <button
+                                onClick={() => setOpenAccordionIndex(isOpen ? null : i)}
+                                style={{
+                                  width: "100%",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  margin: "3px 0",
+                                  borderRadius: "0px",
+                                  justifyContent: "space-between",
+                                  padding: "0.85rem 1.1rem",
+                                  background: isOpen ? "#7d7a25" : "#cec8be66",
+                                  border: "none",
+                                  color: isOpen ? "#fafafa !important" : "#222 !important",
+                                  cursor: "pointer",
+                                  textAlign: isAr ? "right" : "left",
+                                  gap: "0.75rem",
+                                  transition: "background 0.2s ease",
+                                }}
+                              >
+                                <span style={{ fontSize: "0.9rem", fontWeight: 600, flex: 1, color: isOpen ? "#fafafa" : "#222" }}>
+                                  {itemTitle}
+                                </span>
+                                <svg
+                                  width={16} height={16}
+                                  viewBox="0 0 24 24"
+                                  fill="none" stroke="#b3331d" strokeWidth={2.5}
+                                  style={{ flexShrink: 0, transition: "transform 0.25s ease", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+
+                              {/* Expandable rows table */}
+                              {isOpen && item.row?.length > 0 && (
+                                <div style={{ background: "#fff" }}>
+                                  <h3 className="text-[#7d7a25]" style={{ padding: "10px 20px", fontWeight: "600" }}>
+                                    {languageSelector(
+                                      lng,
+                                      item.row[0].labelEn,
+                                      item.row[0].labelAr
+                                    )}
+                                  </h3>
+                                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+                                    <tbody>
+                                      {item.row.slice(1).map((r, j) => (
+                                        <tr
+                                          key={j}
+                                          style={{
+                                            borderTop: "1px solid rgba(0,0,0,0.06)",
+                                            background: j % 2 === 0 ? "#fff" : "#fafafa"
+                                          }}
+                                        >
+                                          <td style={{
+                                            padding: "0.6rem 1.1rem",
+                                            color: "#555",
+                                            fontWeight: 600,
+                                            width: "40%",
+                                            verticalAlign: "top",
+                                            borderRight: "1px solid rgba(0,0,0,0.06)",
+                                            whiteSpace: "nowrap",
+                                          }}>
+                                            {languageSelector(lng, r.labelEn, r.labelAr)}
+                                          </td>
+
+                                          <td style={{
+                                            padding: "0.6rem 1.1rem",
+                                            color: "#222",
+                                            verticalAlign: "top",
+                                          }}>
+                                            {languageSelector(lng, r.valueEn, r.valueAr)}
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Document download */}
+                  {document?.mediaItemUrl && (
+                    // show doc in iframe
+                    <iframe
+                      src={buildWpUrl(document?.mediaItemUrl)}
+                      style={{
+                        width: "100%",
+                        height: "500px",
+                      }}
+                    />
+
+
+                  )}
+                  {contentHtml && (
+                    <div
+                      className={styles.contentText}
+                      dangerouslySetInnerHTML={{ __html: contentHtml }}
+                    />
+                  )}
+
+                  {/* Extra gallery images – slider when more than one */}
+                  {extraImages.length === 1 && (
+                    <div style={{ marginTop: "1.5rem", borderRadius: 4, overflow: "hidden" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={imageSelector(
+                          lng,
+                          extraImages[0].mediaItemUrl || extraImages[0].filePath || extraImages[0].file,
+                          extraImages[0].mediaItemUrl || extraImages[0].filePath || extraImages[0].file
+                        )}
+                        alt=""
+                        style={{ width: "100%", height: "auto", display: "block" }}
+                      />
+                    </div>
+                  )}
+
+                  {extraImages.length > 1 && (
+                    <div style={{ marginTop: "1.5rem", position: "relative", borderRadius: 4, overflow: "hidden", background: "#f0eeeb" }}>
+                      {/* Slide */}
+                      <div style={{ position: "relative", aspectRatio: "16/9", overflow: "hidden" }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          key={sliderIndex}
+                          src={imageSelector(
+                            lng,
+                            extraImages[sliderIndex].mediaItemUrl || extraImages[sliderIndex].filePath || extraImages[sliderIndex].file,
+                            extraImages[sliderIndex].mediaItemUrl || extraImages[sliderIndex].filePath || extraImages[sliderIndex].file
+                          )}
+                          alt=""
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            display: "block",
+                            transition: "opacity 0.3s ease",
+                          }}
+                        />
+                      </div>
+
+                      {/* Prev arrow */}
+                      <button
+                        onClick={() => setSliderIndex((p) => (p - 1 + extraImages.length) % extraImages.length)}
+                        aria-label="Previous image"
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "0.75rem",
+                          transform: "translateY(-50%)",
+                          background: "#6596ad",
+                          border: "none",
+                          width: 50,
+                          height: 60,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          color: "#fff",
+                          flexShrink: 0,
+                        }}
                       >
-                        <div className={styles.venueCardName}>{sv.name}</div>
-                        <div className={styles.venueCardTag}>{sv.tag}</div>
+                        <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+
+                      {/* Next arrow */}
+                      <button
+                        onClick={() => setSliderIndex((p) => (p + 1) % extraImages.length)}
+                        aria-label="Next image"
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          right: "0.75rem",
+                          transform: "translateY(-50%)",
+                          background: "#6596ad",
+                          border: "none",
+                          width: 50,
+                          height: 60,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          color: "#fff",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+
+                      {/* Dot indicators */}
+                      <div style={{
+                        position: "absolute",
+                        bottom: "0.6rem",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        display: "flex",
+                        gap: "0.4rem",
+                      }}>
+                        {extraImages.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setSliderIndex(i)}
+                            aria-label={`Go to image ${i + 1}`}
+                            style={{
+                              width: i === sliderIndex ? 20 : 8,
+                              height: 8,
+                              borderRadius: 4,
+                              border: "none",
+                              background: i === sliderIndex ? "#b3331d" : "rgba(255,255,255,0.7)",
+                              cursor: "pointer",
+                              padding: 0,
+                              transition: "width 0.25s ease, background 0.25s ease",
+                            }}
+                          />
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+
+                      {/* Counter */}
+                      <span style={{
+                        position: "absolute",
+                        top: "0.6rem",
+                        right: "0.75rem",
+                        background: "rgba(0,0,0,0.45)",
+                        color: "#fff",
+                        fontSize: "0.72rem",
+                        fontWeight: 600,
+                        padding: "0.2rem 0.55rem",
+                        borderRadius: 3,
+                      }}>
+                        {sliderIndex + 1} / {extraImages.length}
+                      </span>
+                    </div>
+                  )}
+
+                </div>
               </div>
-            </div>
-          </section>
-        </div>
+            </section>
+
+          </div>
+        )}
       </main>
+      {/* ── Map image popup ── */}
+      {popupImage && (
+        <div
+          onClick={closePopup}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,0.82)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1.5rem",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: "relative", maxWidth: "90vw", maxHeight: "90vh" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={popupImage}
+              alt="Map"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "85vh",
+                objectFit: "contain",
+                borderRadius: 6,
+                display: "block",
+                boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
+              }}
+            />
+            <button
+              onClick={closePopup}
+              aria-label="Close"
+              style={{
+                position: "absolute",
+                top: "-14px",
+                right: "-14px",
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                background: "#b3331d",
+                border: "2px solid #fff",
+                color: "#fff",
+                fontSize: "1rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                lineHeight: 1,
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
+}
+
+// Returns subtab nodes that have actual TabContent data
+function getValidSubs(tab) {
+  return (tab?.tabFields?.subTab?.nodes || []).filter((s) => s?.tabFields);
 }

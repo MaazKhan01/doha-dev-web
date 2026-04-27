@@ -29,7 +29,7 @@ export default function RootLayout({ children, params }) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>QOC UCMS</title>
+        <title>Asian Games Doha 2030</title>
         <meta name="robots" content="index, follow" />
 
         {/* Favicon */}
