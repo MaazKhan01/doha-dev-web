@@ -64,3 +64,34 @@ html {
   color: #C0392B;
   margin-bottom: 10px;
 }
+.innerPage-emblem::before {
+/* use top-emblem image here and set on top of div */
+content: "";
+background-image: url("/en/images/dotted-pattern.png");
+background-position: center;
+position: absolute;
+width: 100%;
+max-height: 60px;
+background-repeat: repeat;
+overflow: hidden;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+
+}
+.innerPage-emblem::after {
+/* use top-emblem image here and set on top of div */
+content: "";
+background-image: url("/en/images/dotted-pattern.png");
+background-position: center;
+position: absolute;
+width: 100%;
+max-height: 60px;
+background-repeat: repeat;
+overflow: hidden;
+top: 94%;
+left: 0;
+right: 0;
+bottom: 0;
+}

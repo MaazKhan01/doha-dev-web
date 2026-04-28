@@ -15,11 +15,12 @@
 
 /* ─── Main Content ───────────────────────────── */
 .mainContent {
-  padding: 3rem 4rem 4rem;
+  padding: 5rem 4rem 5rem;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
 }
 
 .contentLayout {
