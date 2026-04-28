@@ -389,6 +389,38 @@ export const CONTENT_SECTION_2_QUERY = `query GetContentSection2($id: ID!) {
   }
 }`
 
+// Rich Content Page (Terms of Use, Privacy Policy, etc.)
+export const RICH_CONTENT_PAGE_QUERY = `query RichContentPage($uri: ID!) {
+  page(id: $uri, idType: URI) {
+    id
+    flexibleContent {
+      component {
+        fieldGroupName
+        ... on FlexibleContentComponentClassicEditorLayout {
+          fieldGroupName
+          richContent
+        }
+      }
+      bannerSection {
+        bannerBackgroundColorAr
+        bannerBackgroundColorEn
+        bannerTitleAr
+        bannerTitleEn
+        bannerBackgroundImageEn {
+          node {
+            mediaItemUrl
+          }
+        }
+        bannerBackgroundImageAr {
+          node {
+            mediaItemUrl
+          }
+        }
+      }
+    }
+  }
+}`;
+
 // Venues Page
 const VENUE_TAB_FIELDS = `
   titleEn

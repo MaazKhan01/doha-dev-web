@@ -13,7 +13,6 @@ export default function Footer() {
   const footerLinksArr = footerFields?.footerLinks || [];
 
   if (loading) return null;
-
   return (
     <footer className={styles.footer}>
       <div className="container">
@@ -21,6 +20,8 @@ export default function Footer() {
         <div className={styles.links}>
           {footerLinksArr.map((link, index) => (
             <span key={index}>
+               {   console.log(link,index)}
+
               <a href={link.urlEn} className={styles.link}>{link.textEn}</a>
               {index < footerLinksArr.length - 1 && <span className={styles.divider}>|</span>}
             </span>
