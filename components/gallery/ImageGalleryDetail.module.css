@@ -2,31 +2,35 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--light-bg, #f5f4f2);
   font-family: 'DM Sans', sans-serif;
 }
 
 .mainContent {
   flex: 1;
-  padding: 2.5rem 4rem 5rem;
-  max-width: 1200px;
+
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
-
+.header{
+  padding: 10px;
+  position: relative;
+}
 /* Back button */
 .backBtn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #b3331d;
+  color: #fff;
   text-decoration: none;
   margin-bottom: 2rem;
   letter-spacing: 0.02em;
   transition: opacity 0.2s;
+  background-color: #6596ad;
+  padding: 10px 30px;
+
 }
 .backBtn:hover { opacity: 0.75; }
 
@@ -34,13 +38,21 @@
 .sliderWrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  /* aspect-ratio: 16 / 9; */
+  min-height: 70vh;
   overflow: hidden;
-  background: #111;
+  /* background: #111; */
   border-radius: 6px;
   user-select: none;
+  
 }
-
+/* in mobile give image max height */
+@media (max-width: 768px) {
+  
+  .sliderTrack {
+  aspect-ratio: 16 / 9;
+  }
+}
 .sliderTrack {
   position: absolute;
   inset: 0;
@@ -66,10 +78,9 @@
 
 .slideImg {
   width: 100%;
-  height: 100%;
   object-fit: contain;
   display: block;
-  background: #111;
+  margin: 0 10px;
 }
 
 /* Arrows */
@@ -78,11 +89,11 @@
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
-  background: rgba(179, 51, 29, 0.85);
+  background: rgba(179, 51, 29);
   border: none;
   color: #fff;
-  width: 44px;
-  height: 56px;
+  width: 50px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;

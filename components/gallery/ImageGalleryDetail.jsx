@@ -41,7 +41,10 @@ export default function ImageGalleryDetail({ slug: slugProp }) {
       bannerSection?.bannerBackgroundImageAr?.node?.mediaItemUrl
     )
   );
-
+  // heading
+  const heading = languageSelector(lng, bannerSection?.bannerTitleEn, bannerSection?.bannerTitleAr);
+  // count of images
+  const totalImages = images.length;
   const goTo = useCallback((idx) => {
     if (images.length === 0) return;
     setActiveIndex((idx + images.length) % images.length);
@@ -62,20 +65,18 @@ export default function ImageGalleryDetail({ slug: slugProp }) {
       <InnerPageBanner
         title={bannerTitle}
         image={bannerImage}
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Image Gallery", href: `/${lang}/image-gallery` },
-          { label: bannerTitle || "Album" },
-        ]}
+
       />
 
-      <div className="innerPage-emblem">
+      <div className="innerPage-emblem py-20">
+                        <div className="container">
+                  <div className="my-8">
+                    <h2 className="text-[40px] mb-4 font-medium text-theme-primary">{heading}</h2>
+                    <h3> <span className="text-theme-red">{totalImages} </span> Photos</h3>
+                  </div>
+                </div>
         <main className={styles.mainContent}>
-          {/* Back button */}
-          <Link href={`/${lang}/image-gallery`} className={styles.backBtn}>
-            <FaArrowLeft size={13} />
-            Back to Gallery
-          </Link>
+
 
           {loading && images.length === 0 ? (
             <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
@@ -83,6 +84,7 @@ export default function ImageGalleryDetail({ slug: slugProp }) {
             <>
               {/* ── Peek Slider ── */}
               <div className={styles.sliderWrap}>
+
                 <div className={styles.sliderTrack}>
                   {images.map((img, i) => {
                     const offset = i - activeIndex;
@@ -164,6 +166,12 @@ export default function ImageGalleryDetail({ slug: slugProp }) {
               )}
             </>
           )}
+          {/* Back button */}
+          <div className="container">   <Link href={`/${lang}/image-gallery`} className={`${styles.backBtn} mt-12`}>
+            <FaArrowLeft size={13} />
+            Back to Gallery
+          </Link>
+          </div>
         </main>
       </div>
     </div>
