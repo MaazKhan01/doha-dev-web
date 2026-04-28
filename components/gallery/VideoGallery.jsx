@@ -1,45 +1,51 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { gql, useQuery } from "@apollo/client";
 import { FaPlay } from "react-icons/fa";
 import InnerPageBanner from "@/components/ui/InnerPageBanner";
+import { useLanguage } from "@/context/LanguageProvider";
+import { languageSelector, imageSelector } from "@/utils/functions";
+import { VIDEO_GALLERY_QUERY } from "@/utils/graphQueries";
+import { buildWpUrl } from "@/utils/buildWpUrl";
 import styles from "./VideoGallery.module.css";
 
-const VIDEOS = [
-  {
-    id: "v1",
-    title: "Doha 2030 Asian Games Bid - Official Video",
-    date: "10 Nov 2020",
-    image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=80",
-    youtubeId: "dQw4w9WgXcQ" // Example placeholder
-  },
-  {
-    id: "v2",
-    title: "Welcome to Doha - A Gateway to the Future",
-    date: "15 Oct 2020",
-    image: "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=900&q=80",
-    youtubeId: "9bZkp7q19f0"
-  },
-  {
-    id: "v3",
-    title: "World-Class Sports Venues Overview",
-    date: "05 Sep 2020",
-    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=900&q=80",
-    youtubeId: "y6120QOlsfU"
-  },
-  {
-    id: "v4",
-    title: "Athletes Endorse Doha 2030 Bid",
-    date: "20 Aug 2020",
-    image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
-    youtubeId: "3JZ_D3ELwOQ"
-  },
-];
+function getYouTubeEmbedUrl(url) {
+  if (!url) return null;
+  const match = url.match(/(?:youtube\.com\/(?:.*[?&]v=|embed\/)|youtu\.be\/)([^"&?/\s]{11})/);
+  if (match) return `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0`;
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+  return null;
+}
+
+// Guard so buildWpUrl is only called when a real URL exists
+function safeUrl(rawUrl) {
+  return rawUrl ? buildWpUrl(rawUrl) : null;
+}
 
 export default function VideoGallery() {
+  const { lng } = useLanguage();
   const [selectedVideo, setSelectedVideo] = useState(null);
 
-  // Close modal on Escape
+  const { data, loading } = useQuery(gql`${VIDEO_GALLERY_QUERY}`);
+
+  const bannerSection = data?.page?.flexibleContent?.bannerSection;
+  const components = data?.page?.flexibleContent?.component || [];
+  const mediaGrid = components.find((c) => c?.fieldGroupName?.includes("MediaGridLayout"));
+  const videos = mediaGrid?.videoDetails || [];
+
+  const bannerTitle =
+    languageSelector(lng, bannerSection?.bannerTitleEn, bannerSection?.bannerTitleAr) ||
+    "Video Gallery";
+  const bannerImage = safeUrl(
+    imageSelector(
+      lng,
+      bannerSection?.bannerBackgroundImageEn?.node?.mediaItemUrl,
+      bannerSection?.bannerBackgroundImageAr?.node?.mediaItemUrl
+    )
+  );
+
   const handleKey = useCallback((e) => {
     if (e.key === "Escape") setSelectedVideo(null);
   }, []);
@@ -47,86 +53,125 @@ export default function VideoGallery() {
   useEffect(() => {
     if (!selectedVideo) return;
     document.addEventListener("keydown", handleKey);
-    document.body.style.overflow = "hidden"; // Prevent background scroll
+    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKey);
       document.body.style.overflow = "";
     };
   }, [selectedVideo, handleKey]);
 
+  // Determine the modal video source for the selected video
+  const modalSource = (() => {
+    if (!selectedVideo) return null;
+    const isYouTube = selectedVideo.videoSourceType?.includes("YouTube");
+    if (isYouTube) {
+      return { type: "embed", url: getYouTubeEmbedUrl(selectedVideo.videoUrl) };
+    }
+    const localUrl = safeUrl(selectedVideo.uploadVideo?.node?.mediaItemUrl);
+    if (localUrl) return { type: "video", url: localUrl };
+    // Fallback: try videoUrl as a direct embed
+    return { type: "embed", url: selectedVideo.videoUrl || null };
+  })();
+
   return (
     <div className={styles.pageWrapper}>
       <InnerPageBanner
-        title="Video Gallery"
-        eyebrow="Media"
-        image="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Video Gallery" },
-        ]}
+        title={bannerTitle}
+        image={bannerImage}
       />
 
-      <main className={styles.mainContent}>
-        <div className={styles.grid}>
-          {VIDEOS.map((video) => (
-            <div
-              key={video.id}
-              className={styles.card}
-              onClick={() => setSelectedVideo(video)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setSelectedVideo(video);
-                }
-              }}
-            >
-              <div className={styles.cardImgWrap}>
-                <div
-                  className={styles.cardImg}
-                  style={{ backgroundImage: `url(${video.image})` }}
-                />
-                <div className={styles.playIcon}>
-                  <FaPlay />
-                </div>
-              </div>
-              <div className={styles.cardBody}>
-                <h3 className={styles.cardTitle}>{video.title}</h3>
-                <span className={styles.cardDate}>{video.date}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
+      <div className="innerPage-emblem py-12">
+        <main className={styles.mainContent}>
+          {loading && videos.length === 0 ? (
+            <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
+          ) : (
+            <div className={styles.grid}>
+              {videos.map((video, i) => {
+                const rawThumb = video?.videoThumbnail?.node?.mediaItemUrl;
+                const thumb = rawThumb ? buildWpUrl(rawThumb) : null;
 
-      {/* Video Modal via Portal */}
+                return (
+                  <div
+                    key={i}
+                    className={styles.card}
+                    onClick={() => setSelectedVideo(video)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedVideo(video);
+                      }
+                    }}
+                  >
+                    <div className={styles.cardImgWrap}>
+                      {thumb ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={thumb}
+                          alt={video.videoTitle || ""}
+                          className={styles.cardImg}
+                        />
+                      ) : (
+                        <div className={styles.cardImgPlaceholder} />
+                      )}
+                      <div className={styles.playIcon}>
+                        <FaPlay size={20} />
+                      </div>
+                    </div>
+                    <div className={styles.cardBody}>
+                       {video.postDate && (
+                        <span className={styles.cardDate}>Post on {video.postDate}</span>
+                      )}
+                      <h3 className={styles.cardTitle}>{video.videoTitle}</h3>
+                     
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </main>
+      </div>
+
       {selectedVideo && createPortal(
-        <div 
-          className={styles.modalOverlay} 
+        <div
+          className={styles.modalOverlay}
           onClick={() => setSelectedVideo(null)}
           role="dialog"
           aria-modal="true"
         >
-          <button 
+          <button
             className={styles.modalClose}
             onClick={() => setSelectedVideo(null)}
             aria-label="Close video"
           >
             ✕
           </button>
-          <div 
+          <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
           >
-            <iframe
-              className={styles.videoIframe}
-              src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1`}
-              title={selectedVideo.title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+            {modalSource?.type === "video" ? (
+              /* eslint-disable-next-line jsx-a11y/media-has-caption */
+              <video
+                className={styles.videoIframe}
+                src={modalSource.url}
+                autoPlay
+                controls
+              />
+            ) : modalSource?.url ? (
+              <iframe
+                className={styles.videoIframe}
+                src={modalSource.url}
+                title={selectedVideo.videoTitle}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <div className={styles.noUrl}>Video URL not available</div>
+            )}
           </div>
         </div>,
         document.body

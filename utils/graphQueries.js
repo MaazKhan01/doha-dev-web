@@ -389,6 +389,134 @@ export const CONTENT_SECTION_2_QUERY = `query GetContentSection2($id: ID!) {
   }
 }`
 
+// Gallery banner fragment (reused inside both gallery list queries)
+const GALLERY_BANNER_FIELDS = `
+  bannerSection {
+    bannerTitleEn
+    bannerTitleAr
+    bannerBackgroundColorEn
+    bannerBackgroundColorAr
+    bannerBackgroundImageEn {
+      node { mediaItemUrl }
+    }
+    bannerBackgroundImageAr {
+      node { mediaItemUrl }
+    }
+  }
+`;
+
+export const VIDEO_GALLERY_QUERY = `query VideoGalleryQuery {
+  page(id: "video-gallery", idType: URI) {
+    id
+    flexibleContent {
+      ${GALLERY_BANNER_FIELDS}
+      component {
+        fieldGroupName
+        ... on FlexibleContentComponentMediaGridLayout {
+          fieldGroupName
+          mediaType
+          videoDetails {
+            videoSourceType
+            videoThumbnail {
+              node {
+                mediaItemUrl
+              }
+            }
+            videoTitle
+            videoUrl
+            uploadVideo {
+              node {
+                mediaItemUrl
+              }
+            }
+            postDate
+          }
+          sectionBackground {
+            node {
+              mediaItemUrl
+            }
+          }
+        }
+      }
+    }
+  }
+}`;
+
+export const IMAGE_GALLERY_LIST_QUERY = `query ImageGalleryListQuery {
+  page(id: "image-gallery", idType: URI) {
+    id
+    flexibleContent {
+      ${GALLERY_BANNER_FIELDS}
+      component {
+        fieldGroupName
+        ... on FlexibleContentComponentMediaGridLayout {
+          fieldGroupName
+          mediaType
+          imageDetails {
+            nodes {
+              uri
+              ... on ImageGallery {
+                id
+                imageGalleryContent {
+                  heading
+                  photoCount
+                  
+                  imageGallery {
+                    nodes {
+                      sourceUrl
+                      mediaItemUrl
+                      date
+                    }
+                  }
+                  bannerSection {
+                    bannerTitleEn
+                    bannerTitleAr
+                    bannerBackgroundImageEn {
+                      node { mediaItemUrl }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}`;
+
+export const IMAGE_GALLERY_DETAIL_QUERY = `query ImageGalleryDetailQuery($slug: ID!) {
+  imageGallery(id: $slug, idType: SLUG) {
+    title
+    slug
+    uri
+    imageGalleryContent {
+      heading
+      photoCount
+      bannerSection {
+        bannerTitleEn
+        bannerTitleAr
+        bannerBackgroundColorEn
+        bannerBackgroundColorAr
+        bannerBackgroundImageEn {
+          node { mediaItemUrl }
+        }
+        bannerBackgroundImageAr {
+          node { mediaItemUrl }
+        }
+      }
+      imageGallery {
+        nodes {
+          mediaItemUrl
+          sourceUrl
+          altText
+          title
+        }
+      }
+    }
+  }
+}`;
+
 // Rich Content Page (Terms of Use, Privacy Policy, etc.)
 export const RICH_CONTENT_PAGE_QUERY = `query RichContentPage($uri: ID!) {
   page(id: $uri, idType: URI) {

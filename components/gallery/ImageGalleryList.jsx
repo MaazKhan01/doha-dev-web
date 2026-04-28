@@ -1,87 +1,105 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { gql, useQuery } from "@apollo/client";
 import { useParams } from "next/navigation";
+import { FaImages } from "react-icons/fa";
 import InnerPageBanner from "@/components/ui/InnerPageBanner";
+import { useLanguage } from "@/context/LanguageProvider";
+import { languageSelector, imageSelector } from "@/utils/functions";
+import { IMAGE_GALLERY_LIST_QUERY } from "@/utils/graphQueries";
+import { buildWpUrl } from "@/utils/buildWpUrl";
 import styles from "./ImageGalleryList.module.css";
+import moment from "moment";
 
-const GALLERY_ALBUMS = [
-  {
-    slug: "OCA-Evaluation-day2",
-    title: "OCA Evaluation Committee visit - Day 2",
-    date: "12 Nov 2020",
-    image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=80",
-    category: "Visit"
-  },
-  {
-    slug: "OCA-Evaluation-day1",
-    title: "OCA Evaluation Committee visit - Day 1",
-    date: "11 Nov 2020",
-    image: "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=900&q=80",
-    category: "Visit"
-  },
-  {
-    slug: "Youth-Working-Group",
-    title: "Doha 2030 launch of Youth Working Group",
-    date: "10 Dec 2023",
-    image: "https://images.unsplash.com/photo-1471295253337-3ceaaedca402?w=900&q=80",
-    category: "Launch"
-  },
-  {
-    slug: "Green-Games-pledge",
-    title: "Sustainability with Green Games pledge",
-    date: "05 Nov 2023",
-    image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
-    category: "Environment"
-  },
-  {
-    slug: "Asian-Games-Bid",
-    title: "Bolstered by World-Class Partners",
-    date: "02 Feb 2024",
-    image: "https://images.unsplash.com/photo-1585858229735-cd08d8cb510d?w=900&q=80",
-    category: "Partnership"
-  }
-];
+function slugFromUri(uri) {
+  return uri?.replace(/\/$/, "").split("/").pop() || "";
+}
 
 export default function ImageGalleryList() {
   const params = useParams();
   const lang = params?.lang || "en";
+  const { lng } = useLanguage();
+
+  const { data, loading } = useQuery(gql`${IMAGE_GALLERY_LIST_QUERY}`);
+
+  const bannerSection = data?.page?.flexibleContent?.bannerSection;
+  const components = data?.page?.flexibleContent?.component || [];
+  const mediaGrid = components.find((c) => c?.fieldGroupName?.includes("MediaGridLayout"));
+  const albums = mediaGrid?.imageDetails?.nodes || [];
+
+  const bannerTitle =
+    languageSelector(lng, bannerSection?.bannerTitleEn, bannerSection?.bannerTitleAr) ||
+    "Image Gallery";
+  const bannerImage = buildWpUrl(
+    imageSelector(
+      lng,
+      bannerSection?.bannerBackgroundImageEn?.node?.mediaItemUrl,
+      bannerSection?.bannerBackgroundImageAr?.node?.mediaItemUrl
+    )
+  );
 
   return (
     <div className={styles.pageWrapper}>
       <InnerPageBanner
-        title="Image Gallery"
-        eyebrow="Media"
-        image="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1600&q=80"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Image Gallery" },
-        ]}
+        title={bannerTitle}
+        image={bannerImage}
       />
 
-      <main className={styles.mainContent}>
-        <div className={styles.grid}>
-          {GALLERY_ALBUMS.map((album) => (
-            <Link
-              key={album.slug}
-              href={`/${lang}/image-gallery/${album.slug}`}
-              className={styles.card}
-            >
-              <div className={styles.cardImgWrap}>
-                <div
-                  className={styles.cardImg}
-                  style={{ backgroundImage: `url(${album.image})` }}
-                />
-                <span className={styles.categoryTag}>{album.category}</span>
-              </div>
-              <div className={styles.cardBody}>
-                <h3 className={styles.cardTitle}>{album.title}</h3>
-                <span className={styles.cardDate}>{album.date}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </main>
+      <div className="innerPage-emblem py-12">
+        <main className={styles.mainContent}>
+          {loading && albums.length === 0 ? (
+            <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
+          ) : (
+            <div className={styles.grid}>
+              {albums.map((album) => {
+                const content = album?.imageGalleryContent;
+                if (!content) return null;
+
+                const slug = slugFromUri(album.uri);
+                const title =
+                  languageSelector(lng, content.bannerSection?.bannerTitleEn, content.bannerSection?.bannerTitleAr) ||
+                  content.heading || "";
+                const rawThumb =
+                  content.imageGallery?.nodes?.[0]?.sourceUrl ||
+                  content.imageGallery?.nodes?.[0]?.mediaItemUrl;
+                const thumb = rawThumb ? buildWpUrl(rawThumb) : null;
+                const count = content.photoCount;
+                const date = content.imageGallery?.nodes?.[0]?.date;
+                return (
+                  <Link
+                    key={album.id || slug}
+                    href={`/${lang}/image-gallery/${slug}`}
+                    className={styles.card}
+                  >
+                    <div className={styles.cardImgWrap}>
+                      <div
+                        className={styles.cardImg}
+                        style={{ backgroundImage: thumb ? `url(${thumb})` : "none" }}
+                      />
+                      {count && (
+                        <span className={styles.photoCount}>
+                          <div className="text-xl text-[#b3331d]">{count.split(" ")[0]}</div>
+                          <div className="text-xs">{lng === "ar" ? "صور" : "Photos"}</div>
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.cardBody}>
+                      {date && (
+                        <span className={styles.cardDate}>
+                           {lng === "ar" ? "نشر في" : "Posted on"}  {moment(date).format("DD MM YYYY")}
+                        </span>
+                      )}
+                      <h3 className={styles.cardTitle}>{title}</h3>
+                      
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }

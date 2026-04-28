@@ -8,137 +8,141 @@
 
 .mainContent {
   flex: 1;
-  padding: 3rem 4rem 4rem;
-  max-width: 1400px;
+  padding: 2.5rem 4rem 5rem;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
 
-.header {
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--red-primary, #b3331d);
-  margin: 0 0 0.5rem 0;
-  line-height: 1.2;
-}
-
-.dateTag {
+/* Back button */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.85rem;
-  color: var(--text-muted, #666);
-  font-weight: 500;
+  font-weight: 600;
+  color: #b3331d;
+  text-decoration: none;
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s;
 }
+.backBtn:hover { opacity: 0.75; }
 
-/* Image Grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.imgWrap {
+/* ── Slider ─────────────────────── */
+.sliderWrap {
   position: relative;
   width: 100%;
-  padding-top: 75%; /* 4:3 Aspect Ratio */
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 4px;
-  background: #eee;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #111;
+  border-radius: 6px;
+  user-select: none;
 }
 
-.imgWrap:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
-.imgInner {
+.sliderTrack {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.5s ease;
 }
 
-.imgWrap:hover .imgInner {
-  transform: scale(1.05);
-}
-
-/* Lightbox overlay */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  backdrop-filter: blur(5px);
-}
-
-.lightboxClose {
+/* Each slide occupies the central 70% of the wrapper.
+   offset * 100% shifts by the element's own width (70% of container):
+     offset=0  → left: 15%  …to 85%   (visible)
+     offset=-1 → -55% …to 15%          (15% peek on left)
+     offset=+1 → 85%  …to 155%         (15% peek on right) */
+.slide {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  color: white;
-  font-size: 1.5rem;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 2001;
+  top: 0;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity  0.45s ease;
+  overflow: hidden;
 }
 
-.lightboxClose:hover {
-  background: white;
-  color: black;
-  border-color: white;
-}
+.slide[role="button"] { cursor: pointer; }
 
-.lightboxImg {
-  max-width: 100%;
-  max-height: 100%;
+.slideImg {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: block;
+  background: #111;
+}
+
+/* Arrows */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(179, 51, 29, 0.85);
+  border: none;
+  color: #fff;
+  width: 44px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.arrow:hover { background: #b3331d; }
+.arrowLeft  { left:  0; border-radius: 0 4px 4px 0; }
+.arrowRight { right: 0; border-radius: 4px 0 0 4px; }
+
+/* Counter badge */
+.counter {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  z-index: 10;
+}
+
+/* Dots */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.2);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s, width 0.25s;
+}
+.dotActive {
+  width: 20px;
+  border-radius: 4px;
+  background: #b3331d;
+}
+
+/* Caption */
+.caption {
+  text-align: center;
+  margin-top: 0.85rem;
+  font-size: 0.88rem;
+  color: #666;
+  font-style: italic;
 }
 
 @media (max-width: 768px) {
-  .mainContent {
-    padding: 2rem 1.5rem;
-  }
-  
-  .title {
-    font-size: 1.6rem;
-  }
-  
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
-  }
-  
-  .lightbox {
-    padding: 1rem;
-  }
-  
-  .lightboxClose {
-    top: 1rem;
-    right: 1rem;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-  }
+  .mainContent { padding: 2rem 1.25rem 4rem; }
+  .arrow { width: 36px; height: 46px; font-size: 0.85rem; }
+  .slide { left: 10%; width: 80%; }
 }

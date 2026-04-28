@@ -1,125 +1,171 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { gql, useQuery } from "@apollo/client";
+import { useParams } from "next/navigation";
+import { FaChevronLeft, FaChevronRight, FaArrowLeft } from "react-icons/fa";
 import InnerPageBanner from "@/components/ui/InnerPageBanner";
+import { useLanguage } from "@/context/LanguageProvider";
+import { languageSelector, imageSelector } from "@/utils/functions";
+import { IMAGE_GALLERY_DETAIL_QUERY } from "@/utils/graphQueries";
+import { buildWpUrl } from "@/utils/buildWpUrl";
 import styles from "./ImageGalleryDetail.module.css";
-import { createPortal } from "react-dom";
 
-// Mock data mapping slugs to photos
-const ALBUM_DATA = {
-  "OCA-Evaluation-day2": {
-    title: "OCA Evaluation Committee visit - Day 2",
-    date: "12 Nov 2020",
-    banner: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1600&q=80",
-    photos: [
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=900&q=80",
-      "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=900&q=80",
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80",
-      "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=900&q=80",
-      "https://images.unsplash.com/photo-1628779238951-be2c9f2a59f4?w=900&q=80",
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900&q=80",
-      "https://images.unsplash.com/photo-1519337265831-281ec6cc8514?w=900&q=80",
-      "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=900&q=80"
-    ]
-  },
-  // Fallback for other slugs (just for demo purposes)
-  "default": {
-    title: "Gallery Album",
-    date: "2024",
-    banner: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1600&q=80",
-    photos: [
-      "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=900&q=80",
-      "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=900&q=80",
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&q=80"
-    ]
-  }
-};
+export default function ImageGalleryDetail({ slug: slugProp }) {
+  const routeParams = useParams();
+  const slug = slugProp || routeParams?.slug || "";
+  const lang = routeParams?.lang || "en";
+  const { lng } = useLanguage();
 
-export default function ImageGalleryDetail({ slug }) {
-  const album = ALBUM_DATA[slug] || ALBUM_DATA["default"];
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  // Close lightbox on Escape
-  React.useEffect(() => {
-    if (!selectedPhoto) return;
-    const handleKey = (e) => {
-      if (e.key === "Escape") setSelectedPhoto(null);
-    };
-    document.addEventListener("keydown", handleKey);
-    document.body.style.overflow = "hidden"; // Prevent scrolling behind lightbox
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = "";
-    };
-  }, [selectedPhoto]);
+  const { data, loading } = useQuery(gql`${IMAGE_GALLERY_DETAIL_QUERY}`, {
+    variables: { slug },
+    skip: !slug,
+  });
+
+  const content = data?.imageGallery?.imageGalleryContent;
+  const bannerSection = content?.bannerSection;
+  const images = content?.imageGallery?.nodes || [];
+
+  const bannerTitle =
+    languageSelector(lng, bannerSection?.bannerTitleEn, bannerSection?.bannerTitleAr) ||
+    content?.heading ||
+    data?.imageGallery?.title ||
+    "";
+
+  const bannerImage = buildWpUrl(
+    imageSelector(
+      lng,
+      bannerSection?.bannerBackgroundImageEn?.node?.mediaItemUrl,
+      bannerSection?.bannerBackgroundImageAr?.node?.mediaItemUrl
+    )
+  );
+
+  const goTo = useCallback((idx) => {
+    if (images.length === 0) return;
+    setActiveIndex((idx + images.length) % images.length);
+  }, [images.length]);
+
+  const handleKey = useCallback((e) => {
+    if (e.key === "ArrowLeft") goTo(activeIndex - 1);
+    if (e.key === "ArrowRight") goTo(activeIndex + 1);
+  }, [goTo, activeIndex]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [handleKey]);
 
   return (
     <div className={styles.pageWrapper}>
       <InnerPageBanner
-        title={album.title}
-        eyebrow="Media / Image Gallery"
-        image={album.banner}
+        title={bannerTitle}
+        image={bannerImage}
         breadcrumbs={[
           { label: "Home", href: "/" },
-          { label: "Image Gallery", href: "/en/image-gallery" }, // generic lang path for breadcrumb
-          { label: "Album" },
+          { label: "Image Gallery", href: `/${lang}/image-gallery` },
+          { label: bannerTitle || "Album" },
         ]}
       />
 
-      <main className={styles.mainContent}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>{album.title}</h2>
-          <span className={styles.dateTag}>Published: {album.date}</span>
-        </div>
+      <div className="innerPage-emblem">
+        <main className={styles.mainContent}>
+          {/* Back button */}
+          <Link href={`/${lang}/image-gallery`} className={styles.backBtn}>
+            <FaArrowLeft size={13} />
+            Back to Gallery
+          </Link>
 
-        <div className={styles.grid}>
-          {album.photos.map((photoUrl, idx) => (
-            <div
-              key={idx}
-              className={styles.imgWrap}
-              onClick={() => setSelectedPhoto(photoUrl)}
-              role="button"
-              tabIndex={0}
-              aria-label={`View photo ${idx + 1}`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setSelectedPhoto(photoUrl);
-                }
-              }}
-            >
-              <div
-                className={styles.imgInner}
-                style={{ backgroundImage: `url(${photoUrl})` }}
-              />
-            </div>
-          ))}
-        </div>
-      </main>
+          {loading && images.length === 0 ? (
+            <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
+          ) : (
+            <>
+              {/* ── Peek Slider ── */}
+              <div className={styles.sliderWrap}>
+                <div className={styles.sliderTrack}>
+                  {images.map((img, i) => {
+                    const offset = i - activeIndex;
+                    const rawSrc = img.sourceUrl || img.mediaItemUrl;
+                    const src = rawSrc ? buildWpUrl(rawSrc) : null;
+                    // Only render active and its immediate neighbours
+                    if (Math.abs(offset) > 1) return null;
+                    return (
+                      <div
+                        key={i}
+                        className={styles.slide}
+                        style={{
+                          transform: `translateX(${offset * 100}%)`,
+                          opacity: offset === 0 ? 1 : 0.45,
+                          zIndex: offset === 0 ? 2 : 1,
+                        }}
+                        onClick={() => offset !== 0 && goTo(i)}
+                        role={offset !== 0 ? "button" : undefined}
+                        aria-label={offset !== 0 ? `View image ${i + 1}` : undefined}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={src}
+                          alt={img.altText || img.title || `Photo ${i + 1}`}
+                          className={styles.slideImg}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
 
-      {/* Lightbox rendered via Portal */}
-      {selectedPhoto && createPortal(
-        <div 
-          className={styles.lightbox} 
-          onClick={() => setSelectedPhoto(null)}
-          role="dialog"
-          aria-modal="true"
-        >
-          <button 
-            className={styles.lightboxClose}
-            onClick={() => setSelectedPhoto(null)}
-            aria-label="Close lightbox"
-          >
-            ✕
-          </button>
-          <img 
-            src={selectedPhoto} 
-            alt="Expanded gallery view" 
-            className={styles.lightboxImg}
-            onClick={(e) => e.stopPropagation()} // don't close when clicking image itself
-          />
-        </div>,
-        document.body
-      )}
+                {/* Prev arrow */}
+                {images.length > 1 && (
+                  <button
+                    className={`${styles.arrow} ${styles.arrowLeft}`}
+                    onClick={() => goTo(activeIndex - 1)}
+                    aria-label="Previous image"
+                  >
+                    <FaChevronLeft />
+                  </button>
+                )}
+
+                {/* Next arrow */}
+                {images.length > 1 && (
+                  <button
+                    className={`${styles.arrow} ${styles.arrowRight}`}
+                    onClick={() => goTo(activeIndex + 1)}
+                    aria-label="Next image"
+                  >
+                    <FaChevronRight />
+                  </button>
+                )}
+
+                {/* Counter */}
+                {images.length > 0 && (
+                  <span className={styles.counter}>
+                    {activeIndex + 1} / {images.length}
+                  </span>
+                )}
+              </div>
+
+              {/* Dot navigation */}
+              {images.length > 1 && (
+                <div className={styles.dots}>
+                  {images.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ""}`}
+                      onClick={() => goTo(i)}
+                      aria-label={`Go to image ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Caption */}
+              {images[activeIndex]?.altText && (
+                <p className={styles.caption}>{images[activeIndex].altText}</p>
+              )}
+            </>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
