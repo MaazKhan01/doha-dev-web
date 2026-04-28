@@ -84,7 +84,7 @@ export default function SportsVenuesSection({ pageNo, idx }) {
           </p>
 
           {button && (
-            <div className="flex justify-end bg-[#b3331d]">
+            <div className="">
               <Link href={button.link || `/${lang}/venues`}>
                 <button
                   className={styles.btn}

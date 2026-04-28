@@ -21,7 +21,7 @@ export default function AboutDoha2030Section({ pageNo, idx }) {
   const cmsData = useMemo(() => {
     return queryData?.page?.flexibleContent?.component?.[idx] || null;
   }, [queryData, idx]);
-  console.log(cmsData);
+
   const sectionData = useMemo(() => {
     if (cmsData) {
       const imgPath = cmsData.backgroundImageEn?.node?.sourceUrl;

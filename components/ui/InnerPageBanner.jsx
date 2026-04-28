@@ -34,6 +34,7 @@ export default function InnerPageBanner({
         style={height ? { height } : undefined}
         role="banner"
       >
+        <div className="container" >
         <div className={styles.bg} style={bgStyle} aria-hidden="true" />
         <div
           className={styles.overlay}
@@ -44,6 +45,7 @@ export default function InnerPageBanner({
           {eyebrow && <span className={styles.eyebrow}>{eyebrow}</span>}
           <h1 className={styles.title}>{title}</h1>
           <div className={styles.accent} aria-hidden="true" />
+        </div>
         </div>
       </div>
 
