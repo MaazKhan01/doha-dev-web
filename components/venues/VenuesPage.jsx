@@ -7,7 +7,7 @@ import { languageSelector, imageSelector } from "@/utils/functions";
 import { VENUES_QUERY } from "@/utils/graphQueries";
 import styles from "./VenuesPage.module.css";
 import { buildWpUrl } from "@/utils/buildWpUrl";
-import {  FaSearch,FaAngleRight } from "react-icons/fa";
+import { FaSearch, FaAngleRight, FaPlus, FaMinus } from "react-icons/fa";
 
 
 export default function VenuesPage() {
@@ -125,14 +125,14 @@ export default function VenuesPage() {
           ) || "Sports & Venues"
         }
         image={buildWpUrl(
-          imageSelector( 
+          imageSelector(
             lng,
             bannerSection?.bannerBackgroundImageEn?.node?.mediaItemUrl,
             bannerSection?.bannerBackgroundImageAr?.node?.mediaItemUrl
           )
         )}
         overlayColor={!bannerSection?.bannerBackgroundImageEn?.node ? bannerSection?.bannerBackgroundColorEn : undefined}
-        
+
       />
 
       <main className={styles.mainContent}>
@@ -167,7 +167,24 @@ export default function VenuesPage() {
                       onClick={() => handleMainTabClick(tab)}
                     >
                       <span>{tabLabel}</span>
-                      <span > <FaAngleRight size={19} color={isActive || hasActiveSub ? 'var(--red-primary)' : "#dedede"} /></span>
+
+                      {subs.length > 0 ? (
+                        <span
+                          className={styles.plusMinusIcon}
+                        >
+                          {isExpanded || hasActiveSub ? (
+                            <FaMinus size={10} color="var(--red-primary)" />
+                          ) : (
+                            <FaPlus size={10} color="#999" />
+                          )}
+                        </span>
+                      ) : (
+                        <FaAngleRight
+                          size={18}
+                          color={isActive ? "var(--red-primary)" : "#dedede"}
+                        />
+                      )}
+
                       {/* {subs.length > 0 && (
                         <svg
                           style={{
@@ -383,25 +400,21 @@ export default function VenuesPage() {
 
                   {/* Accordion section */}
                   {accordion?.accordionItem?.length > 0 && (
-                    <div style={{ marginTop: "2rem" }}>
+                    <div style={{ marginTop: "2rem", backgroundColor: "#fff", padding: "1rem" }}>
                       {/* Main heading */}
                       {(accordion.headingEn || accordion.headingAr) && (
                         <h3 style={{
-                          fontSize: "1rem",
-                          fontWeight: 700,
+                          fontSize: "24px",
+                          fontWeight: 500,
                           color: "#b3331d",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.06em",
                           marginBottom: "0.75rem",
-                          paddingBottom: "0.5rem",
-                          borderBottom: "2px solid #b3331d",
                         }}>
                           {languageSelector(lng, accordion.headingEn, accordion.headingAr)}
                         </h3>
                       )}
 
                       {/* Accordion items */}
-                      <div style={{ border: "1px solid rgba(0,0,0,0.09)", borderRadius: 6, overflow: "hidden" }}>
+                      <div style={{ overflow: "hidden" }}>
                         {accordion.accordionItem.map((item, i) => {
                           const isOpen = openAccordionIndex === i;
                           const itemTitle = languageSelector(lng, item.titleEn, item.titleAr);
@@ -427,17 +440,13 @@ export default function VenuesPage() {
                                   transition: "background 0.2s ease",
                                 }}
                               >
-                                <span style={{ fontSize: "0.9rem", fontWeight: 600, flex: 1, color: isOpen ? "#fafafa" : "#222" }}>
+                                <span style={{ fontSize: "15px", fontWeight: 700, flex: 1, color: isOpen ? "#fafafa" : "var(--red-primary)" }}>
                                   {itemTitle}
                                 </span>
-                                <svg
-                                  width={16} height={16}
-                                  viewBox="0 0 24 24"
-                                  fill="none" stroke="#b3331d" strokeWidth={2.5}
-                                  style={{ flexShrink: 0, transition: "transform 0.25s ease", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-                                >
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
+                                <span className={styles.plusMinusIcon}>
+                                  {isOpen ? <FaMinus size={12} color={isOpen ? "#fafafa" : "var(--red-primary)"} /> :
+                                    <FaPlus size={12} color={isOpen ? "#fafafa" : "var(--red-primary)"} />}
+                                </span>
                               </button>
 
                               {/* Expandable rows table */}

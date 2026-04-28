@@ -32,13 +32,25 @@
 
 /* ─── Left Vertical Tabs ─────────────────────── */
 .tabsColumn {
-  width: 270px;
+  width: 290px;
   flex-shrink: 0;
   background: rgba(255, 255, 255);
   margin: 1.5rem 0;
   display: flex;
   flex-direction: column;
   align-self: stretch;
+}
+.plusMinusIcon {
+   width: 22;
+    height: 22;
+    border-radius: 50%;
+    border: 1.5px solid;
+    border-color:  #dedede;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: "all 0.2s ease"
 }
 
 .tabsSectionTitle {
