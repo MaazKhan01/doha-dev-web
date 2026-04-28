@@ -22,9 +22,11 @@ export default function Navbar({
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Check if NOT home (/en OR /ar)
-  const isNotHome = pathname !== "/en" || pathname !== "/ar";
-
+  // Check if NOT home (/en OR /ar) or any id page (#)
+const isNotHome =
+  (pathname !== "/en" && pathname !== "/ar") ||
+  window.location.hash !== "";
+  
   // Detect scroll state based on active section instead of window.scrollY
   useEffect(() => {
     if (!activeSectionId && isNotHome) return;

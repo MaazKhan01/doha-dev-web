@@ -12,7 +12,7 @@
   transition: all 0.4s ease;
 }
 .navbar.relative {
-  position: relative !important;
+  position: relative;
 }
 .navbar.scrolled {
   height: 80px;
