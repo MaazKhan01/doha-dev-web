@@ -27,7 +27,7 @@ export default function Navbar({
 
   // Detect scroll state based on active section instead of window.scrollY
   useEffect(() => {
-    if (!activeSectionId) return;
+    if (!activeSectionId && isNotHome) return;
 
     // Make navbar small starting from the second section onwards
     const shouldBeScrolled = activeSectionId !== "home";
@@ -38,7 +38,6 @@ export default function Navbar({
   const { loading, data } = useQuery(gql`${HEADER}`);
 
   const headerData = data?.header?.headerFields;
-  console.log(activeSectionId, isNotHome);
 
   const logoUrl = headerData?.logoEn?.node?.filePath
     ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${headerData.logoEn.node.filePath}`

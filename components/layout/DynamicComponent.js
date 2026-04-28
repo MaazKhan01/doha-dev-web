@@ -9,6 +9,7 @@ import Navbar from "../home/Navbar";
 import SideNavDots from "../home/SideNavDots";
 import Footer from "../home/Footer";
 import styles from "../home/HomePage.module.css";
+import { FaSpinner } from "react-icons/fa";
 
 const HeroSlider = dynamic(() => import("../home/HeroSlider"));
 const AboutQatarSection = dynamic(() => import("../home/AboutQatarSection"));
@@ -118,7 +119,7 @@ const DynamicComponent = ({ id }) => {
         const atTop = scrollTop <= 2;
 
         // Mid-content: let the browser scroll naturally and track the time
-      if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
+        if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) {
           scrollTimeRef.current = Date.now();
           return;
         }
@@ -245,8 +246,28 @@ const DynamicComponent = ({ id }) => {
     }
   };
 
-  if (loading && dataset.length === 0) return null;
-
+  if (loading && dataset.length === 0) return <FaSpinner />;
+  if (error) {
+    return (
+      <div style={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        background: "#fff",
+        color: "#333",
+        textAlign: "center",
+        padding: "20px"
+      }}>
+        <h2>Something went wrong</h2>
+        <p>{error.message || "Failed to load content."}</p>
+        <button className="border p-2 m-2 font-bold" onClick={() => window.location.reload()}>
+          Retry
+        </button>
+      </div>
+    );
+  }
   return (
     <div className={styles.outerContainer} ref={containerRef}>
       <Navbar onSectionClick={scrollToId} activeSectionId={activeSectionId} />
