@@ -32,6 +32,8 @@ export default function VenuesPage() {
 
   const { data, loading } = useQuery(gql`${VENUES_QUERY}`);
 
+  const bannerSection = data?.page?.flexibleContent?.bannerSection;
+
   const tabsComponent = data?.page?.flexibleContent?.component?.find(
     (c) => c?.fieldGroupName?.includes("TabsContentLayout")
   );
@@ -115,13 +117,22 @@ export default function VenuesPage() {
   return (
     <>
       <InnerPageBanner
-        title="Sports &amp; Venues"
-        eyebrow="Doha 2030 Asian Games"
-        image="https://deweb-519a7.b-cdn.net/post-images/133e3759-278d-4f2e-a543-0a8674294313.webp"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Sports & Venues" },
-        ]}
+        title={
+          languageSelector(
+            lng,
+            bannerSection?.bannerTitleEn,
+            bannerSection?.bannerTitleAr
+          ) || "Sports & Venues"
+        }
+        image={buildWpUrl(
+          imageSelector( 
+            lng,
+            bannerSection?.bannerBackgroundImageEn?.node?.mediaItemUrl,
+            bannerSection?.bannerBackgroundImageAr?.node?.mediaItemUrl
+          )
+        )}
+        overlayColor={!bannerSection?.bannerBackgroundImageEn?.node ? bannerSection?.bannerBackgroundColorEn : undefined}
+        
       />
 
       <main className={styles.mainContent}>
@@ -156,7 +167,7 @@ export default function VenuesPage() {
                       onClick={() => handleMainTabClick(tab)}
                     >
                       <span>{tabLabel}</span>
-                      <span > <FaAngleRight size={19} /></span>
+                      <span > <FaAngleRight size={19} color={isActive || hasActiveSub ? 'var(--red-primary)' : "#dedede"} /></span>
                       {/* {subs.length > 0 && (
                         <svg
                           style={{

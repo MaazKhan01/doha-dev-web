@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./Navbar.module.css";
+import { usePathname } from "next/navigation";
 import {
   FaYoutube,
   FaInstagram,
@@ -13,12 +14,16 @@ import {
 import { gql, useQuery } from "@apollo/client";
 import { HEADER } from "@/utils/graphQueries";
 
-export default function Navbar({ 
-  onSectionClick, 
-  activeSectionId 
+export default function Navbar({
+  onSectionClick,
+  activeSectionId
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+
+  // Check if NOT home (/en OR /ar)
+  const isNotHome = pathname !== "/en" || pathname !== "/ar";
 
   // Detect scroll state based on active section instead of window.scrollY
   useEffect(() => {
@@ -33,8 +38,9 @@ export default function Navbar({
   const { loading, data } = useQuery(gql`${HEADER}`);
 
   const headerData = data?.header?.headerFields;
+  console.log(activeSectionId, isNotHome);
 
-  const logoUrl = headerData?.logoEn?.node?.filePath 
+  const logoUrl = headerData?.logoEn?.node?.filePath
     ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${headerData.logoEn.node.filePath}`
     : "/en/images/logo.svg";
 
@@ -44,8 +50,8 @@ export default function Navbar({
   })) || [];
 
   const socialLinks = headerData?.socialIcons?.map(social => ({
-    icon: social.icon?.node?.mediaItemUrl 
-      ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${social.icon.node.mediaItemUrl}` 
+    icon: social.icon?.node?.mediaItemUrl
+      ? `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, '')}${social.icon.node.mediaItemUrl}`
       : null,
     href: social.link,
     title: social.title
@@ -66,18 +72,24 @@ export default function Navbar({
   if (loading) return null;
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
+    <nav
+      className={`
+    ${styles.navbar} 
+    ${isScrolled ? styles.scrolled : ""} 
+    ${isNotHome ? styles.relative : ""}
+  `}
+    >
       <div className={styles.container}>
         {/* Logo */}
-        <div 
-          className={styles.logo} 
+        <div
+          className={styles.logo}
           onClick={() => window.location.href = "/"}
         >
-          <img 
-            src={logoUrl} 
-            alt="Logo" 
-            width={isScrolled ? 140 : 180} 
-            style={{ 
+          <img
+            src={logoUrl}
+            alt="Logo"
+            width={isScrolled ? 140 : 180}
+            style={{
               padding: isScrolled ? '6px 0' : '10px 0',
               transition: 'all 0.35s ease'
             }}
@@ -90,7 +102,7 @@ export default function Navbar({
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isMenuOpen ? <FaTimes color="#C0392B"/> : <FaBars color="#C0392B" />}
+          {isMenuOpen ? <FaTimes color="#C0392B" /> : <FaBars color="#C0392B" />}
         </button>
 
         {/* Desktop Links */}
@@ -107,14 +119,14 @@ export default function Navbar({
         {/* Desktop Social */}
         <div className={styles.social}>
           {socialLinks.map((s, i) => (
-            <a 
-              key={i} 
-              href={s.href} 
-              target="_blank" 
-              rel="noreferrer" 
+            <a
+              key={i}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
               title={s.title}
             >
-              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{height: "20px"}} /> : s.title}
+              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{ height: "20px" }} /> : s.title}
             </a>
           ))}
         </div>

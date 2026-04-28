@@ -446,6 +446,22 @@ export const VENUES_QUERY = `query VenuesQuery {
   page(id: "sports-and-venues", idType: URI) {
     id
     flexibleContent {
+      bannerSection {
+        bannerTitleEn
+        bannerTitleAr
+        bannerBackgroundImageEn {
+          node {
+            mediaItemUrl
+          }
+        }
+        bannerBackgroundImageAr {
+          node {
+            mediaItemUrl
+          }
+        }
+        bannerBackgroundColorEn
+        bannerBackgroundColorAr
+      }
       component {
         ... on FlexibleContentComponentTabsContentLayout {
           fieldGroupName
