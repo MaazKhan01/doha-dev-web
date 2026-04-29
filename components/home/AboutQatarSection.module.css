@@ -87,12 +87,15 @@
   gap: 0.75rem;
   padding: 0 0 1rem 0;
   flex-wrap: nowrap;
-  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 .mainTabsHeader::-webkit-scrollbar { display: none; }
-
+@media (max-width:768px){
+  .mainTabsHeader{
+    overflow-x: auto;
+  }
+}
 .mainTabBtn {
   background: #fff;
   color: #333;
@@ -237,11 +240,17 @@
     right: 0 !important;
     bottom: 0 !important;
   }
+  .imageWrap{
+    flex: 1;
+    width: 100%;
+    min-height: 300px;
+  }
 }
 
 /* Content column */
 .contentCol {
-  flex: 1;
+  /* flex: 1; */
+  width: 100%;
   display: flex;
   flex-direction: column;
   z-index: 1;
@@ -251,10 +260,13 @@
 
 /* Image */
 .imageWrap {
-  flex: 1;
+  /* flex: 1; */
   position: relative;
   overflow: hidden;
   min-height: 0;
+  height: 520px;
+  visibility: visible;
+  width: 100%;
 }
 
 .image {
@@ -430,7 +442,7 @@
   padding: 1rem 1.1rem;
   background: transparent;
   border: none;
-  color: rgba(255,255,255,0.88);
+  background-color: #fff;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -439,7 +451,7 @@
 }
 
 .accordionHeaderOpen {
-  background: rgba(255,255,255,0.1);
+  background: rgb(201, 128, 61);
   color: #fff;
 }
 

@@ -53,7 +53,9 @@ export default function SportsVenuesSection({ pageNo, idx }) {
   // You can make venues dynamic later by adding a field in WordPress
   const venues = fallbackVenues; // Replace with dynamic data when available
 
-  if (loading) return <section className={styles.section}>Loading venues section...</section>;
+  if (loading) return <section className={styles.section}>
+    
+  </section>;
   if (error) console.error("Error loading SportsVenuesSection:", error);
 
   return (
