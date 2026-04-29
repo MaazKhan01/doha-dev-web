@@ -61,8 +61,19 @@ const isNotHome =
   const handleNav = (e, href) => {
     e.preventDefault();
     setIsMenuOpen(false);
-    if (onSectionClick && href.startsWith("#")) {
-      onSectionClick(href.replace("#", ""));
+
+    if (href.startsWith("#")) {
+      const sectionId = href.slice(1);
+      const isHome = pathname === "/en" || pathname === "/ar" || pathname === "/";
+
+      if (isHome && onSectionClick) {
+        // On homepage — delegate to the section-scroll system
+        onSectionClick(sectionId);
+      } else {
+        // On any inner page — navigate to the home page and let it scroll
+        const lang = pathname.split("/")[1] || "en";
+        window.location.href = `/${lang}${href}`;
+      }
     } else {
       window.location.href = href;
     }

@@ -202,6 +202,18 @@ const DynamicComponent = ({ id }) => {
     setActiveIndex(idx);
   };
 
+  // After sections load, honour any hash that was in the URL
+  // (e.g. user navigated from an inner page via /{lang}#about-qatar)
+  useEffect(() => {
+    if (SECTIONS.length === 0) return;
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    scrollToId(hash);
+    // Remove the hash so it doesn't re-fire on future re-renders
+    window.history.replaceState(null, "", window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [SECTIONS.length]);
+
   const getSlideStyle = (idx) => {
     const isActive = idx === activeIndex;
     const isLeaving = idx === prevIndex;
@@ -278,11 +290,16 @@ const DynamicComponent = ({ id }) => {
   }
   /* ── Mobile: normal page scroll ────────────────────────────── */
   if (isMobile) {
+    const handleMobileSection = (sectionId) => {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
     return (
       <div style={{ overflowX: "hidden" }}>
-        <Navbar onSectionClick={() => {}} activeSectionId="" />
+        <Navbar onSectionClick={handleMobileSection} activeSectionId="" />
         {dataset.map((item, idx) => (
-          <div key={idx}>
+          <div key={idx} id={SECTIONS[idx]?.id || `section-${idx}`}>
             {renderComponent(item, idx)}
           </div>
         ))}

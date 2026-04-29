@@ -94,7 +94,7 @@
 }
 
 .card:hover .cardIconCircle {
-  transform: scale(1.1);
+  /* transform: scale(); */
 }
 
 .cardBody {
