@@ -307,74 +307,86 @@
   }
 }
 
+/* ─── Mobile Navigation (replaces the aside on < 768px) ─────── */
+.mobileNavWrap {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+/* Row 1 — main sport/category tabs */
+.mobileMainRow {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: var(--red-primary);
+}
+.mobileMainRow::-webkit-scrollbar { display: none; }
+
+.mobileMainBtn {
+  flex-shrink: 0;
+  padding: 0.75rem 1.1rem;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.75);
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mobileMainBtnActive {
+  color: #fff;
+  border-bottom-color: #fff;
+  background: rgba(255,255,255,0.12);
+}
+
+/* Row 2 — sub-tabs of the active category */
+.mobileSubRow {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: #f5f3f0;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.mobileSubRow::-webkit-scrollbar { display: none; }
+
+.mobileSubBtn {
+  flex-shrink: 0;
+  padding: 0.6rem 1rem;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  color: #555;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mobileSubBtnActive {
+  color: var(--red-primary);
+  border-bottom-color: var(--red-primary);
+  font-weight: 700;
+}
+
 @media (max-width: 768px) {
-  .mainContent { padding: 0 0 2rem; }
+  .mainContent { padding: 0 0 2.5rem; }
 
   .contentLayout {
     flex-direction: column;
-  }
-
-  /* Tabs column becomes a horizontal scrollable strip */
-  .tabsColumn {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-    padding: 0;
-    margin: 0;
-    scrollbar-width: none;
-    background: #fff;
-    border-bottom: 2px solid rgba(0,0,0,0.07);
-    /* allow subtab dropdowns to overflow */
-    position: relative;
-  }
-  .tabsColumn::-webkit-scrollbar { display: none; }
-
-  .tabsSectionTitle { display: none; }
-
-  /* Each main tab button becomes a horizontal chip */
-  .tabBtn {
-    flex-shrink: 0;
-    white-space: nowrap;
-    border-left: none;
-    border-bottom: 3px solid transparent;
-    padding: 0.75rem 1.1rem;
-    font-size: 14px;
-  }
-  .tabBtnActive {
-    border-left-color: transparent !important;
-    border-bottom-color: var(--red-primary) !important;
-  }
-  .tabBtnActive::before { display: none; }
-
-  /* SubTab list drops down below its parent chip */
-  .subTabList {
-    display: none; /* hidden when closed */
-  }
-  .subTabListOpen {
-    display: block;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    border-bottom: 2px solid rgba(0,0,0,0.07);
-    z-index: 20;
-    max-height: 220px;
-    overflow-y: auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  }
-  .subTabBtn {
-    font-size: 13px;
-    padding: 0.65rem 1.25rem;
-    border-left: none;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    overflow: visible;
+    min-height: unset;
   }
 
   .contentBody { padding: 1.25rem 1rem 1.5rem; }
   .contentTitle { font-size: 22px; }
-
   .venueGrid { grid-template-columns: 1fr; }
   .statsRow  { gap: 1.25rem; }
 }

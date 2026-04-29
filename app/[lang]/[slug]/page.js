@@ -40,10 +40,6 @@ export default function Home({ params }) {
     },
   });
 
-  useEffect(() => {
-    setLoad(true);
-  }, [setLoad]);
-
   const currentPage = useMemo(() => {
     return pages?.pages?.nodes.find(
       (item) =>

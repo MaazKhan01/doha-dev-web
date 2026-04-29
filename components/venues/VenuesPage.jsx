@@ -21,6 +21,14 @@ export default function VenuesPage() {
   const [sliderIndex, setSliderIndex] = useState(0);
   const [popupImage, setPopupImage] = useState(null);
   const [openAccordionIndex, setOpenAccordionIndex] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const openImagePopup = (url) => {
     setPopupImage(url);
@@ -115,6 +123,12 @@ export default function VenuesPage() {
   const imageUrl = buildWpUrl(
     distanceInfo?.mapImageEn?.node?.mediaItemUrl
   );
+
+  // Mobile: find which main-tab is currently "active" (has the active content)
+  const activeMainTabNode = mainTabs.find(
+    (t) => t.id === activeTabId || getValidSubs(t).some((s) => s.id === activeTabId)
+  );
+  const activeSubs = activeMainTabNode ? getValidSubs(activeMainTabNode) : [];
   return (
     <div className=" relative">
       <InnerPageBanner
@@ -142,101 +156,106 @@ export default function VenuesPage() {
           ) : (
             <div className={styles.contentLayout}>
 
-              {/* ── Left vertical tabs ───────────────── */}
-              <aside
-                className={styles.tabsColumn}
-                aria-label="Venue categories"
-                style={isAr ? { order: 1 } : undefined}
-              >
-                <div className={styles.tabsSectionTitle}>Navigation</div>
-
-                {mainTabs.map((tab) => {
-                  const tabLabel =
-                    languageSelector(lng, tab.tabFields?.titleEn, tab.tabFields?.titleAr) ||
-                    tab.title;
-                  const subs = getValidSubs(tab);
-                  const isExpanded = expandedTabIds.has(tab.id);
-                  const isActive = activeTabId === tab.id;
-                  const hasActiveSub = subs.some((s) => s.id === activeTabId);
-
-                  return (
-                    <div key={tab.id}>
-                      <button
-                        role="tab"
-                        aria-selected={isActive || hasActiveSub}
-                        className={`${styles.tabBtn} ${isActive || hasActiveSub ? styles.tabBtnActive : ""} flex justify-between items-center`}
-                        onClick={() => handleMainTabClick(tab)}
-                      >
-                        <span>{tabLabel}</span>
-
-                        {subs.length > 0 ? (
-                          <span
-                            className={styles.plusMinusIcon}
-                          >
-                            {isExpanded || hasActiveSub ? (
-                              <FaMinus size={10} color="var(--red-primary)" />
-                            ) : (
-                              <FaPlus size={10} color="#999" />
-                            )}
-                          </span>
-                        ) : (
-                          <FaAngleRight
-                            size={18}
-                            color={isActive ? "var(--red-primary)" : "#dedede"}
-                          />
-                        )}
-
-                        {/* {subs.length > 0 && (
-                        <svg
-                          style={{
-                            width: 14,
-                            height: 14,
-                            marginLeft: isAr ? 0 : "auto",
-                            marginRight: isAr ? "auto" : 0,
-                            paddingLeft: isAr ? 0 : "0.5rem",
-                            flexShrink: 0,
-                            transition: "transform 0.2s ease",
-                            transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                          }}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth={2}
+              {/* ── MOBILE: two stacked scrollable rows ─── */}
+              {isMobile ? (
+                <div className={styles.mobileNavWrap} dir={isAr ? "rtl" : "ltr"}>
+                  {/* Row 1 — main tabs */}
+                  <div className={styles.mobileMainRow}>
+                    {mainTabs.map((tab) => {
+                      const tabLabel = languageSelector(lng, tab.tabFields?.titleEn, tab.tabFields?.titleAr) || tab.title;
+                      const isActive = activeMainTabNode?.id === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          className={`${styles.mobileMainBtn} ${isActive ? styles.mobileMainBtnActive : ""}`}
+                          onClick={() => handleMainTabClick(tab)}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )} */}
-                      </button>
+                          {tabLabel}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-                      {/* Sub-tab accordion */}
-                      <ul
-                        className={`${styles.subTabList} ${isExpanded ? styles.subTabListOpen : ""}`}
-                        role="tablist"
-                      >
-                        {subs.map((sub) => {
-                          const subLabel =
-                            languageSelector(lng, sub.tabFields?.titleEn, sub.tabFields?.titleAr) ||
-                            sub.title;
-                          return (
-                            <li key={sub.id}>
-                              <button
-                                className={`${styles.subTabBtn} ${activeTabId === sub.id ? styles.subTabBtnActive : ""}`}
-                                onClick={() => changeTab(sub.id)}
-                              >
-                                <span>{subLabel}</span>
-                                {activeTabId === sub.id && (
-                                  <span><FaAngleRight size={19} /></span>
-                                )}
-                              </button>
-
-                            </li>
-                          );
-                        })}
-                      </ul>
+                  {/* Row 2 — sub-tabs of the active main tab */}
+                  {activeSubs.length > 0 && (
+                    <div className={styles.mobileSubRow}>
+                      {activeSubs.map((sub) => {
+                        const subLabel = languageSelector(lng, sub.tabFields?.titleEn, sub.tabFields?.titleAr) || sub.title;
+                        return (
+                          <button
+                            key={sub.id}
+                            className={`${styles.mobileSubBtn} ${activeTabId === sub.id ? styles.mobileSubBtnActive : ""}`}
+                            onClick={() => changeTab(sub.id)}
+                          >
+                            {subLabel}
+                          </button>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </aside>
+                  )}
+                </div>
+              ) : (
+                /* ── DESKTOP: left vertical tabs ───────── */
+                <aside
+                  className={styles.tabsColumn}
+                  aria-label="Venue categories"
+                  style={isAr ? { order: 1 } : undefined}
+                >
+                  <div className={styles.tabsSectionTitle}>Navigation</div>
+
+                  {mainTabs.map((tab) => {
+                    const tabLabel = languageSelector(lng, tab.tabFields?.titleEn, tab.tabFields?.titleAr) || tab.title;
+                    const subs = getValidSubs(tab);
+                    const isExpanded = expandedTabIds.has(tab.id);
+                    const isActive = activeTabId === tab.id;
+                    const hasActiveSub = subs.some((s) => s.id === activeTabId);
+
+                    return (
+                      <div key={tab.id}>
+                        <button
+                          role="tab"
+                          aria-selected={isActive || hasActiveSub}
+                          className={`${styles.tabBtn} ${isActive || hasActiveSub ? styles.tabBtnActive : ""} flex justify-between items-center`}
+                          onClick={() => handleMainTabClick(tab)}
+                        >
+                          <span>{tabLabel}</span>
+                          {subs.length > 0 ? (
+                            <span className={styles.plusMinusIcon}>
+                              {isExpanded || hasActiveSub ? (
+                                <FaMinus size={10} color="var(--red-primary)" />
+                              ) : (
+                                <FaPlus size={10} color="#999" />
+                              )}
+                            </span>
+                          ) : (
+                            <FaAngleRight size={18} color={isActive ? "var(--red-primary)" : "#dedede"} />
+                          )}
+                        </button>
+
+                        <ul
+                          className={`${styles.subTabList} ${isExpanded ? styles.subTabListOpen : ""}`}
+                          role="tablist"
+                        >
+                          {subs.map((sub) => {
+                            const subLabel = languageSelector(lng, sub.tabFields?.titleEn, sub.tabFields?.titleAr) || sub.title;
+                            return (
+                              <li key={sub.id}>
+                                <button
+                                  className={`${styles.subTabBtn} ${activeTabId === sub.id ? styles.subTabBtnActive : ""}`}
+                                  onClick={() => changeTab(sub.id)}
+                                >
+                                  <span>{subLabel}</span>
+                                  {activeTabId === sub.id && <span><FaAngleRight size={19} /></span>}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </aside>
+              )}
 
               {/* ── Right content panel ──────────────── */}
               <section className={styles.contentPanel}>

@@ -24,9 +24,8 @@ export default function Home({ params }) {
       }
     `
   );
-
+  loading ? setLoad(true) : setLoad(false);
   useEffect(() => {
-    setLoad(true);
     if (!loading) {
       let temp = data?.pages?.nodes?.find(
         (item) =>

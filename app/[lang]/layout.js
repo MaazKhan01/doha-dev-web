@@ -23,7 +23,6 @@ const client = new ApolloClient({
 export default function RootLayout({ children, params }) {
   const { lang } = use(params);
   const currentLang = lang || "en";
-  console.log(`${process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "")}/graphql`)
   return (
     <html lang={currentLang}>
       <head>
