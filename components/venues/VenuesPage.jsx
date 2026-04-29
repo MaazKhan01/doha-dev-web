@@ -8,6 +8,7 @@ import { VENUES_QUERY } from "@/utils/graphQueries";
 import styles from "./VenuesPage.module.css";
 import { buildWpUrl } from "@/utils/buildWpUrl";
 import { FaSearch, FaAngleRight, FaPlus, FaMinus } from "react-icons/fa";
+import LogoLoader from "@/components/ui/LogoLoader";
 
 
 export default function VenuesPage() {
@@ -137,7 +138,7 @@ export default function VenuesPage() {
       <div className="innerPage-emblem relative">
         <main className={styles.mainContent}>
           {loading && mainTabs.length === 0 ? (
-            <div style={{ padding: "4rem", textAlign: "center", color: "#888" }}>Loading…</div>
+            <LogoLoader />
           ) : (
             <div className={styles.contentLayout}>
 

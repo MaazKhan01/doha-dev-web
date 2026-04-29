@@ -8,6 +8,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { languageSelector, imageSelector } from "@/utils/functions";
 import { VIDEO_GALLERY_QUERY } from "@/utils/graphQueries";
 import { buildWpUrl } from "@/utils/buildWpUrl";
+import LogoLoader from "@/components/ui/LogoLoader";
 import styles from "./VideoGallery.module.css";
 
 function getYouTubeEmbedUrl(url) {
@@ -83,7 +84,7 @@ export default function VideoGallery() {
       <div className="innerPage-emblem py-12">
         <main className={styles.mainContent}>
           {loading && videos.length === 0 ? (
-            <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
+            <LogoLoader />
           ) : (
             <div className={styles.grid}>
               {videos.map((video, i) => {

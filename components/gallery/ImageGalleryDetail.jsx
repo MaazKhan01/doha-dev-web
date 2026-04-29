@@ -9,6 +9,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { languageSelector, imageSelector } from "@/utils/functions";
 import { IMAGE_GALLERY_DETAIL_QUERY } from "@/utils/graphQueries";
 import { buildWpUrl } from "@/utils/buildWpUrl";
+import LogoLoader from "@/components/ui/LogoLoader";
 import styles from "./ImageGalleryDetail.module.css";
 
 export default function ImageGalleryDetail({ slug: slugProp }) {
@@ -79,7 +80,7 @@ export default function ImageGalleryDetail({ slug: slugProp }) {
 
 
           {loading && images.length === 0 ? (
-            <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
+            <LogoLoader />
           ) : (
             <>
               {/* ── Peek Slider ── */}

@@ -25,6 +25,7 @@ const TRANSITION = "transform 0.8s cubic-bezier(0.77, 0, 0.175, 1)";
 const DynamicComponent = ({ id }) => {
   const [dataset, setDataset] = useState([]);
   const { setLoad } = useLoader();
+  const [isMobile, setIsMobile] = useState(false);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState(null);
@@ -32,6 +33,13 @@ const DynamicComponent = ({ id }) => {
   const isScrollingRef = useRef(false);
   const containerRef = useRef(null);
   const touchStartYRef = useRef(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const { loading, error, data } = useQuery(
     gql`${PAGES_QUERY}`,
@@ -246,7 +254,7 @@ const DynamicComponent = ({ id }) => {
     }
   };
 
-  if (loading && dataset.length === 0) return <FaSpinner />;
+  if (loading && dataset.length === 0) return null;
   if (error) {
     return (
       <div style={{
@@ -268,6 +276,22 @@ const DynamicComponent = ({ id }) => {
       </div>
     );
   }
+  /* ── Mobile: normal page scroll ────────────────────────────── */
+  if (isMobile) {
+    return (
+      <div style={{ overflowX: "hidden" }}>
+        <Navbar onSectionClick={() => {}} activeSectionId="" />
+        {dataset.map((item, idx) => (
+          <div key={idx}>
+            {renderComponent(item, idx)}
+          </div>
+        ))}
+        <Footer />
+      </div>
+    );
+  }
+
+  /* ── Desktop: full-page snap scroll ─────────────────────────── */
   return (
     <div className={styles.outerContainer} ref={containerRef}>
       <Navbar onSectionClick={scrollToId} activeSectionId={activeSectionId} />

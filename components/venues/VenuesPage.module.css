@@ -308,40 +308,73 @@
 }
 
 @media (max-width: 768px) {
+  .mainContent { padding: 0 0 2rem; }
+
   .contentLayout {
     flex-direction: column;
   }
 
+  /* Tabs column becomes a horizontal scrollable strip */
   .tabsColumn {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
-    padding: 0;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
+    padding: 0;
+    margin: 0;
+    scrollbar-width: none;
+    background: #fff;
+    border-bottom: 2px solid rgba(0,0,0,0.07);
+    /* allow subtab dropdowns to overflow */
+    position: relative;
   }
+  .tabsColumn::-webkit-scrollbar { display: none; }
 
-  .tabsSectionTitle { display: none; font-size: 16px; }
+  .tabsSectionTitle { display: none; }
 
+  /* Each main tab button becomes a horizontal chip */
   .tabBtn {
+    flex-shrink: 0;
     white-space: nowrap;
     border-left: none;
     border-bottom: 3px solid transparent;
+    padding: 0.75rem 1.1rem;
+    font-size: 14px;
   }
-
   .tabBtnActive {
     border-left-color: transparent !important;
-    border-bottom-color: var(--gold) !important;
+    border-bottom-color: var(--red-primary) !important;
   }
-
   .tabBtnActive::before { display: none; }
 
-  .subTabList { display: none; }
+  /* SubTab list drops down below its parent chip */
+  .subTabList {
+    display: none; /* hidden when closed */
+  }
+  .subTabListOpen {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 2px solid rgba(0,0,0,0.07);
+    z-index: 20;
+    max-height: 220px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .subTabBtn {
+    font-size: 13px;
+    padding: 0.65rem 1.25rem;
+    border-left: none;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
 
-  .mainContent { padding: 1.5rem 1rem 2rem; }
-
-  .contentBody { padding: 1.5rem 1.25rem; }
+  .contentBody { padding: 1.25rem 1rem 1.5rem; }
+  .contentTitle { font-size: 22px; }
 
   .venueGrid { grid-template-columns: 1fr; }
-
-  .statsRow { gap: 1.5rem; }
+  .statsRow  { gap: 1.25rem; }
 }

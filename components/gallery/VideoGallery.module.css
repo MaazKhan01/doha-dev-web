@@ -177,28 +177,14 @@
 }
 
 @media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .mainContent { padding: 2rem 2rem 3rem; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 }
 
-@media (max-width: 768px) {
-  .mainContent {
-    padding: 2rem 1.5rem;
-  }
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .modalOverlay {
-    padding: 1rem;
-  }
-  
-  .modalClose {
-    top: 1rem;
-    right: 1rem;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-  }
+@media (max-width: 640px) {
+  .mainContent { padding: 1.5rem 1rem 2.5rem; }
+  .grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  .cardImgWrap { height: 220px; }
+  .modalOverlay { padding: 0.75rem; }
+  .modalClose { top: 0.75rem; right: 0.75rem; width: 38px; height: 38px; font-size: 1rem; }
 }

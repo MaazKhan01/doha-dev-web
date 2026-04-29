@@ -9,6 +9,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { languageSelector, imageSelector } from "@/utils/functions";
 import { IMAGE_GALLERY_LIST_QUERY } from "@/utils/graphQueries";
 import { buildWpUrl } from "@/utils/buildWpUrl";
+import LogoLoader from "@/components/ui/LogoLoader";
 import styles from "./ImageGalleryList.module.css";
 import moment from "moment";
 
@@ -49,7 +50,7 @@ export default function ImageGalleryList() {
       <div className="innerPage-emblem py-12">
         <main className={styles.mainContent}>
           {loading && albums.length === 0 ? (
-            <div style={{ textAlign: "center", color: "#888", padding: "4rem 0" }}>Loading…</div>
+            <LogoLoader />
           ) : (
             <div className={styles.grid}>
               {albums.map((album) => {

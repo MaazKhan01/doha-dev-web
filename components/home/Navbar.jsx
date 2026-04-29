@@ -26,7 +26,7 @@ export default function Navbar({
 const isNotHome =
   (pathname !== "/en" && pathname !== "/ar") ||
   window.location.hash !== "";
-  
+
   // Detect scroll state based on active section instead of window.scrollY
   useEffect(() => {
     if (!activeSectionId && isNotHome) return;
@@ -127,7 +127,7 @@ const isNotHome =
               rel="noreferrer"
               title={s.title}
             >
-              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{ height: "20px" }} /> : s.title}
+              {s.icon ? <img src={s.icon} alt={s.title} width={20} height={20} style={{ height: "18px" }} /> : s.title}
             </a>
           ))}
         </div>

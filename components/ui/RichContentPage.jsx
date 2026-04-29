@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { languageSelector, imageSelector } from "@/utils/functions";
 import { RICH_CONTENT_PAGE_QUERY } from "@/utils/graphQueries";
 import { buildWpUrl } from "@/utils/buildWpUrl";
+import LogoLoader from "@/components/ui/LogoLoader";
 
 export default function RichContentPage({ uri, fallbackTitle = "" }) {
   const { lng } = useLanguage();
@@ -48,7 +49,7 @@ export default function RichContentPage({ uri, fallbackTitle = "" }) {
       <div className=" innerPage-emblem">
         <main className="container py-12">
           {loading && !richContent ? (
-            <div style={{ color: "#888", textAlign: "center", padding: "4rem 0" }}>Loading…</div>
+            <LogoLoader />
           ) : (
             <div
               className="rich-content"
