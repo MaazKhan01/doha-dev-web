@@ -11,7 +11,7 @@ function getLocale(request) {
   return match(languages, i18n.locales, i18n.defaultLocale);
 }
 
-export function proxy(request) {
+export default function proxy(request) {
   const pathname = request.nextUrl.pathname;
 
   const pathnameIsMissingLocale = i18n.locales.every(
