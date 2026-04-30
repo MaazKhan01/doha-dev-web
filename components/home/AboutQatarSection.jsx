@@ -58,7 +58,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
     () => currentTabs[activeSubTab] || null,
     [currentTabs, activeSubTab]
   );
-
+  console.log(currentTabs, guides)
   const handleMainTabChange = (i) => {
     if (i === activeMainTab) return;
     setAnimating(true);
@@ -149,11 +149,11 @@ export default function AboutQatarSection({ pageNo, idx }) {
             ) : (
               /* ── DESKTOP: original layout ───────────────────────── */
               <div className={styles.contentArea}>
-                <WavyEmblem />
+                {/* <WavyEmblem /> */}
 
                 {/* Vertical Tabs Column */}
                 <div className={styles.tabsCol}>
-                  {currentTabs.map((t, i) => (
+               <div className={styles.tabsColInner}>   {currentTabs.map((t, i) => (
                     <button
                       key={i}
                       className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
@@ -162,6 +162,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
                       <span>{t.headingEn}</span>
                     </button>
                   ))}
+                  </div>
                 </div>
 
                 {/* Content Column */}

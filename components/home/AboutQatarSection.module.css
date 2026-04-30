@@ -41,13 +41,22 @@
   /* Nav clearance */
 }
 
+@media (min-width: 768px) {
+  .tabsColInner {
+    position: relative;
+    z-index: 1;
+    position: sticky;
+    top: 80px;
+  }
+}
+
 .mainContent {
-  background-color: #C0392B;
+  background-color: #b3331d;
   padding: 2rem 0;
   height: 100%;
   background-image: url(/en/images/about-pattern.png);
   background-repeat: no-repeat;
-  background-position: left;
+  background-position: top left;
   background-size: 100%;
 }
 
@@ -84,25 +93,32 @@
 /* ─── Main horizontal tabs ────────────────────────────────────────────────── */
 .mainTabsHeader {
   display: flex;
-  gap: 0.75rem;
+  gap: 2rem;
   padding: 0 0 1rem 0;
   flex-wrap: nowrap;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-.mainTabsHeader::-webkit-scrollbar { display: none; }
-@media (max-width:768px){
-  .mainTabsHeader{
+
+.mainTabsHeader::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width:768px) {
+  .mainTabsHeader {
     overflow-x: auto;
   }
 }
+
 .mainTabBtn {
-  background: #fff;
-  color: #333;
-  padding: 15px 30px;
-  border-radius: 4px;
+  text-align: center;
+  color: #161616;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
+  background: #fff;
+  padding: 15px 35px;
+  border-radius: 4px;
+
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
@@ -240,7 +256,8 @@
     right: 0 !important;
     bottom: 0 !important;
   }
-  .imageWrap{
+
+  .imageWrap {
     flex: 1;
     width: 100%;
     min-height: 300px;
@@ -348,6 +365,14 @@
   font-size: 16px;
 }
 
+.descIn a {
+  font-weight: 700;
+}
+
+.descIn p {
+  margin-bottom: 10px;
+}
+
 .descOut {
   animation: descFadeOut 0.2s ease forwards;
 }
@@ -430,7 +455,7 @@
 }
 
 .accordionItem {
-  border-bottom: 1px solid rgba(255,255,255,0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .accordionHeader {
@@ -461,8 +486,15 @@
 }
 
 @keyframes accordionOpen {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .accordionImg {
@@ -474,8 +506,8 @@
 
 .accordionDesc {
   padding: 0.9rem 1.1rem 1.2rem;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.88rem;
   line-height: 1.75;
-  border-top: 1px solid rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
