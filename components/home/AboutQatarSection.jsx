@@ -4,24 +4,97 @@ import styles from "./AboutQatarSection.module.css";
 import { gql, useQuery } from "@apollo/client";
 import { ABOUT_QATAR } from "@/utils/graphQueries";
 
-function WavyEmblem() {
+function buildImageUrl(node) {
+  if (!node) return null;
+  const { mediaItemUrl, filePath } = node;
+  if (mediaItemUrl?.startsWith("http")) return mediaItemUrl;
+  const base = process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, "") || "";
+  return `${base}${mediaItemUrl || filePath || ""}`;
+}
+
+function ImageCarousel({ nodes = [], animating, label }) {
+  const [imgIdx, setImgIdx] = useState(0);
+
+  useEffect(() => { setImgIdx(0); }, [nodes]);
+
+  const hasMultiple = nodes.length > 1;
+  const imgUrl = buildImageUrl(nodes[imgIdx]);
+
+  const prev = (e) => { e.stopPropagation(); setImgIdx(i => (i - 1 + nodes.length) % nodes.length); };
+  const next = (e) => { e.stopPropagation(); setImgIdx(i => (i + 1) % nodes.length); };
+
   return (
-    <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" className={styles.emblem}>
-      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-        <circle key={n} cx="80" cy="300" r={n * 55} fill="none" stroke="white" strokeWidth="1" opacity={0.18 - n * 0.015} />
-      ))}
-      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-        <circle key={`b${n}`} cx="80" cy="300" r={n * 55 - 27} fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="3 5" opacity={0.1} />
-      ))}
-    </svg>
+    <div className={styles.imageWrap}>
+      <div
+        className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
+        style={{ backgroundImage: `url(${imgUrl})` }}
+      />
+
+      {hasMultiple && (
+        <>
+          <button className={`${styles.imgArrow} ${styles.imgArrowLeft}`} onClick={prev} aria-label="Previous image">
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button className={`${styles.imgArrow} ${styles.imgArrowRight}`} onClick={next} aria-label="Next image">
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          
+        </>
+      )}
+
+      {label && <div className={styles.imageLabel}>{label}</div>}
+    </div>
   );
 }
 
-function buildImageUrl(imageEn) {
-  if (!imageEn?.node) return null;
-  const { sourceUrl, filePath } = imageEn.node;
-  if (sourceUrl?.startsWith("http")) return sourceUrl;
-  return `${process.env.NEXT_PUBLIC_WP_URL?.replace(/\/$/, "")}${filePath || ""}`;
+function AccordionImageCarousel({ nodes = [] }) {
+  const [imgIdx, setImgIdx] = useState(0);
+  const hasMultiple = nodes.length > 1;
+  const imgUrl = buildImageUrl(nodes[imgIdx]);
+
+  if (!imgUrl) return null;
+
+  return (
+    <div className={styles.accordionImgWrap}>
+      <div className={styles.accordionImg} style={{ backgroundImage: `url(${imgUrl})` }} />
+      {hasMultiple && (
+        <>
+          <button
+            className={`${styles.imgArrow} ${styles.imgArrowLeft}`}
+            onClick={(e) => { e.stopPropagation(); setImgIdx(i => (i - 1 + nodes.length) % nodes.length); }}
+            aria-label="Previous image"
+          >
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            className={`${styles.imgArrow} ${styles.imgArrowRight}`}
+            onClick={(e) => { e.stopPropagation(); setImgIdx(i => (i + 1) % nodes.length); }}
+            aria-label="Next image"
+          >
+            <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <div className={styles.imgDots}>
+            {nodes.map((_, i) => (
+              <button
+                key={i}
+                className={`${styles.imgDot} ${i === imgIdx ? styles.imgDotActive : ""}`}
+                onClick={(e) => { e.stopPropagation(); setImgIdx(i); }}
+                aria-label={`Image ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function AboutQatarSection({ pageNo, idx }) {
@@ -29,7 +102,6 @@ export default function AboutQatarSection({ pageNo, idx }) {
   const [activeSubTab, setActiveSubTab] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  // accordion open index for mobile (-1 = none open)
   const [openAccordion, setOpenAccordion] = useState(0);
 
   useEffect(() => {
@@ -58,7 +130,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
     () => currentTabs[activeSubTab] || null,
     [currentTabs, activeSubTab]
   );
-  console.log(currentTabs, guides)
+
   const handleMainTabChange = (i) => {
     if (i === activeMainTab) return;
     setAnimating(true);
@@ -91,7 +163,6 @@ export default function AboutQatarSection({ pageNo, idx }) {
           <h2 className="header-title">{heading}</h2>
         </div>
 
-        {/* Main Tabs — horizontal scroll on all sizes */}
         <div className={`${styles.mainTabsHeader} container mx-auto`}>
           {guides.map((guide, i) => (
             <button
@@ -107,12 +178,11 @@ export default function AboutQatarSection({ pageNo, idx }) {
         <div className={styles.mainContent}>
           <div className={styles.container}>
 
-            {/* ── MOBILE: accordion ─────────────────────────────────── */}
             {isMobile ? (
               <div className={styles.accordionList}>
                 {currentTabs.map((t, i) => {
                   const isOpen = openAccordion === i;
-                  const imgUrl = buildImageUrl(t.imageEn);
+                  const nodes = t.imagesEn?.nodes || [];
                   return (
                     <div key={i} className={styles.accordionItem}>
                       <button
@@ -131,9 +201,7 @@ export default function AboutQatarSection({ pageNo, idx }) {
 
                       {isOpen && (
                         <div className={styles.accordionBody}>
-                          {imgUrl && (
-                            <div className={styles.accordionImg} style={{ backgroundImage: `url(${imgUrl})` }} />
-                          )}
+                          <AccordionImageCarousel nodes={nodes} />
                           {t.descEn && (
                             <div
                               className={styles.accordionDesc}
@@ -147,35 +215,29 @@ export default function AboutQatarSection({ pageNo, idx }) {
                 })}
               </div>
             ) : (
-              /* ── DESKTOP: original layout ───────────────────────── */
               <div className={styles.contentArea}>
-                {/* <WavyEmblem /> */}
-
-                {/* Vertical Tabs Column */}
                 <div className={styles.tabsCol}>
-               <div className={styles.tabsColInner}>   {currentTabs.map((t, i) => (
-                    <button
-                      key={i}
-                      className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
-                      onClick={() => handleSubTabChange(i)}
-                    >
-                      <span>{t.headingEn}</span>
-                    </button>
-                  ))}
+                  <div className={styles.tabsColInner}>
+                    {currentTabs.map((t, i) => (
+                      <button
+                        key={i}
+                        className={`${styles.tabBtn} ${i === activeSubTab ? styles.tabBtnActive : ""}`}
+                        onClick={() => handleSubTabChange(i)}
+                      >
+                        <span>{t.headingEn}</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* Content Column */}
                 <div className={styles.contentCol}>
                   {currentTab && (
                     <>
-                      <div className={styles.imageWrap}>
-                        <div
-                          className={`${styles.image} ${animating ? styles.imageOut : styles.imageIn}`}
-                          style={{ backgroundImage: `url(${buildImageUrl(currentTab.imageEn)})` }}
-                        />
-                        <div className={styles.imageLabel}>{currentTab.headingEn}</div>
-                      </div>
+                      <ImageCarousel
+                        nodes={currentTab.imagesEn?.nodes || []}
+                        animating={animating}
+                        label={currentTab.headingEn}
+                      />
                       <div className={`${styles.descBox} ${animating ? styles.descOut : styles.descIn}`}>
                         <div dangerouslySetInnerHTML={{ __html: currentTab.descEn }} />
                       </div>

@@ -511,3 +511,71 @@
   line-height: 1.75;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
+
+/* ── Image carousel arrows & dots ───────────────────────────── */
+.accordionImgWrap {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
+.accordionImgWrap .accordionImg {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+
+.imgArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 60px;
+  border: none;
+  background: #6596ad;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.imgArrow:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.imgArrowLeft {
+  left: 10px;
+}
+
+.imgArrowRight {
+  right: 10px;
+}
+
+.imgDots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.imgDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.imgDotActive {
+  background: #fff;
+  transform: scale(1.25);
+}

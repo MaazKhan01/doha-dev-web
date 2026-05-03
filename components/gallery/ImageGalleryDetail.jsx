@@ -69,13 +69,13 @@ export default function ImageGalleryDetail({ slug: slugProp }) {
 
       />
 
-      <div className="innerPage-emblem py-20">
-                        <div className="container">
-                  <div className="my-8">
-                    <h2 className="text-[40px] mb-4 font-medium text-theme-primary">{heading}</h2>
-                    <h3> <span className="text-theme-red">{totalImages} </span> Photos</h3>
-                  </div>
-                </div>
+      <div className="innerPage-emblem py-10 md:py-20">
+        <div className="container">
+          <div className="my-4 md:my-8">
+            <h2 className="text-2xl md:text-[40px] mb-3 font-medium text-theme-primary">{heading}</h2>
+            <h3><span className="text-theme-red">{totalImages} </span>Photos</h3>
+          </div>
+        </div>
         <main className={styles.mainContent}>
 
 

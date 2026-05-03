@@ -46,13 +46,6 @@
   user-select: none;
   
 }
-/* in mobile give image max height */
-@media (max-width: 768px) {
-  
-  .sliderTrack {
-  aspect-ratio: 16 / 9;
-  }
-}
 .sliderTrack {
   position: absolute;
   inset: 0;
@@ -78,9 +71,9 @@
 
 .slideImg {
   width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
-  margin: 0 10px;
 }
 
 /* Arrows */
@@ -153,7 +146,8 @@
 }
 
 @media (max-width: 768px) {
-  .mainContent { padding: 2rem 1.25rem 4rem; }
-  .arrow { width: 36px; height: 46px; font-size: 0.85rem; }
-  .slide { left: 10%; width: 80%; }
+  .mainContent { padding: 1.5rem 0 3rem; }
+  .sliderWrap { min-height: 0; height: 56vw; }
+  .arrow { width: 32px; height: 42px; font-size: 0.8rem; }
+  .slide { left: 5%; width: 90%; }
 }

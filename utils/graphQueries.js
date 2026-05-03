@@ -74,8 +74,8 @@ export const ABOUT_QATAR = `query GetAboutQatar($id: ID!) {
                   steps {
                     descEn
                     headingEn
-                    imageEn {
-                      node {
+                    imagesEn {
+                      nodes {
                         filePath
                         mediaItemUrl
                       }
