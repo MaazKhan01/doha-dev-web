@@ -505,7 +505,8 @@ export const IMAGE_GALLERY_DETAIL_QUERY = `query ImageGalleryDetailQuery($slug: 
           node { mediaItemUrl }
         }
       }
-      imageGallery {
+
+      imageGallery(first: 50) {
         nodes {
           mediaItemUrl
           sourceUrl
