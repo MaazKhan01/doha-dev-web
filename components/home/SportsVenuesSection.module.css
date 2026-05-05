@@ -6,18 +6,19 @@
   position: relative;
   overflow: hidden;
   padding-top: 100px;
+  background-color: #f9f9f9;
 }
 /* bgTop */
 .bgTop {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 300px;
+  height: 80px;
   pointer-events: none;
-  background-size: contain;
+  /* background-size: contain; */
   background-position: center;
-  background-repeat: no-repeat;
-  top: 0;
+  background-repeat: repeat;
+  top: 80px;
   left: 0;
   z-index: 0;
 }
@@ -31,7 +32,7 @@
   background-size: contain;
   background-position: bottom left;
   background-repeat: no-repeat;
-  left: 0;
+  left: 20%;
   bottom: 0;
 }
 
@@ -145,5 +146,8 @@
 
   .card {
     min-height: 200px;
+  }
+  .bgLeft {
+    display: none;
   }
 }

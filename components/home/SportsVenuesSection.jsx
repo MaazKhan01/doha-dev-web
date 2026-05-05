@@ -61,12 +61,10 @@ export default function SportsVenuesSection({ pageNo, idx }) {
   return (
     <section id="sports-venues" className={`${styles.section} `}>
       {/* top image */}
-      {/* {backgroundImage2 && (
         <div
-          style={{ backgroundImage: `url(${backgroundImage2})` }}
+          style={{ backgroundImage: `url('/en/images/top-emblem.png')` }}
           className={styles.bgTop}
         />
-      )} */}
       {backgroundImage && (
         <div
           style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -107,7 +105,7 @@ export default function SportsVenuesSection({ pageNo, idx }) {
           <img
             src={mainImage}
             alt={heading || "Sports Venues"}
-            className="w-full h-auto lg:p-5"
+            className="w-full h-auto lg:p-8"
           />
         </div>
       </div>
