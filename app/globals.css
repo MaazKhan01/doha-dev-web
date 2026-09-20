@@ -1,26 +1,144 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Brand palette */
+  --color-sand: #faf5f0;
+  --color-ink: #1e1e1e;
+  --color-flame: #ff7346;
+  --color-hairline: color-mix(in srgb, #1e1e1e 14%, transparent);
+  --color-muted: color-mix(in srgb, #1e1e1e 65%, transparent);
+
+  /* One card radius across the site */
+  --radius-card: 20px;
+
+  /* Typefaces — the two families are loaded in lib/fonts.ts */
+  --font-display: var(--font-doha), system-ui, sans-serif;
+  --font-body: var(--font-doha), system-ui, sans-serif;
+  --font-arabic: var(--font-noto), system-ui, sans-serif;
+
+  /* Vertical rhythm between major sections — tightens on small screens */
+  --spacing-section: clamp(4rem, 9vw, 7.5rem);
+
+  /* Shared easing for motion and CSS transitions */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    /* Lenis drives scrolling; native smooth scroll would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: var(--color-sand);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Nothing should ever scroll the page sideways on a phone. */
+    overflow-x: hidden;
+  }
+
+  [dir='rtl'] body {
+    font-family: var(--font-arabic);
+  }
+
+  ::selection {
+    background-color: var(--color-flame);
+    color: var(--color-sand);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-flame);
+    outline-offset: 3px;
+  }
+
+  /* Tailwind v4 resets buttons to the default cursor — put it back. */
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  summary {
+    cursor: pointer;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Page gutter — every section aligns to this. */
+  .container-page {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* 62px at the 1440 artboard. */
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 3.875rem;
+    }
+  }
+
+  /* The heavy uppercase display voice used for every hero-scale heading. */
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    /* Long English words must break rather than push the layout wide. */
+    overflow-wrap: break-word;
+  }
+
+  [dir='rtl'] .type-display {
+    font-family: var(--font-arabic);
+    text-transform: none;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+
+  /* 34px Bold all-caps — the left-hand heading of each supporting section. */
+  .type-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(1rem, 3vw, 2.125rem);
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+
+  [dir='rtl'] .type-eyebrow {
+    font-family: var(--font-arabic);
+    text-transform: none;
+  }
+
+  .type-body {
+    font-size: clamp(0.9375rem, 1.6vw, 1rem);
+    line-height: 1.65;
+  }
+
+  /* 24px Light — the supporting column beside every section heading, and the
+     FAQ answers. Scales down on narrow screens rather than wrapping badly. */
+  .type-lead {
+    font-size: clamp(0.9375rem, 2.4vw, 1.5rem);
+    font-weight: 300;
+    line-height: 1.45;
+  }
+}
+
+/* Honour the reader's reduced-motion preference everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
