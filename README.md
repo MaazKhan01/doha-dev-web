@@ -22,7 +22,7 @@ components/
   layout/            header, footer, newsletter, logo
   sections/          one file per band of the page, each takes a typed prop
   ui/                shared primitives (accordion, diamond, media, headings, icons)
-  motion/            Reveal + ScrollLitHeading
+  motion/            Reveal + LitHeading
   providers/         Lenis smooth scrolling
 content/             static EN/AR copy, typed as HomeContent
 lib/cms/             GraphQL client + content loaders
@@ -130,8 +130,9 @@ Defined once in `app/globals.css` under `@theme`:
 - `Reveal` — rise, fade and de-blur on enter, firing at 22% into the viewport so a fast
   scroll does not trip several sections into one flash. Sections cascade on a fixed
   ladder: heading 0s → supporting column 0.12s → cards 0.24s, 0.36s, 0.48s.
-- `ScrollLitHeading` — the statement band. Starts at 16% opacity and lights up line by
-  line, each line driven by its own slice of the section's scroll progress.
+- `LitHeading` — the statement band. Starts at 16% opacity and fills in line by line on
+  a timer, 0.8s apart. It is not scroll-driven; it waits until the heading is on screen,
+  then runs once, so the sequence is never spent before anyone sees it.
 - Lenis provides the smooth scroll; all three respect `prefers-reduced-motion`.
 
 ## Still outstanding

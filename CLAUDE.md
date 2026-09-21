@@ -6,7 +6,7 @@ conventions to hold to.
 ## Conventions
 
 - **Server components by default.** `'use client'` only where there is state, an event
-  handler or a browser API — currently `SmoothScroll`, `Reveal`, `ScrollLitHeading`,
+  handler or a browser API — currently `SmoothScroll`, `Reveal`, `LitHeading`,
   `Accordion`, `NewsletterForm`.
 - **Sections take one typed prop** (`data`) and never fetch. All content enters through
   `lib/cms/home.ts`.
@@ -19,10 +19,10 @@ conventions to hold to.
 - **Never hardcode a font family or a body size.** Use `type-display`, `type-eyebrow`,
   `type-lead`, `type-body`, or the `--font-*` tokens.
 - **One entrance animation.** Wrap in `<Reveal>`; pass `delay` for stagger, following the
-  0 / 0.12 / 0.24+ ladder. The only other motion primitive is `ScrollLitHeading`. Do not
+  0 / 0.12 / 0.24+ ladder. The only other motion primitive is `LitHeading`. Do not
   add bespoke scroll effects.
 - **One shape for chips.** FAQ markers and social buttons both use `<Diamond>`.
-- **Respect reduced motion.** `Reveal`, `ScrollLitHeading`, `Accordion` and Lenis all
+- **Respect reduced motion.** `Reveal`, `LitHeading`, `Accordion` and Lenis all
   check it — anything new must too.
 
 ## Gotchas

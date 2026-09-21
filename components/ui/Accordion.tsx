@@ -12,7 +12,7 @@ import type { FaqItem } from '@/types/content'
 function Marker({ open }: { open: boolean }) {
   return (
     <Diamond
-      spin={open}
+      // spin={open}
       className="size-6 bg-ink text-sand group-hover:bg-flame md:size-7"
     >
       <span className="relative block size-3">
@@ -39,7 +39,7 @@ export function Accordion({ items }: { items: FaqItem[] }) {
       collapsible
       value={openValue}
       onValueChange={setOpenValue}
-      className="border-t border-hairline"
+      className="border-t border-[#1E1E1E]"
     >
       {items.map((item) => {
         const open = openValue === item.id
@@ -48,7 +48,7 @@ export function Accordion({ items }: { items: FaqItem[] }) {
           <AccordionPrimitive.Item
             key={item.id}
             value={item.id}
-            className="border-b border-hairline"
+            className="border-b border-[#1E1E1E]"
           >
             <AccordionPrimitive.Header>
               <AccordionPrimitive.Trigger
@@ -57,7 +57,7 @@ export function Accordion({ items }: { items: FaqItem[] }) {
                   'transition-colors duration-300 hover:text-flame',
                 )}
               >
-                <span className="text-sm leading-snug md:text-base">{item.question}</span>
+                <span className="text-sm leading-snug md:text-lg">{item.question}</span>
                 <Marker open={open} />
               </AccordionPrimitive.Trigger>
             </AccordionPrimitive.Header>

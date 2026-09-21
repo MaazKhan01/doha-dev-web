@@ -70,7 +70,7 @@ export function Footer({ data }: { data: FooterSection }) {
 
       {/* Solid bar at every width, so the legal links never sit on the image. */}
       <div className="bg-ink">
-        <div className="container-page flex flex-col items-center gap-1.5 py-4 text-xs text-sand/80 sm:flex-row sm:justify-between sm:py-5">
+        <div className="container-page flex flex-col items-center gap-1.5 py-4 text-base text-sand/80 sm:flex-row sm:justify-between sm:py-5">
           <p>{data.copyright}</p>
           <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             {data.links.map((link) => (

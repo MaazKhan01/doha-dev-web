@@ -10,7 +10,7 @@ export function ValueProps({ data }: { data: ValuePropsSection }) {
           <h2 className="type-eyebrow max-w-md">{data.title}</h2>
         </Reveal>
         <Reveal delay={0.12}>
-          <p className="type-lead max-w-2xl text-muted">{data.description}</p>
+          <p className="type-lead max-w-2xl text-ink">{data.description}</p>
         </Reveal>
       </div>
 
@@ -26,12 +26,12 @@ export function ValueProps({ data }: { data: ValuePropsSection }) {
                 />
                 {/* Keeps the centred title legible over any crop. */}
                 <div aria-hidden className="absolute inset-0 bg-ink/30" />
-                <h3 className="type-display absolute inset-0 grid place-items-center px-5 text-center text-[clamp(1.4rem,4.5vw,2rem)] text-sand">
+                <h3 className="type-display absolute inset-0 grid place-items-center px-5 text-center text-[clamp(1.4rem,4.5vw,3rem)] text-sand">
                   {item.title}
                 </h3>
               </div>
 
-              <p className="type-body p-5 text-muted md:p-6">{item.body}</p>
+              <p className="type-body p-5 md:p-6">{item.body}</p>
             </li>
           </Reveal>
         ))}

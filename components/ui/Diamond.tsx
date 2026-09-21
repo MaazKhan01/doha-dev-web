@@ -18,7 +18,7 @@ export function Diamond({ children, spin = false, className }: DiamondProps) {
   return (
     <span
       className={cn(
-        'grid shrink-0 place-items-center rounded-[4px]',
+        'grid shrink-0 place-items-center',
         'transition-[rotate,background-color,color] duration-500 ease-[var(--ease-brand)]',
         spin ? 'rotate-[135deg]' : 'rotate-45',
         className,

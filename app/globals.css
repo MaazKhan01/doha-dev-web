@@ -28,6 +28,11 @@
     /* Lenis drives scrolling; native smooth scroll would fight it. */
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
+    /* Nothing should ever scroll the page sideways on a phone.
+       `clip`, not `hidden`: `hidden` on body forces overflow-y to `auto`,
+       which turns body into a scroll container and stops IntersectionObserver
+       resolving in-flow elements — every scroll-triggered reveal dies with it. */
+    overflow-x: clip;
   }
 
   body {
@@ -37,8 +42,6 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* Nothing should ever scroll the page sideways on a phone. */
-    overflow-x: hidden;
   }
 
   [dir='rtl'] body {
@@ -92,6 +95,8 @@
     text-transform: uppercase;
     line-height: 0.92;
     letter-spacing: -0.01em;
+    font-feature-settings: "ss01"; /* ligatures */
+
     /* Long English words must break rather than push the layout wide. */
     overflow-wrap: break-word;
   }
@@ -119,8 +124,9 @@
   }
 
   .type-body {
-    font-size: clamp(0.9375rem, 1.6vw, 1rem);
-    line-height: 1.65;
+    font-size: clamp(0.9375rem, 1.6vw, 1.3rem);
+    /* line-height: 1.65; */
+    font-weight: 300 !important;
   }
 
   /* 24px Light — the supporting column beside every section heading, and the

@@ -20,7 +20,7 @@ export function DisplayHeading({
   tone = 'ink',
 }: DisplayHeadingProps) {
   return (
-    <Tag className={cn('type-display', tone === 'sand' ? 'text-sand' : 'text-ink', className)}>
+    <Tag className={cn('type-display', tone === 'sand' ? 'text-sand' : 'text-black', className)}>
       {lines.map((line, index) => (
         <span key={`${line.text}-${index}`} className="block">
           <span className={line.accent ? 'text-flame' : undefined}>{line.text}</span>
