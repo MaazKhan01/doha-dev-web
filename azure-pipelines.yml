@@ -14,7 +14,7 @@ stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-    # ==================== Lower ENV JOB ====================
+    # ==================== Lower STG ENV JOB ====================
     - job: BuildDev
       displayName: Build job for Lower ENV
       # condition: or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'preprod'))
