@@ -1,14 +1,20 @@
-import type { HomeContent } from '@/types/content'
+import type { StaticContent } from '@/types/content'
 
-export const homeEn: HomeContent = {
+export const homeEn: StaticContent = {
   meta: {
     title: 'Doha 2036 - A Games For All Summers',
     description:
       'Doha is exploring the opportunity to host the Olympic and Paralympic Games in 2036.',
   },
   chrome: {
-    contactLabel: 'Contact',
     skipToContent: 'Skip to content',
+  },
+  header: {
+    logo: {
+      src: '',
+      alt: 'Doha — aspiring to welcome the Olympic and Paralympic Games',
+    },
+    menus: [{ label: 'Contact', href: '#contact', children: [] }],
   },
   hero: {
     heading: [{ text: 'A Games For' }, { text: 'All Summers' }],

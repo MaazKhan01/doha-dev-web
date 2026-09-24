@@ -1,17 +1,19 @@
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils/cn'
+import type { MediaAsset } from '@/types/content'
 
 /**
  * The header lockup: Qatar Olympic Committee, the DOHA bid wordmark and Qatar
- * Paralympic Committee, shipped as a single SVG. Width is capped so it never
- * crowds the nav on a phone.
+ * Paralympic Committee. Uses the CMS logo when one is uploaded, else the
+ * bundled SVG. Width is capped so it never crowds the nav on a phone; height
+ * follows the image's own ratio.
  */
-export function Wordmark({ className }: { className?: string }) {
+export function Wordmark({ logo, className }: { logo: MediaAsset; className?: string }) {
   return (
     <Image
-      src="/logo.svg"
-      alt="Doha — aspiring to welcome the Olympic and Paralympic Games"
+      src={logo.src || '/logo.svg'}
+      alt={logo.alt}
       width={341}
       height={102}
       priority

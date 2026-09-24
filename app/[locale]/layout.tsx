@@ -5,7 +5,7 @@ import '@/app/globals.css'
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 import { SmoothScroll } from '@/components/providers/SmoothScroll'
-import { getHomeContent } from '@/lib/cms/home'
+import { getSiteContent } from '@/lib/cms/site'
 import { fontVariables } from '@/lib/fonts'
 import { isLocale, localeDirection, locales } from '@/lib/i18n/config'
 
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: LayoutParams): Promise<Metada
   const { locale } = await params
   if (!isLocale(locale)) return {}
 
-  const { meta } = await getHomeContent(locale)
+  const { meta } = await getSiteContent(locale)
   return {
     title: meta.title,
     description: meta.description,
@@ -36,7 +36,7 @@ export default async function LocaleLayout({
   const { locale } = await params
   if (!isLocale(locale)) notFound()
 
-  const content = await getHomeContent(locale)
+  const content = await getSiteContent(locale)
 
   return (
     <html lang={locale} dir={localeDirection[locale]} className={fontVariables}>
@@ -50,7 +50,7 @@ export default async function LocaleLayout({
           {content.chrome.skipToContent}
         </a>
 
-        <Header locale={locale} contactLabel={content.chrome.contactLabel} />
+        <Header locale={locale} data={content.header} />
         <main id="main">{children}</main>
         <Footer data={content.footer} />
       </body>

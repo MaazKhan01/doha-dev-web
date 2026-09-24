@@ -9,7 +9,9 @@ conventions to hold to.
   handler or a browser API — currently `SmoothScroll`, `Reveal`, `LitHeading`,
   `Accordion`, `NewsletterForm`.
 - **Sections take one typed prop** (`data`) and never fetch. All content enters through
-  `lib/cms/home.ts`.
+  `lib/cms/site.ts` (layout) and `lib/cms/home.ts` (page); queries live only in
+  `lib/cms/graphQlQueries.js`, and CMS shapes are translated only in `lib/cms/mappers.ts`.
+- **Sections render through `PageBuilder`** in CMS order — don't hand-place them in a page.
 - **Extend `types/content.ts` before adding a section.** The type is the contract between
   the CMS and the components.
 - **Logical properties only** — `ps/pe`, `ms/me`, `text-start/end`, `border-s/e`. Never

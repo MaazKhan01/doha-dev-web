@@ -39,21 +39,24 @@ export const cmsClient = endpoint
 
 export const isCmsConfigured = cmsClient !== null
 
+/** A query and the variables it runs with — the shape of every entry in `graphQlQueries.js`. */
+export type CmsQuery = {
+  query: string
+  variables: Record<string, unknown>
+}
+
 /**
- * Runs a query and falls back to static content when the CMS is not configured
- * or the request fails, so the site never renders empty during the build-out.
+ * Runs a query from `graphQlQueries.js`. Resolves to `null` when the CMS is not
+ * configured or the request fails; the loaders then serve the static content,
+ * so the site never renders empty during the build-out.
  */
-export async function queryCms<TData>(
-  document: string,
-  variables: Record<string, unknown>,
-  fallback: TData,
-): Promise<TData> {
-  if (!cmsClient) return fallback
+export async function queryCms<TData>({ query, variables }: CmsQuery): Promise<TData | null> {
+  if (!cmsClient) return null
 
   try {
-    return await cmsClient.request<TData>(document, variables)
+    return await cmsClient.request<TData>(query, variables)
   } catch (error) {
     console.error('[cms] query failed, serving static fallback', error)
-    return fallback
+    return null
   }
 }

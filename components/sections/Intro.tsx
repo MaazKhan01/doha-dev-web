@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { Reveal } from '@/components/motion/Reveal'
 import { DisplayHeading } from '@/components/ui/DisplayHeading'
 import type { IntroSection } from '@/types/content'
@@ -21,8 +23,17 @@ export function Intro({ data }: { data: IntroSection }) {
           {data.attribution && (
             <Reveal delay={0.1 + data.paragraphs.length * 0.1} offset={28}>
               <p className="max-w-2xl text-sm leading-snug text-flame">
-                <span className="block">{data.attribution.name}</span>
-                <span className="block">{data.attribution.role}</span>
+                {data.attribution.href ? (
+                  <Link href={data.attribution.href} className="transition-opacity duration-300 hover:opacity-70">
+                    <span className="block">{data.attribution.name}</span>
+                    <span className="block">{data.attribution.role}</span>
+                  </Link>
+                ) : (
+                  <>
+                    <span className="block">{data.attribution.name}</span>
+                    <span className="block">{data.attribution.role}</span>
+                  </>
+                )}
               </p>
             </Reveal>
           )}

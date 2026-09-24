@@ -26,6 +26,16 @@ export interface LinkItem {
   href: string
 }
 
+export interface NavItem extends LinkItem {
+  children: LinkItem[]
+}
+
+export interface HeaderSection {
+  /** Empty `src` falls back to the bundled `/logo.svg` lockup. */
+  logo: MediaAsset
+  menus: NavItem[]
+}
+
 export interface HeroSection {
   heading: HeadingLine[]
   video: VideoAsset
@@ -38,6 +48,7 @@ export interface IntroSection {
   attribution?: {
     name: string
     role: string
+    href?: string
   }
 }
 
@@ -93,6 +104,8 @@ export interface FooterSection {
     label: string
     placeholder: string
     cta: string
+    /** When set, the CTA links out instead of submitting the form. */
+    href?: string
   }
   socials: SocialLink[]
   wordmark: string[]
@@ -105,21 +118,44 @@ export interface FooterSection {
 }
 
 export interface SiteChrome {
-  contactLabel: string
   skipToContent: string
 }
 
-export interface HomeContent {
-  meta: {
-    title: string
-    description: string
-  }
-  chrome: SiteChrome
+/** Every section the page builder can render, keyed by the prop it takes. */
+export interface SectionDataMap {
   hero: HeroSection
   intro: IntroSection
   statement: StatementSection
   valueProps: ValuePropsSection
   committee: CommitteeSection
   faq: FaqSection
+}
+
+export type SectionType = keyof SectionDataMap
+
+/** One band of a page, in the order the CMS lists it. */
+export type PageSection = {
+  [K in SectionType]: { id: string; type: K; data: SectionDataMap[K] }
+}[SectionType]
+
+/** Shared by every page: rendered by the locale layout. */
+export interface SiteContent {
+  meta: {
+    title: string
+    description: string
+  }
+  chrome: SiteChrome
+  header: HeaderSection
   footer: FooterSection
 }
+
+export interface HomeContent {
+  sections: PageSection[]
+}
+
+/**
+ * The static copy in `content/`, authored section by section in the design's
+ * default order. It is what renders while the CMS is unset or unreachable, and
+ * the source for values the CMS does not model (alt text, placeholders, socials).
+ */
+export type StaticContent = SiteContent & SectionDataMap

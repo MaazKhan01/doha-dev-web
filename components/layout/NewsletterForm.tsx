@@ -22,6 +22,21 @@ export function NewsletterForm({ copy }: { copy: FooterSection['newsletter'] }) 
     setStatus('done')
   }
 
+  // The CMS can point the CTA at an external sign-up page instead.
+  if (copy.href) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p className="text-sm text-sand/90">{copy.label}</p>
+        <a
+          href={copy.href}
+          className="grid h-9 w-fit place-items-center rounded-md bg-sand px-4 text-sm text-ink transition-colors duration-300 hover:bg-flame hover:text-sand"
+        >
+          {copy.cta}
+        </a>
+      </div>
+    )
+  }
+
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
       <label htmlFor="newsletter-email" className="text-sm text-sand/90">

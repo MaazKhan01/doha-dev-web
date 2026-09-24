@@ -2,26 +2,27 @@ import 'server-only'
 
 import { cache } from 'react'
 
-import { homeAr } from '@/content/home.ar'
-import { homeEn } from '@/content/home.en'
+import { queryCms } from '@/lib/cms/client'
+import { HOMEPAGE_QUERY } from '@/lib/cms/graphQlQueries'
+import { mapSections } from '@/lib/cms/mappers'
+import { staticContent, staticHomeSections } from '@/lib/cms/static'
 import type { Locale } from '@/lib/i18n/config'
+import type { CmsPageQuery } from '@/types/cms'
 import type { HomeContent } from '@/types/content'
 
-const staticContent: Record<Locale, HomeContent> = {
-  en: homeEn,
-  ar: homeAr,
-}
-
 /**
- * Single entry point for the home page's content.
+ * Single entry point for the home page's content: its page-builder sections,
+ * in the order editors arranged them in the CMS.
  *
- * `cache()` deduplicates within one render pass — `generateMetadata`, the
- * layout and the page all ask for the same locale and get one resolution.
- * Cross-request caching is the Data Cache's job, configured in `client.ts`.
- *
- * Today it returns the static fixtures. When the CMS is live, map the GraphQL
- * response to `HomeContent` here — no section component has to change.
+ * `cache()` deduplicates within one render pass; cross-request caching is the
+ * Data Cache's job, configured in `client.ts`. When the CMS is unset or the
+ * request fails, the static sections render in the design's order.
  */
 export const getHomeContent = cache(async (locale: Locale): Promise<HomeContent> => {
-  return staticContent[locale]
+  const fallback = staticContent[locale]
+  const page = await queryCms<CmsPageQuery>(HOMEPAGE_QUERY)
+
+  return {
+    sections: mapSections(page, { locale, fallback }) ?? staticHomeSections(fallback),
+  }
 })

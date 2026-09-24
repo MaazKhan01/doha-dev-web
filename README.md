@@ -41,9 +41,33 @@ Three rules keep it clean:
 
 ## Content and the CMS
 
-`lib/cms/home.ts` is the only place the home page's data comes from. It currently returns
-the fixtures in `content/`. When the CMS is ready, map the GraphQL response to
-`HomeContent` inside that function — no component changes.
+Data flows one way, server-side, one request per query:
+
+```
+lib/cms/graphQlQueries.js   every query + its variables (HEADER / FOOTER / HOMEPAGE)
+        │  queryCms()        lib/cms/client.ts — cached, tagged 'cms', null on failure
+        ▼
+types/cms.ts                raw WPGraphQL response shapes
+        │  lib/cms/mappers.ts — pure: picks En/Ar, strips HTML, __typename → section
+        ▼
+types/content.ts            SiteContent (layout) · HomeContent { sections[] } (page)
+        │  lib/cms/site.ts · lib/cms/home.ts
+        ▼
+PageBuilder                 section type → component, in the order editors set
+```
+
+- **Header and footer** load in `getSiteContent` (layout); **page-builder sections** in
+  `getHomeContent` (page). Editors control section order in the CMS.
+- **Arabic falls back to English** per field while translations are authored.
+- **Rich text is flattened.** A line break starts a new heading line; a **bold** line in a
+  heading is an accent (flame) line. The statement lights its first line by default.
+- **Fallback.** If the endpoint is unset or a query fails, that query's part of the page
+  renders the static copy in `content/`. Unknown `__typename`s are skipped with a dev warning.
+
+**Adding a page-builder layout:** fragment in `graphQlQueries.js` → raw type in
+`types/cms.ts` → mapper + `sectionMappers` entry in `mappers.ts` → (new section only)
+`SectionDataMap` in `types/content.ts` and the `PageBuilder` map. The types make each step
+fail the build until the next one is done.
 
 Set the endpoint in `.env.local` (see `.env.example`):
 

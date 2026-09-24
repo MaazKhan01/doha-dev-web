@@ -1,4 +1,4 @@
-import type { HomeContent } from '@/types/content'
+import type { StaticContent } from '@/types/content'
 import { homeEn } from './home.en'
 
 /**
@@ -6,14 +6,20 @@ import { homeEn } from './home.en'
  * this exists so RTL layout, line breaking and typography can be built and
  * reviewed against real Arabic text rather than transliterated English.
  */
-export const homeAr: HomeContent = {
+export const homeAr: StaticContent = {
   meta: {
     title: 'الدوحة 2036 — دورة ألعاب لكل الصيف',
     description: 'تدرس الدوحة فرصة استضافة الألعاب الأولمبية والبارالمبية في عام 2036.',
   },
   chrome: {
-    contactLabel: 'اتصل بنا',
     skipToContent: 'تخطَّ إلى المحتوى',
+  },
+  header: {
+    logo: {
+      src: '',
+      alt: 'الدوحة — نتطلع إلى استضافة الألعاب الأولمبية والبارالمبية',
+    },
+    menus: [{ label: 'اتصل بنا', href: '#contact', children: [] }],
   },
   hero: {
     heading: [{ text: 'دورة ألعاب' }, { text: 'لكل الصيف' }],
