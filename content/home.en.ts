@@ -19,7 +19,8 @@ export const homeEn: StaticContent = {
   hero: {
     heading: [{ text: 'A Games For' }, { text: 'All Summers' }],
     video: {
-      src: '',
+      // Temporary local cut until the CMS serves the hero media.
+      src: '/media/hero.mp4',
       poster: '',
       alt: 'Qatari riders competing in an equestrian race',
     },

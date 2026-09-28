@@ -24,7 +24,7 @@ export const homeAr: StaticContent = {
   hero: {
     heading: [{ text: 'دورة ألعاب' }, { text: 'لكل الصيف' }],
     video: {
-      src: '',
+      src: homeEn.hero.video.src,
       poster: '',
       alt: 'فرسان قطريون يتنافسون في سباق للفروسية',
     },
