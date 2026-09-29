@@ -3,6 +3,17 @@
 import Lenis from 'lenis'
 import { useEffect } from 'react'
 
+let instance: Lenis | null = null
+
+/**
+ * Pauses Lenis while an overlay is open, so the page behind a modal stays put.
+ * A no-op under reduced motion, where Lenis never starts.
+ */
+export function setScrollLocked(locked: boolean) {
+  if (locked) instance?.stop()
+  else instance?.start()
+}
+
 /**
  * Lenis smooth scrolling, driven by rAF and disabled for readers who ask for
  * reduced motion. Mounted once in the root layout.
@@ -18,6 +29,7 @@ export function SmoothScroll() {
       smoothWheel: true,
       touchMultiplier: 1.6,
     })
+    instance = lenis
 
     let frame = 0
     const raf = (time: number) => {
@@ -29,6 +41,7 @@ export function SmoothScroll() {
     return () => {
       cancelAnimationFrame(frame)
       lenis.destroy()
+      instance = null
     }
   }, [])
 

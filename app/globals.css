@@ -5,11 +5,15 @@
   --color-sand: #faf5f0;
   --color-ink: #1e1e1e;
   --color-flame: #ff7346;
+  /* Input borders, section rules and quiet notes on sand */
+  --color-stone: #c8b4a0;
   --color-hairline: color-mix(in srgb, #1e1e1e 14%, transparent);
   --color-muted: color-mix(in srgb, #1e1e1e 65%, transparent);
 
   /* One card radius across the site */
   --radius-card: 20px;
+  /* Inputs and buttons inside cards and modals */
+  --radius-field: 6px;
 
   /* Typefaces — the two families are loaded in lib/fonts.ts */
   --font-display: var(--font-doha), system-ui, sans-serif;

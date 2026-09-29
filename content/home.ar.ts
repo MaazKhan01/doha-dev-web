@@ -14,6 +14,39 @@ export const homeAr: StaticContent = {
   chrome: {
     skipToContent: 'تخطَّ إلى المحتوى',
   },
+  modals: {
+    newsletter: {
+      eyebrow: 'النشرة البريدية',
+      heading: ['رافقونا', 'في الرحلة'],
+      body: 'كونوا أول من يعرف أخبار ملف الدوحة 2036 — المحطات والإعلانات وقصص المنطقة.',
+      emailLabel: 'البريد الإلكتروني',
+      emailPlaceholder: 'بريدك الإلكتروني',
+      consent:
+        'أوافق على تلقي التحديثات من لجنة ملف الدوحة 2036 وأقبل إشعار الخصوصية.',
+      submit: 'اشترك',
+      submitting: 'جارٍ الاشتراك…',
+      success: 'شكراً لك — تم تسجيلك في القائمة.',
+      error: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
+      close: 'إغلاق',
+    },
+    contact: {
+      eyebrow: 'اتصل بنا',
+      heading: ['تواصل معنا'],
+      body: 'للاستفسارات الإعلامية أو الشراكات أو الاستفسارات العامة — أرسل لنا رسالة وسيتواصل معك الفريق.',
+      fields: {
+        name: { label: 'الاسم', placeholder: 'الاسم الكامل' },
+        email: { label: 'البريد الإلكتروني', placeholder: 'your@email.com' },
+        subject: { label: 'الموضوع', placeholder: 'ما موضوع استفسارك؟' },
+        message: { label: 'الرسالة', placeholder: 'اكتب رسالتك…' },
+      },
+      note: 'نرد خلال 5 أيام عمل.',
+      submit: 'إرسال',
+      submitting: 'جارٍ الإرسال…',
+      success: 'شكراً لك — تم إرسال رسالتك.',
+      error: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
+      close: 'إغلاق',
+    },
+  },
   header: {
     logo: {
       src: '',
@@ -150,16 +183,15 @@ export const homeAr: StaticContent = {
   footer: {
     newsletter: {
       label: 'اشترك في نشرتنا البريدية',
-      placeholder: 'البريد الإلكتروني',
       cta: 'اشترك',
     },
     socials: homeEn.footer.socials.map((social) => ({ ...social })),
     wordmark: ['دورة ألعاب', 'لكل', 'الصيف'],
     copyright: '© اللجنة الأولمبية القطرية',
     links: [
-      { label: 'الإشعارات القانونية', href: '#' },
-      { label: 'الخصوصية', href: '#' },
-      { label: 'الشفافية', href: '#' },
+      { label: 'الإشعارات القانونية', href: '/ar/legal-notices' },
+      { label: 'الخصوصية', href: '/ar/privacy' },
+      { label: 'الشفافية', href: '/ar/transparency' },
     ],
     media: {
       backdrop: { src: '', alt: 'صورة أرشيفية لغواصي اللؤلؤ قبالة سواحل قطر' },

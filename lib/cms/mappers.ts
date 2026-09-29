@@ -87,7 +87,6 @@ export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx)
   return {
     newsletter: {
       label: toPlainText(pick(locale, cta?.ctaLabel, cta?.ctaLabelAr)),
-      placeholder: base.newsletter.placeholder,
       cta: toPlainText(pick(locale, en?.buttonLabel, ar?.buttonLabel)) || base.newsletter.cta,
       href: pick(locale, en?.buttonLink, ar?.buttonLink) || undefined,
     },

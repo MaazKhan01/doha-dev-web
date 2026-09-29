@@ -9,6 +9,39 @@ export const homeEn: StaticContent = {
   chrome: {
     skipToContent: 'Skip to content',
   },
+  modals: {
+    newsletter: {
+      eyebrow: 'Newsletter',
+      heading: ['Stay with', 'the journey'],
+      body: 'Be the first to hear about the Doha 2036 bid — milestones, announcements and stories from the region.',
+      emailLabel: 'Email address',
+      emailPlaceholder: 'your@email.com',
+      consent:
+        'I agree to receive updates from the Doha 2036 Bid Committee and accept the Privacy Notice.',
+      submit: 'Sign up',
+      submitting: 'Signing up…',
+      success: 'Thank you — you are on the list.',
+      error: 'Something went wrong. Please try again.',
+      close: 'Close',
+    },
+    contact: {
+      eyebrow: 'Contact us',
+      heading: ['Get in touch'],
+      body: 'Media, partnership or general enquiries — send us a note and the team will come back to you.',
+      fields: {
+        name: { label: 'Name', placeholder: 'Full name' },
+        email: { label: 'Email', placeholder: 'your@email.com' },
+        subject: { label: 'Subject', placeholder: 'What is your enquiry about?' },
+        message: { label: 'Message', placeholder: 'Write your message…' },
+      },
+      note: 'We reply within 5 working days.',
+      submit: 'Send',
+      submitting: 'Sending…',
+      success: 'Thank you — your message has been sent.',
+      error: 'Something went wrong. Please try again.',
+      close: 'Close',
+    },
+  },
   header: {
     logo: {
       src: '',
@@ -147,7 +180,6 @@ export const homeEn: StaticContent = {
   footer: {
     newsletter: {
       label: 'Sign up for our newsletter',
-      placeholder: 'Email address',
       cta: 'Sign up',
     },
     socials: [
@@ -159,9 +191,9 @@ export const homeEn: StaticContent = {
     wordmark: ['A Games', 'For All', 'Summers'],
     copyright: '© Qatar Olympic Committee',
     links: [
-      { label: 'Legal Notices', href: '#' },
-      { label: 'Privacy', href: '#' },
-      { label: 'Transparency', href: '#' },
+      { label: 'Legal Notices', href: '/en/legal-notices' },
+      { label: 'Privacy', href: '/en/privacy' },
+      { label: 'Transparency', href: '/en/transparency' },
     ],
     media: {
       backdrop: { src: '', alt: 'Archive photograph of pearl divers off the coast of Qatar' },

@@ -32,5 +32,7 @@ export const getSiteContent = cache(async (locale: Locale): Promise<SiteContent>
     chrome: fallback.chrome,
     header: mapHeader(header, { locale, fallback }),
     footer: mapFooter(footer, { locale, fallback }),
+    // Static until the CMS models the modal copy.
+    modals: fallback.modals,
   }
 })

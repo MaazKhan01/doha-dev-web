@@ -102,9 +102,8 @@ export interface SocialLink {
 export interface FooterSection {
   newsletter: {
     label: string
-    placeholder: string
     cta: string
-    /** When set, the CTA links out instead of submitting the form. */
+    /** When set, the CTA links out instead of opening the newsletter modal. */
     href?: string
   }
   socials: SocialLink[]
@@ -119,6 +118,65 @@ export interface FooterSection {
 
 export interface SiteChrome {
   skipToContent: string
+}
+
+/** Copy shared by every form: status lines and the dialog's close button. */
+export interface FormCopy {
+  submit: string
+  submitting: string
+  success: string
+  error: string
+  close: string
+}
+
+export interface NewsletterModalContent extends FormCopy {
+  eyebrow: string
+  heading: string[]
+  body: string
+  emailLabel: string
+  emailPlaceholder: string
+  consent: string
+}
+
+export interface ContactModalContent extends FormCopy {
+  eyebrow: string
+  heading: string[]
+  body: string
+  fields: {
+    name: { label: string; placeholder: string }
+    email: { label: string; placeholder: string }
+    subject: { label: string; placeholder: string }
+    message: { label: string; placeholder: string }
+  }
+  /** Sits beside the submit button, e.g. the reply-time promise. */
+  note: string
+}
+
+export interface SiteModals {
+  newsletter: NewsletterModalContent
+  contact: ContactModalContent
+}
+
+/** The ids a link can target to open a modal: `href="#contact"`, `href="#newsletter"`. */
+export type ModalId = keyof SiteModals
+
+export interface LegalSection {
+  id: string
+  title: string
+  paragraphs: string[]
+}
+
+export interface LegalPage {
+  slug: string
+  meta: { title: string; description: string }
+  title: string[]
+  intro: string
+  sections: LegalSection[]
+  help: {
+    title: string
+    body: string
+    cta: string
+  }
 }
 
 /** Every section the page builder can render, keyed by the prop it takes. */
@@ -147,6 +205,7 @@ export interface SiteContent {
   chrome: SiteChrome
   header: HeaderSection
   footer: FooterSection
+  modals: SiteModals
 }
 
 export interface HomeContent {

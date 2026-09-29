@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import '@/app/globals.css'
-import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
+import { ModalHost } from '@/components/modals/ModalHost'
 import { SmoothScroll } from '@/components/providers/SmoothScroll'
 import { getSiteContent } from '@/lib/cms/site'
 import { fontVariables } from '@/lib/fonts'
@@ -51,8 +51,9 @@ export default async function LocaleLayout({
         </a>
 
         <Header locale={locale} data={content.header} />
-        <main id="main">{children}</main>
-        <Footer data={content.footer} />
+        {/* Each route group's layout renders <main> and its own footer variant. */}
+        {children}
+        <ModalHost modals={content.modals} />
       </body>
     </html>
   )
