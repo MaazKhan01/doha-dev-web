@@ -197,7 +197,6 @@ export const homeEn: StaticContent = {
     ],
     media: {
       backdrop: { src: '', alt: 'Archive photograph of pearl divers off the coast of Qatar' },
-      inset: { src: '', alt: 'Swimmers diving into the water at the start of a race' },
     },
   },
 }

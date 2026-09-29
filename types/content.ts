@@ -112,7 +112,6 @@ export interface FooterSection {
   links: LinkItem[]
   media: {
     backdrop: MediaAsset
-    inset: MediaAsset
   }
 }
 
@@ -162,6 +161,8 @@ export type ModalId = keyof SiteModals
 
 export interface LegalSection {
   id: string
+  /** Shown before the title ("01 — Publisher"); numbered by position when absent. */
+  number?: string
   title: string
   paragraphs: string[]
 }

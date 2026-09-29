@@ -4,7 +4,7 @@ import { cache } from 'react'
 
 import { queryCms } from '@/lib/cms/client'
 import { FOOTER_QUERY, HEADER_QUERY } from '@/lib/cms/graphQlQueries'
-import { mapFooter, mapHeader } from '@/lib/cms/mappers'
+import { mapFooter, mapHeader, mapModals } from '@/lib/cms/mappers'
 import { staticContent } from '@/lib/cms/static'
 import type { Locale } from '@/lib/i18n/config'
 import type { CmsFooterQuery, CmsHeaderQuery } from '@/types/cms'
@@ -32,7 +32,6 @@ export const getSiteContent = cache(async (locale: Locale): Promise<SiteContent>
     chrome: fallback.chrome,
     header: mapHeader(header, { locale, fallback }),
     footer: mapFooter(footer, { locale, fallback }),
-    // Static until the CMS models the modal copy.
-    modals: fallback.modals,
+    modals: mapModals(header, footer, { locale, fallback }),
   }
 })

@@ -17,6 +17,7 @@ import type {
   CmsFooterQuery,
   CmsHeaderQuery,
   CmsHeroBanner,
+  CmsLegalPageQuery,
   CmsOverviewSection,
   CmsPageComponent,
   CmsPageComponentTypename,
@@ -31,7 +32,9 @@ import type {
   HeaderSection,
   HeroSection,
   IntroSection,
+  LegalPage,
   PageSection,
+  SiteModals,
   SocialLink,
   StatementSection,
   StaticContent,
@@ -70,7 +73,8 @@ export function mapHeader(raw: CmsHeaderQuery | null, { locale, fallback }: Ctx)
       return {
         label,
         href: toHref(locale, pick(locale, menu.urlEn, menu.urlAr)) ?? '#',
-        children: compact(menu.subMenus).flatMap((sub) => {
+        // `subMenuRequired` is the editor's switch; left unset, trust `subMenus`.
+        children: (menu.subMenuRequired === false ? [] : compact(menu.subMenus)).flatMap((sub) => {
           const subLabel = toPlainText(pick(locale, sub.labelEn, sub.labelAr))
           return subLabel
             ? { label: subLabel, href: toHref(locale, pick(locale, sub.urlEn, sub.urlAr)) ?? '#' }
@@ -122,13 +126,50 @@ export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx)
         pickMedia(locale, fields.backgroundMediaEn, fields.backgroundMediaAr),
         base.media.backdrop.alt,
       ),
-      inset: toMedia(
-        pickMedia(locale, fields.foregroundMediaEn, fields.foregroundMediaAr),
-        base.media.inset.alt,
-      ),
     },
   }
 }
+
+/**
+ * Modal copy: contact from the header's fields, newsletter from the footer's.
+ * Each modal falls back to its static copy as a whole if its group is missing,
+ * and field by field for what the CMS does not model (form labels, statuses).
+ */
+export function mapModals(
+  header: CmsHeaderQuery | null,
+  footer: CmsFooterQuery | null,
+  { locale, fallback }: Ctx,
+): SiteModals {
+  const base = fallback.modals
+  const contact = header?.header?.contactModalFields
+  const newsletter = footer?.footer?.newsletterModalFields
+  const text = (en: string | null | undefined, ar: string | null | undefined, otherwise: string) =>
+    toPlainText(pick(locale, en, ar)) || otherwise
+
+  return {
+    newsletter: newsletter
+      ? {
+          ...base.newsletter,
+          eyebrow: text(newsletter.badgeLabel, newsletter.badgeLabelAr, base.newsletter.eyebrow),
+          heading: nonEmpty(toLines(pick(locale, newsletter.title, newsletter.titleAr)), base.newsletter.heading),
+          body: text(newsletter.description, newsletter.descriptionAr, base.newsletter.body),
+          submit: text(newsletter.buttonLabel, newsletter.buttonLabelAr, base.newsletter.submit),
+          consent: text(newsletter.consentText, newsletter.consentTextAr, base.newsletter.consent),
+        }
+      : base.newsletter,
+    contact: contact
+      ? {
+          ...base.contact,
+          heading: nonEmpty(toLines(pick(locale, contact.title, contact.titleAr)), base.contact.heading),
+          body: text(contact.subtitle, contact.subtitleAr, base.contact.body),
+          submit: text(contact.submitButtonLabel, contact.submitButtonLabelAr, base.contact.submit),
+          note: text(contact.footerNote, contact.footerNoteAr, base.contact.note),
+        }
+      : base.contact,
+  }
+}
+
+const nonEmpty = <T>(list: T[], otherwise: T[]) => (list.length ? list : otherwise)
 
 const externalOnly = (url: string | undefined) =>
   url && /^https?:\/\//i.test(url.trim()) ? url.trim() : undefined
@@ -293,4 +334,48 @@ export function mapSections(raw: CmsPageQuery | null, ctx: Ctx): PageSection[] |
 
     return { ...map(component, ctx), id: `${component.__typename}-${index}` }
   })
+}
+
+// ─── Legal pages ─────────────────────────────────────────────────────────────
+
+/**
+ * A legal page. `null` when the CMS has no page at that slug or the page is not
+ * on the Legal Notices template — the loader then serves the static copy.
+ * `fallback` (the static page for the slug, if any) supplies the metadata and
+ * the help card's copy where the CMS leaves them empty.
+ */
+export function mapLegalPage(
+  raw: CmsLegalPageQuery | null,
+  { locale, slug, fallback }: { locale: Locale; slug: string; fallback: LegalPage | null },
+): LegalPage | null {
+  const page = raw?.pageBy
+  const fields = page?.template?.legalNoticesPageFields
+  if (!page || !fields) return null
+
+  const title = toLines(pick(locale, fields.mainTitle, fields.mainTitleAr))
+  const intro = toPlainText(pick(locale, fields.topNoticeText, fields.topNoticeTextAr))
+  const heading = title.join(' ') || toPlainText(page.title)
+
+  return {
+    slug,
+    meta: fallback?.meta ?? { title: `${heading} - Doha 2036`, description: intro },
+    title: title.length ? title : [heading],
+    intro,
+    sections: compact(fields.legalSections).flatMap((section, index) => {
+      const sectionTitle = toPlainText(pick(locale, section.sectionTitle, section.sectionTitleAr))
+      if (!sectionTitle) return []
+      return {
+        id: `section-${index + 1}`,
+        number: toPlainText(section.sectionNumber) || undefined,
+        title: sectionTitle,
+        // Editors break lines with Shift+Enter (<br>) as well as new paragraphs; both start a line.
+        paragraphs: toLines(pick(locale, section.sectionContent, section.sectionContentAr)),
+      }
+    }),
+    help: {
+      title: toPlainText(pick(locale, fields.ctaBannerTitle, fields.ctaBannerTitleAr)) || (fallback?.help.title ?? ''),
+      body: toPlainText(pick(locale, fields.ctaBannerSubtitle, fields.ctaBannerSubtitleAr)) || (fallback?.help.body ?? ''),
+      cta: toPlainText(pick(locale, fields.ctaButtonLabel, fields.ctaButtonLabelAr)) || (fallback?.help.cta ?? ''),
+    },
+  }
 }

@@ -29,11 +29,25 @@ export interface CmsMenuLink {
 }
 
 export interface CmsMenu extends CmsMenuLink {
+  /** Editors' switch for the sub-menu; when off, `subMenus` is ignored. */
+  subMenuRequired?: Maybe<boolean>
   subMenus?: Maybe<Maybe<CmsMenuLink>[]>
+}
+
+export interface CmsContactModalFields {
+  title?: Maybe<string>
+  titleAr?: Maybe<string>
+  subtitle?: Maybe<string>
+  subtitleAr?: Maybe<string>
+  submitButtonLabel?: Maybe<string>
+  submitButtonLabelAr?: Maybe<string>
+  footerNote?: Maybe<string>
+  footerNoteAr?: Maybe<string>
 }
 
 export interface CmsHeaderQuery {
   header?: Maybe<{
+    contactModalFields?: Maybe<CmsContactModalFields>
     headerFields?: Maybe<{
       logoEn?: CmsMedia
       logoAr?: CmsMedia
@@ -68,8 +82,22 @@ export interface CmsFooterLink {
   }>
 }
 
+export interface CmsNewsletterModalFields {
+  badgeLabel?: Maybe<string>
+  badgeLabelAr?: Maybe<string>
+  title?: Maybe<string>
+  titleAr?: Maybe<string>
+  description?: Maybe<string>
+  descriptionAr?: Maybe<string>
+  buttonLabel?: Maybe<string>
+  buttonLabelAr?: Maybe<string>
+  consentText?: Maybe<string>
+  consentTextAr?: Maybe<string>
+}
+
 export interface CmsFooterQuery {
   footer?: Maybe<{
+    newsletterModalFields?: Maybe<CmsNewsletterModalFields>
     footerFields?: Maybe<{
       headlineEn?: Maybe<string>
       headlineAr?: Maybe<string>
@@ -81,12 +109,51 @@ export interface CmsFooterQuery {
       }>
       backgroundMediaEn?: CmsMedia
       backgroundMediaAr?: CmsMedia
-      foregroundMediaEn?: CmsMedia
-      foregroundMediaAr?: CmsMedia
       socials?: Maybe<Maybe<CmsSocial>[]>
       copyrightText?: Maybe<string>
       copyrightTextAr?: Maybe<string>
       footerLinks?: Maybe<Maybe<CmsFooterLink>[]>
+    }>
+  }>
+}
+
+// ─── Legal pages ─────────────────────────────────────────────────────────────
+
+export interface CmsLegalSection {
+  /** Editor-supplied, e.g. "01". */
+  sectionNumber?: Maybe<string>
+  sectionTitle?: Maybe<string>
+  sectionTitleAr?: Maybe<string>
+  /** WYSIWYG HTML. */
+  sectionContent?: Maybe<string>
+  sectionContentAr?: Maybe<string>
+}
+
+export interface CmsLegalNoticesFields {
+  mainTitle?: Maybe<string>
+  mainTitleAr?: Maybe<string>
+  topNoticeText?: Maybe<string>
+  topNoticeTextAr?: Maybe<string>
+  legalSections?: Maybe<Maybe<CmsLegalSection>[]>
+  ctaBannerTitle?: Maybe<string>
+  ctaBannerTitleAr?: Maybe<string>
+  ctaBannerSubtitle?: Maybe<string>
+  ctaBannerSubtitleAr?: Maybe<string>
+  ctaButtonLabel?: Maybe<string>
+  ctaButtonLabelAr?: Maybe<string>
+}
+
+export interface CmsLegalPageQuery {
+  pageBy?: Maybe<{
+    uri?: Maybe<string>
+    slug?: Maybe<string>
+    title?: Maybe<string>
+    status?: Maybe<string>
+    /** Only `Template_LegalNotices` carries the fields; others arrive with just `__typename`. */
+    template?: Maybe<{
+      __typename?: string
+      templateName?: Maybe<string>
+      legalNoticesPageFields?: Maybe<CmsLegalNoticesFields>
     }>
   }>
 }

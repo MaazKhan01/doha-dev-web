@@ -29,7 +29,7 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
       // capped so it stops growing past the 1440 artboard.
       className="relative isolate flex min-h-[32rem] flex-col overflow-hidden bg-ink text-sand lg:min-h-[min(63.03vw,56.75rem)]"
     >
-      <Media asset={data.media.backdrop} className="absolute inset-0 -z-10 grayscale" />
+      <Media asset={data.media.backdrop} className="absolute inset-0 -z-10" />
       <div aria-hidden className="absolute inset-0 -z-10 bg-ink/45" />
 
       <div className="container-page flex flex-1 flex-col justify-between gap-12 py-8 md:gap-16 md:py-12">
@@ -68,27 +68,15 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
           </Reveal>
         </div>
 
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
-          <Reveal>
-            <p className="type-display text-[clamp(2.25rem,8vw,4rem)] text-sand">
-              {data.wordmark.map((line, index) => (
-                <span key={index} className="block">
-                  {line}
-                </span>
-              ))}
-            </p>
-          </Reveal>
-
-          {/* The inset portrait only appears from tablet up — the mobile board
-              leaves the backdrop uninterrupted. */}
-          <Reveal delay={0.12} className="hidden sm:block">
-            <Media
-              asset={data.media.inset}
-              sizes="30vw"
-              className="aspect-square w-[14rem] rounded-card lg:w-[18rem]"
-            />
-          </Reveal>
-        </div>
+        <Reveal>
+          <p className="type-display text-[clamp(2.25rem,8vw,4rem)] text-sand">
+            {data.wordmark.map((line, index) => (
+              <span key={index} className="block">
+                {line}
+              </span>
+            ))}
+          </p>
+        </Reveal>
       </div>
 
       {/* Solid bar at every width, so the legal links never sit on the image. */}

@@ -4,7 +4,11 @@ import { cache } from 'react'
 
 import { legalAr } from '@/content/legal.ar'
 import { legalEn } from '@/content/legal.en'
+import { queryCms } from '@/lib/cms/client'
+import { LEGAL_PAGE_QUERY } from '@/lib/cms/graphQlQueries'
+import { mapLegalPage } from '@/lib/cms/mappers'
 import type { Locale } from '@/lib/i18n/config'
+import type { CmsLegalPageQuery } from '@/types/cms'
 import type { LegalPage } from '@/types/content'
 
 const staticLegal: Record<Locale, LegalPage[]> = {
@@ -12,17 +16,22 @@ const staticLegal: Record<Locale, LegalPage[]> = {
   ar: legalAr,
 }
 
-/** Slugs to prerender. Once the CMS serves these pages, list them from it instead. */
+/**
+ * Slugs to prerender at build. Any other slug is still tried on request, so a
+ * new Legal Notices page in the CMS appears without a code change.
+ */
 export const legalSlugs = legalEn.map((page) => page.slug)
 
 /**
- * One legal page by slug, or `null` for an unknown slug (the route 404s).
+ * One legal page by slug: the CMS page when it exists on the Legal Notices
+ * template, else the static copy, else `null` (the route 404s).
  *
- * Static until the CMS query for legal pages is shared: add it to
- * `graphQlQueries.js`, a raw type to `types/cms.ts`, a `mapLegalPage` to
- * `mappers.ts`, and resolve it here with the static page as the fallback —
- * the route and component stay as they are.
+ * The slug is the WordPress page URI (`legal-notices`), and the query is
+ * locale-independent, so `/en/…` and `/ar/…` share one Data Cache entry.
  */
 export const getLegalPage = cache(async (locale: Locale, slug: string): Promise<LegalPage | null> => {
-  return staticLegal[locale].find((page) => page.slug === slug) ?? null
+  const fallback = staticLegal[locale].find((page) => page.slug === slug) ?? null
+  const raw = await queryCms<CmsLegalPageQuery>({ ...LEGAL_PAGE_QUERY, variables: { uri: slug } })
+
+  return mapLegalPage(raw, { locale, slug, fallback }) ?? fallback
 })

@@ -195,7 +195,6 @@ export const homeAr: StaticContent = {
     ],
     media: {
       backdrop: { src: '', alt: 'صورة أرشيفية لغواصي اللؤلؤ قبالة سواحل قطر' },
-      inset: { src: '', alt: 'سباحون يقفزون إلى الماء عند انطلاق السباق' },
     },
   },
 }

@@ -40,7 +40,7 @@ export function LegalContent({ data }: { data: LegalPage }) {
                 className="grid gap-3 pt-10 pb-9 md:pt-14 md:pb-12 lg:grid-cols-[31.25rem_1fr] lg:gap-0"
               >
                 <h2 className="text-[clamp(1.25rem,1.8vw,1.625rem)] leading-tight font-bold">
-                  {pad(index)} — {section.title}
+                  {section.number || pad(index)} — {section.title}
                 </h2>
                 <div className="max-w-[47rem] text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.65]">
                   {section.paragraphs.map((paragraph, i) => (
