@@ -101,6 +101,52 @@ export function toParagraphs(value: Maybe<string>): string[] {
     .filter(Boolean)
 }
 
+/** Where the GraphQL endpoint is served from — also where its uploads are reachable. */
+const cmsOrigin = (() => {
+  try {
+    return process.env.CMS_GRAPHQL_ENDPOINT ? new URL(process.env.CMS_GRAPHQL_ENDPOINT).origin : null
+  } catch {
+    return null
+  }
+})()
+
+/**
+ * WordPress writes upload URLs with its own site URL (e.g. a local
+ * `doha-website.local`), which is not the host the site reaches it on. Rebase
+ * uploads onto the endpoint's origin so they load, and pass through
+ * `next/image`'s allow-list, wherever WordPress thinks it lives.
+ */
+export function toPublicUrl(url: Maybe<string>): string {
+  if (!url) return ''
+  if (!cmsOrigin) return url
+  try {
+    const parsed = new URL(url)
+    return parsed.pathname.startsWith('/wp-content/')
+      ? `${cmsOrigin}${parsed.pathname}${parsed.search}`
+      : url
+  } catch {
+    return url
+  }
+}
+
+/** Paths that open a modal rather than a page, so `/contact` in the CMS just works. */
+const modalPaths: Record<string, string> = { '/contact': '#contact', '/newsletter': '#newsletter' }
+
+/**
+ * A CMS link to an `href` the site can route. Relative paths gain the locale
+ * (`/privacy` → `/en/privacy`); `/contact` and `/newsletter` open their
+ * modals; `#…` and absolute URLs pass through. Empty or a bare `#` is no link.
+ */
+export function toHref(locale: Locale, url: Maybe<string>): string | undefined {
+  const value = url?.trim()
+  if (!value || value === '#') return undefined
+  if (!value.startsWith('/') || value.startsWith('//')) return value
+
+  const withoutLocale = value.replace(/^\/(en|ar)(?=\/|$|#|\?)/, '') || '/'
+  const path = withoutLocale.replace(/\/$/, '').toLowerCase()
+  return modalPaths[path] ?? `/${locale}${withoutLocale === '/' ? '' : withoutLocale}`
+}
+
 /**
  * An ACF media edge to a `MediaAsset`. Alt text comes from the media library;
  * `alt` is used when the editor has not set one. No URL means an empty `src`,
@@ -109,7 +155,7 @@ export function toParagraphs(value: Maybe<string>): string[] {
 export function toMedia(media: CmsMedia, alt: string): MediaAsset {
   const node = media?.node
   return {
-    src: node?.mediaItemUrl || node?.sourceUrl || '',
+    src: toPublicUrl(node?.mediaItemUrl || node?.sourceUrl),
     alt: toPlainText(node?.altText) || alt,
   }
 }

@@ -3,7 +3,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import Image from 'next/image'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 
 import { setScrollLocked } from '@/components/providers/SmoothScroll'
 import { cn } from '@/lib/utils/cn'
@@ -30,6 +30,7 @@ const EASE = [0.22, 1, 0.36, 1] as const
  */
 export function Modal({ open, onOpenChange, closeLabel, children, className }: ModalProps) {
   const reduceMotion = useReducedMotion()
+  const card = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setScrollLocked(open)
@@ -51,8 +52,20 @@ export function Modal({ open, onOpenChange, closeLabel, children, className }: M
               />
             </Dialog.Overlay>
 
-            <Dialog.Content asChild forceMount aria-describedby={undefined}>
+            <Dialog.Content
+              asChild
+              forceMount
+              aria-describedby={undefined}
+              // Start in the first field rather than on the close button.
+              onOpenAutoFocus={(event) => {
+                const field = card.current?.querySelector<HTMLElement>('input, textarea, select')
+                if (!field) return
+                event.preventDefault()
+                field.focus()
+              }}
+            >
               <motion.div
+                ref={card}
                 // Wheel and touch scroll the card natively, not through Lenis.
                 data-lenis-prevent
                 // `inset-0 m-auto` centres without left/right, so RTL needs nothing.

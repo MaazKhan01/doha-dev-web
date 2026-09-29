@@ -52,10 +52,13 @@ export function Field({
   )
 }
 
-/** Polite live region under a form's submit row. */
-export function FormStatus({ children }: { children: ReactNode }) {
+/**
+ * Polite live region for a form's outcome. Always in the DOM so screen readers
+ * announce the change, but takes no space until there is something to say.
+ */
+export function FormStatus({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p aria-live="polite" className="min-h-5 text-sm text-muted">
+    <p aria-live="polite" className={cn('text-sm text-muted', className)}>
       {children}
     </p>
   )

@@ -15,7 +15,7 @@ type FooterProps = {
 export function Footer({ data, variant = 'full' }: FooterProps) {
   if (variant === 'bar') {
     return (
-      <footer id="contact">
+      <footer>
         <FooterBar data={data} />
       </footer>
     )
@@ -23,7 +23,8 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
 
   return (
     <footer
-      id="contact"
+      // No `id="contact"`: that hash opens the contact modal, and an anchor
+      // here would make a `/en#contact` deep link jump the page to the footer.
       // Desktop matches the design's 1440 × 907.58 band (63.03% of width),
       // capped so it stops growing past the 1440 artboard.
       className="relative isolate flex min-h-[32rem] flex-col overflow-hidden bg-ink text-sand lg:min-h-[min(63.03vw,56.75rem)]"

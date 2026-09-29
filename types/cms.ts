@@ -50,8 +50,8 @@ export interface CmsButton {
 }
 
 export interface CmsSocial {
-  /** Free text from the CMS, e.g. "Instagram" or "Twitter"; normalised in the mapper. */
-  platform?: Maybe<string>
+  /** An ACF select, so WPGraphQL returns it as a list: `["instagram"]`. Normalised in the mapper. */
+  platform?: Maybe<string | Maybe<string>[]>
   urlEn?: Maybe<string>
   urlAr?: Maybe<string>
 }

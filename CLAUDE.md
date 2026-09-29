@@ -7,7 +7,11 @@ conventions to hold to.
 
 - **Server components by default.** `'use client'` only where there is state, an event
   handler or a browser API — currently `SmoothScroll`, `Reveal`, `LitHeading`,
-  `Accordion`, `NewsletterForm`.
+  `Accordion`, `LocaleSwitch` and everything in `components/modals/`.
+- **Modals open from links.** Point any link at `#contact` or `#newsletter` (CMS links
+  too — `/contact` is rewritten to `#contact`); `ModalHost` intercepts it. Don't add
+  open-state props or context to trigger them, and never give an element those ids.
+  New modals go in `components/modals/` and reuse the `Modal` shell.
 - **Sections take one typed prop** (`data`) and never fetch. All content enters through
   `lib/cms/site.ts` (layout) and `lib/cms/home.ts` (page); queries live only in
   `lib/cms/graphQlQueries.js`, and CMS shapes are translated only in `lib/cms/mappers.ts`.
@@ -31,7 +35,14 @@ conventions to hold to.
 
 - `params` is a Promise in Next 16 — always `await params`.
 - Route middleware lives in `proxy.ts`, not `middleware.ts` (Next 16 convention).
-- There is no `app/layout.tsx`; the root layout is `app/[locale]/layout.tsx`.
+- There is no `app/layout.tsx`; the root layout is `app/[locale]/layout.tsx`. It renders
+  the header and modals; `<main>` and the footer variant come from the route-group
+  layouts, `(home)` (full footer) and `(legal)` (copyright bar only).
+- Motion components must render the same element tree whatever the reduced-motion
+  preference: the server renders the hidden state and React does not patch server
+  styles on hydration, so a plain-element branch for reduced motion stays invisible.
+- WordPress writes upload URLs with its own site URL; `toPublicUrl` rebases them onto
+  the endpoint's origin. Use it (or `toMedia`) for every CMS media URL.
 - `revalidate` must be a literal in the page file; Next will not read an imported
   constant and fails the build with "Invalid segment configuration export".
 - `revalidateTag` takes two arguments in Next 16 — pass the `'max'` profile.

@@ -16,8 +16,7 @@ function modalFromHash(hash: string, modals: SiteModals): ModalId | null {
  * and editors can point any CMS link at one: `#contact` or `#newsletter`, with
  * or without a path in front. Arriving on a URL with that hash opens it too.
  *
- * Without JavaScript the links fall back to ordinary anchors — `#contact`
- * still jumps to the footer.
+ * No element carries these ids, so a deep link never scrolls the page first.
  */
 export function ModalHost({ modals }: { modals: SiteModals }) {
   const [active, setActive] = useState<ModalId | null>(null)

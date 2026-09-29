@@ -31,18 +31,9 @@ export function LitHeading({ lines, className }: { lines: HeadingLine[]; classNa
   const shouldReduceMotion = useReducedMotion()
   const inView = useInView(ref, { once: true, amount: 0.15 })
 
-  if (shouldReduceMotion) {
-    return (
-      <h2 ref={ref} className={cn('type-display', className)}>
-        {lines.map((item, index) => (
-          <span key={index} className="block">
-            <span className={item.accent ? 'text-flame' : undefined}>{item.text}</span>
-          </span>
-        ))}
-      </h2>
-    )
-  }
-
+  // One element tree for both preferences: the server renders the dimmed state
+  // and React does not patch server styles on hydration, so a separate reduced
+  // branch stayed at 16% opacity. Reduced motion lights every line at once.
   return (
     <h2 ref={ref} className={cn('type-display', className)}>
       {lines.map((item, index) => (
@@ -50,8 +41,12 @@ export function LitHeading({ lines, className }: { lines: HeadingLine[]; classNa
           key={index}
           className={cn('block', item.accent && 'text-flame')}
           initial={{ opacity: DIMMED }}
-          animate={{ opacity: inView ? 1 : DIMMED }}
-          transition={{ duration: FILL, delay: index * STEP, ease: [0.22, 1, 0.36, 1] }}
+          animate={{ opacity: shouldReduceMotion || inView ? 1 : DIMMED }}
+          transition={
+            shouldReduceMotion
+              ? { duration: 0 }
+              : { duration: FILL, delay: index * STEP, ease: [0.22, 1, 0.36, 1] }
+          }
         >
           {item.text}
         </motion.span>

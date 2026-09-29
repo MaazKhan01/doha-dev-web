@@ -2,10 +2,12 @@ import {
   pick,
   pickMedia,
   toHeadingLines,
+  toHref,
   toLines,
   toMedia,
   toParagraphs,
   toPlainText,
+  toPublicUrl,
 } from '@/lib/cms/format'
 import type { Locale } from '@/lib/i18n/config'
 import type {
@@ -19,6 +21,7 @@ import type {
   CmsPageComponent,
   CmsPageComponentTypename,
   CmsPageQuery,
+  CmsSocial,
   CmsValuePropositionGrid,
 } from '@/types/cms'
 import type {
@@ -59,16 +62,19 @@ export function mapHeader(raw: CmsHeaderQuery | null, { locale, fallback }: Ctx)
   const logo = pickMedia(locale, fields.logoEn, fields.logoAr)
 
   return {
-    logo: toMedia(logo, toPlainText(logo?.node?.title) || fallback.header.logo.alt),
+    // Media titles are file names ("logo"), so the static alt stands in for a missing one.
+    logo: toMedia(logo, fallback.header.logo.alt),
     menus: compact(fields.menus).flatMap((menu) => {
       const label = toPlainText(pick(locale, menu.labelEn, menu.labelAr))
       if (!label) return []
       return {
         label,
-        href: pick(locale, menu.urlEn, menu.urlAr) || '#',
+        href: toHref(locale, pick(locale, menu.urlEn, menu.urlAr)) ?? '#',
         children: compact(menu.subMenus).flatMap((sub) => {
           const subLabel = toPlainText(pick(locale, sub.labelEn, sub.labelAr))
-          return subLabel ? { label: subLabel, href: pick(locale, sub.urlEn, sub.urlAr) || '#' } : []
+          return subLabel
+            ? { label: subLabel, href: toHref(locale, pick(locale, sub.urlEn, sub.urlAr)) ?? '#' }
+            : []
         }),
       }
     }),
@@ -88,7 +94,8 @@ export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx)
     newsletter: {
       label: toPlainText(pick(locale, cta?.ctaLabel, cta?.ctaLabelAr)),
       cta: toPlainText(pick(locale, en?.buttonLabel, ar?.buttonLabel)) || base.newsletter.cta,
-      href: pick(locale, en?.buttonLink, ar?.buttonLink) || undefined,
+      // Only an external sign-up page replaces the newsletter modal; there is no internal one.
+      href: externalOnly(pick(locale, en?.buttonLink, ar?.buttonLink)),
     },
     socials: compact(fields.socials).flatMap((social) => {
       const id = toSocialId(social.platform)
@@ -105,7 +112,9 @@ export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx)
       if (!label) return []
       return {
         label,
-        href: pick(locale, item.footerLink?.footerLinkLink, item.footerLinkAr?.footerLinkLinkAr) || '#',
+        href:
+          toHref(locale, pick(locale, item.footerLink?.footerLinkLink, item.footerLinkAr?.footerLinkLinkAr)) ??
+          '#',
       }
     }),
     media: {
@@ -121,11 +130,15 @@ export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx)
   }
 }
 
+const externalOnly = (url: string | undefined) =>
+  url && /^https?:\/\//i.test(url.trim()) ? url.trim() : undefined
+
 /**
- * `platform` is free text in the CMS; only platforms with an icon render.
- * Accepts "Instagram", "instagram", "X", "Twitter", "X (Twitter)", "Tik Tok"…
+ * `platform` is an ACF select (a one-item list) or free text; only platforms
+ * with an icon render. Accepts "instagram", "X", "Twitter", "X (Twitter)", "Tik Tok"…
  */
-function toSocialId(platform: string | null | undefined): SocialLink['id'] | null {
+function toSocialId(value: CmsSocial['platform']): SocialLink['id'] | null {
+  const platform = Array.isArray(value) ? value[0] : value
   const key = (platform ?? '').toLowerCase().replace(/[^a-z]/g, '')
   if (key === 'x' || key.includes('twitter')) return 'x'
   if (key.startsWith('instagram')) return 'instagram'
@@ -141,7 +154,7 @@ function toSocialId(platform: string | null | undefined): SocialLink['id'] | nul
 
 function mapHero(raw: CmsHeroBanner, { locale, fallback }: Ctx): HeroSection {
   const media = pickMedia(locale, raw.heroBgMedia, raw.backgroundMediaImagevideoAr)
-  const url = media?.node?.mediaItemUrl || media?.node?.sourceUrl || ''
+  const url = toPublicUrl(media?.node?.mediaItemUrl || media?.node?.sourceUrl)
   // One field takes either a video or a still; the still becomes the poster.
   const isVideo = media?.node?.mimeType?.startsWith('video/') ?? false
 
@@ -170,7 +183,7 @@ function mapIntro(raw: CmsOverviewSection, { locale }: Ctx): IntroSection {
       pick(locale, raw.overviewSectionMainBodyContent, raw.overviewSectionMainBodyContentArabic),
     ),
     attribution: name
-      ? { name, role: role.join(' '), href: link?.link || undefined }
+      ? { name, role: role.join(' '), href: toHref(locale, link?.link) }
       : undefined,
   }
 }

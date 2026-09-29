@@ -40,14 +40,15 @@ export function NewsletterModal({ data, open, onOpenChange }: NewsletterModalPro
             required
             autoComplete="email"
             placeholder={data.emailPlaceholder}
-            className={cn(fieldClass, 'h-14 min-w-0 flex-1')}
+            // Grows only in the row layout; in the stacked one a 0 basis would collapse it.
+            className={cn(fieldClass, 'h-14 min-w-0 sm:flex-1')}
           />
           <button type="submit" disabled={state === 'submitting'} className={cn(buttonClass, 'h-14 sm:w-38')}>
             {state === 'submitting' ? data.submitting : data.submit}
           </button>
         </div>
 
-        <label className="mt-6 flex cursor-pointer items-start gap-3 text-sm leading-snug">
+        <label className="mt-6 flex cursor-pointer items-start gap-2.5 text-sm leading-snug">
           <span className="relative mt-px grid size-[1.0625rem] shrink-0 place-items-center">
             <input
               type="checkbox"
@@ -66,11 +67,9 @@ export function NewsletterModal({ data, open, onOpenChange }: NewsletterModalPro
           <span>{data.consent}</span>
         </label>
 
-        <div className="mt-3">
-          <FormStatus>
-            {state === 'done' ? data.success : state === 'error' ? data.error : null}
-          </FormStatus>
-        </div>
+        <FormStatus className="not-empty:mt-4">
+          {state === 'done' ? data.success : state === 'error' ? data.error : null}
+        </FormStatus>
       </form>
     </Modal>
   )
