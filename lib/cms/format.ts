@@ -1,3 +1,4 @@
+import { CMS_GRAPHQL_ENDPOINT } from '@/lib/cms/config'
 import type { Locale } from '@/lib/i18n/config'
 import type { CmsMedia } from '@/types/cms'
 import type { HeadingLine, MediaAsset } from '@/types/content'
@@ -104,7 +105,7 @@ export function toParagraphs(value: Maybe<string>): string[] {
 /** Where the GraphQL endpoint is served from — also where its uploads are reachable. */
 const cmsOrigin = (() => {
   try {
-    return process.env.CMS_GRAPHQL_ENDPOINT ? new URL(process.env.CMS_GRAPHQL_ENDPOINT).origin : null
+    return CMS_GRAPHQL_ENDPOINT ? new URL(CMS_GRAPHQL_ENDPOINT).origin : null
   } catch {
     return null
   }

@@ -69,15 +69,16 @@ PageBuilder                 section type → component, in the order editors set
 `SectionDataMap` in `types/content.ts` and the `PageBuilder` map. The types make each step
 fail the build until the next one is done.
 
-Set the endpoint in `.env.local` (see `.env.example`):
+The backend address is a constant, `CMS_URL` in `lib/cms/config.ts`, not an env var, so
+deployments need no configuration. Change it there and redeploy; set it to `''` to serve
+the static content. Only secrets stay in env (see `.env.example`):
 
 ```
-CMS_GRAPHQL_ENDPOINT=https://cms.example.com/graphql
 CMS_GRAPHQL_TOKEN=
 REVALIDATE_SECRET=
 ```
 
-`queryCms` falls back to the static content if the endpoint is unset or the request fails.
+`queryCms` falls back to the static content if the URL is empty or the request fails.
 
 ## Caching
 
@@ -98,8 +99,8 @@ changes immediately instead of waiting out the window.
 segment config, so it cannot reference `CMS_REVALIDATE`. Keep the two in step.
 
 Images go through `next/image` with AVIF/WebP and a one-year TTL on derivatives. The CMS
-hostname is derived from `CMS_GRAPHQL_ENDPOINT`, so uploaded media is optimisable without
-a second env var. Fonts are self-hosted through `next/font`, so they are content-hashed
+hostname is derived from `CMS_URL`, so uploaded media is optimisable with no second
+setting. Fonts are self-hosted through `next/font`, so they are content-hashed
 and immutable with no third-party round trip.
 
 ## Internationalisation

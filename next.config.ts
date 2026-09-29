@@ -1,12 +1,12 @@
 import type { NextConfig } from 'next'
 
+import { CMS_GRAPHQL_ENDPOINT } from './lib/cms/config'
+
 /**
- * The CMS host, derived from the GraphQL endpoint, so uploaded media can be
- * optimised by next/image without maintaining a second env var.
+ * The CMS host, derived from the GraphQL endpoint in `lib/cms/config.ts`, so
+ * uploaded media can be optimised by next/image with no second setting.
  */
-const cmsHost = process.env.CMS_GRAPHQL_ENDPOINT
-  ? new URL(process.env.CMS_GRAPHQL_ENDPOINT).hostname
-  : undefined
+const cmsHost = CMS_GRAPHQL_ENDPOINT ? new URL(CMS_GRAPHQL_ENDPOINT).hostname : undefined
 
 const nextConfig: NextConfig = {
   images: {

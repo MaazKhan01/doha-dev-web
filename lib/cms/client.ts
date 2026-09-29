@@ -1,6 +1,8 @@
 import { GraphQLClient } from 'graphql-request'
 
-const endpoint = process.env.CMS_GRAPHQL_ENDPOINT
+import { CMS_GRAPHQL_ENDPOINT } from '@/lib/cms/config'
+
+const endpoint = CMS_GRAPHQL_ENDPOINT
 
 /** Revalidation window for CMS-backed content, in seconds. */
 export const CMS_REVALIDATE = 300
