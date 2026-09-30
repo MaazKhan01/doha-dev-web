@@ -15,7 +15,10 @@ type NewsletterModalProps = {
 /** Newsletter sign-up: email, submit and a required consent box. */
 export function NewsletterModal({ data, open, onOpenChange }: NewsletterModalProps) {
   // TODO: POST to /api/newsletter once the email provider is confirmed.
-  const { state, onSubmit, reset } = useFormSubmit(async () => {})
+  const { state, onSubmit, reset } = useFormSubmit(
+    async () => {},
+    () => onOpenChange(false),
+  )
 
   return (
     <Modal

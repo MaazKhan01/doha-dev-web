@@ -15,7 +15,10 @@ type ContactModalProps = {
 /** Enquiry form: name and email side by side, then subject and message. */
 export function ContactModal({ data, open, onOpenChange }: ContactModalProps) {
   // TODO: POST to /api/contact once the enquiry inbox / CRM is confirmed.
-  const { state, onSubmit, reset } = useFormSubmit(async () => {})
+  const { state, onSubmit, reset } = useFormSubmit(
+    async () => {},
+    () => onOpenChange(false),
+  )
   const { fields } = data
 
   return (
