@@ -229,11 +229,23 @@ function mapIntro(raw: CmsOverviewSection, { locale }: Ctx): IntroSection {
   }
 }
 
+/**
+ * "Why Doha?": the headline is the orange line, then one line per repeater row
+ * of `bannerText`. A row may still be bolded to light it too.
+ */
 function mapStatement(raw: CmsCalloutBanner, { locale }: Ctx): StatementSection {
-  const heading = toHeadingLines(pick(locale, raw.bannerText, raw.bannerTextAr))
-  // The design lights the question line; do that unless the editor bolded others.
-  if (heading[0] && !heading.some((line) => line.accent)) heading[0] = { ...heading[0], accent: true }
-  return { heading }
+  const headline = toPlainText(pick(locale, raw.bannerHeadline, raw.bannerHeadlineArabic))
+  const en = compact(raw.bannerText).map((row) => row.theBannerText)
+  const ar = compact(raw.bannerTextAr).map((row) => row.theBannerTextAr)
+  // Arabic falls back to English only when it has no rows at all.
+  const rows = locale === 'ar' && ar.some(Boolean) ? ar : en
+
+  return {
+    heading: [
+      ...(headline ? [{ text: headline, accent: true }] : []),
+      ...rows.flatMap((row) => toHeadingLines(row)),
+    ],
+  }
 }
 
 function mapValueProps(raw: CmsValuePropositionGrid, { locale }: Ctx): ValuePropsSection {

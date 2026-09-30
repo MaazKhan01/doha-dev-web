@@ -190,8 +190,12 @@ export interface CmsOverviewSection {
 
 export interface CmsCalloutBanner {
   __typename: 'PageBuilderPageComponentsCalloutBannerLayout'
-  bannerText?: Maybe<string>
-  bannerTextAr?: Maybe<string>
+  /** The accent line, e.g. "Why Doha". */
+  bannerHeadline?: Maybe<string>
+  bannerHeadlineArabic?: Maybe<string>
+  /** A repeater, one row per line of the statement. */
+  bannerText?: Maybe<Maybe<{ theBannerText?: Maybe<string> }>[]>
+  bannerTextAr?: Maybe<Maybe<{ theBannerTextAr?: Maybe<string> }>[]>
 }
 
 export interface CmsFeatureCard {
