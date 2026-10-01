@@ -194,7 +194,7 @@ function toSocialId(value: CmsSocial['platform']): SocialLink['id'] | null {
 // ─── Page-builder sections ───────────────────────────────────────────────────
 
 function mapHero(raw: CmsHeroBanner, { locale, fallback }: Ctx): HeroSection {
-  const media = pickMedia(locale, raw.heroBgMedia, raw.backgroundMediaImagevideoAr)
+  const media = pickMedia(locale, raw.heroBgMedia, raw.heroBgMediaAr)
   const url = toPublicUrl(media?.node?.mediaItemUrl || media?.node?.sourceUrl)
   // One field takes either a video or a still; the still becomes the poster.
   const isVideo = media?.node?.mimeType?.startsWith('video/') ?? false
@@ -330,7 +330,7 @@ function isKnownComponent(component: { __typename: string }): component is CmsPa
  * know are skipped (with a warning in development) rather than breaking the page.
  */
 export function mapSections(raw: CmsPageQuery | null, ctx: Ctx): PageSection[] | null {
-  const components = raw?.page?.pageBuilder?.pageComponents
+  const components = raw?.pageBy?.template?.pageBuilder?.pageComponents
   if (!components) return null
 
   return compact(components).flatMap((component, index) => {
@@ -360,7 +360,7 @@ export function mapLegalPage(
   raw: CmsLegalPageQuery | null,
   { locale, slug, fallback }: { locale: Locale; slug: string; fallback: LegalPage | null },
 ): LegalPage | null {
-  const page = raw?.pageBy
+  const page = raw?.page
   const fields = page?.template?.legalNoticesPageFields
   if (!page || !fields) return null
 

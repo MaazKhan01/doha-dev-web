@@ -142,6 +142,48 @@
   }
 }
 
+@layer components {
+  /* The 404 page's backdrop: a grid of small diamonds — the site's chip motif —
+     with a flame spotlight that follows the pointer. The parent sets --x / --y
+     (pointer position in px) and --spot (0 or 1). The SVG is only a mask, so
+     its fill is irrelevant: colour comes from the brand tokens. */
+  .diamond-field {
+    --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M22 17l5 5-5 5-5-5z'/%3E%3C/svg%3E");
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .diamond-field::before,
+  .diamond-field::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: var(--diamond);
+    mask-image: var(--diamond);
+    -webkit-mask-size: 44px 44px;
+    mask-size: 44px 44px;
+  }
+
+  .diamond-field::before {
+    background-color: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .diamond-field::after {
+    background-color: var(--color-flame);
+    -webkit-mask-image: radial-gradient(circle 15rem at var(--x, 50%) var(--y, 50%), black, transparent 70%), var(--diamond);
+    mask-image: radial-gradient(circle 15rem at var(--x, 50%) var(--y, 50%), black, transparent 70%), var(--diamond);
+    -webkit-mask-size: 100% 100%, 44px 44px;
+    mask-size: 100% 100%, 44px 44px;
+    -webkit-mask-repeat: no-repeat, repeat;
+    mask-repeat: no-repeat, repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+    opacity: var(--spot, 0);
+    transition: opacity 0.6s var(--ease-brand);
+  }
+}
+
 /* Honour the reader's reduced-motion preference everywhere. */
 @media (prefers-reduced-motion: reduce) {
   *,

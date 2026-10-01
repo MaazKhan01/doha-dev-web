@@ -112,21 +112,24 @@ const cmsOrigin = (() => {
 })()
 
 /**
- * WordPress writes upload URLs with its own site URL (e.g. a local
- * `doha-website.local`), which is not the host the site reaches it on. Rebase
- * uploads onto the endpoint's origin so they load, and pass through
- * `next/image`'s allow-list, wherever WordPress thinks it lives.
+ * Upload URLs as the browser and `next/image` need them: absolute, on the
+ * endpoint's origin. WordPress may write them root-relative
+ * (`/wp-content/uploads/…`), which would resolve against this site, or with
+ * its own site URL (e.g. a local `doha-website.local`), which is not the host
+ * the site reaches it on. Both are rebased onto the endpoint.
  */
 export function toPublicUrl(url: Maybe<string>): string {
-  if (!url) return ''
-  if (!cmsOrigin) return url
+  const value = url?.trim()
+  if (!value) return ''
+  if (!cmsOrigin) return value
   try {
-    const parsed = new URL(url)
+    // A relative URL resolves against the CMS, not against this site.
+    const parsed = new URL(value, cmsOrigin)
     return parsed.pathname.startsWith('/wp-content/')
       ? `${cmsOrigin}${parsed.pathname}${parsed.search}`
-      : url
+      : parsed.href
   } catch {
-    return url
+    return value
   }
 }
 
@@ -139,8 +142,10 @@ const modalPaths: Record<string, string> = { '/contact': '#contact', '/newslette
  * modals; `#…` and absolute URLs pass through. Empty or a bare `#` is no link.
  */
 export function toHref(locale: Locale, url: Maybe<string>): string | undefined {
-  const value = url?.trim()
+  let value = url?.trim()
   if (!value || value === '#') return undefined
+  // A bare slug (`legal-notices`) is a site path, not relative to the current page.
+  if (!/^([a-z][a-z\d+.-]*:|\/|#|\?)/i.test(value)) value = `/${value}`
   if (!value.startsWith('/') || value.startsWith('//')) return value
 
   const withoutLocale = value.replace(/^\/(en|ar)(?=\/|$|#|\?)/, '') || '/'
@@ -155,10 +160,20 @@ export function toHref(locale: Locale, url: Maybe<string>): string | undefined {
  */
 export function toMedia(media: CmsMedia, alt: string): MediaAsset {
   const node = media?.node
+  const libraryAlt = toPlainText(node?.altText)
   return {
     src: toPublicUrl(node?.mediaItemUrl || node?.sourceUrl),
-    alt: toPlainText(node?.altText) || alt,
+    alt: libraryAlt && !looksLikeFileName(libraryAlt) ? libraryAlt : alt,
   }
+}
+
+/**
+ * WordPress pre-fills alt text with the upload's file name ("ready-infrastructure").
+ * That describes nothing, so a single hyphenated or underscored token is
+ * treated as unset and the caller's description is used instead.
+ */
+function looksLikeFileName(value: string): boolean {
+  return !/\s/.test(value) && /[-_]/.test(value)
 }
 
 /** Picks the Arabic asset for `ar` when one is uploaded, else the English one. */

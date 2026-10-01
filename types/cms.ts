@@ -144,7 +144,7 @@ export interface CmsLegalNoticesFields {
 }
 
 export interface CmsLegalPageQuery {
-  pageBy?: Maybe<{
+  page?: Maybe<{
     uri?: Maybe<string>
     slug?: Maybe<string>
     title?: Maybe<string>
@@ -165,7 +165,7 @@ export interface CmsHeroBanner {
   heroHeading?: Maybe<string>
   heroHeadingAr?: Maybe<string>
   heroBgMedia?: CmsMedia
-  backgroundMediaImagevideoAr?: CmsMedia
+  heroBgMediaAr?: CmsMedia
 }
 
 export interface CmsSplitTitle {
@@ -262,14 +262,20 @@ export type CmsPageComponent =
 export type CmsPageComponentTypename = CmsPageComponent['__typename']
 
 export interface CmsPageQuery {
-  page?: Maybe<{
+  pageBy?: Maybe<{
     id?: Maybe<string>
+    uri?: Maybe<string>
     title?: Maybe<string>
-    slug?: Maybe<string>
-    pageBuilder?: Maybe<{
-      slug?: Maybe<string>
-      /** Layouts this build does not know arrive with only `__typename`. */
-      pageComponents?: Maybe<Maybe<CmsPageComponent | { __typename: string }>[]>
+    status?: Maybe<string>
+    /** The page builder hangs off the "Dynamic Sections" template; other templates have none. */
+    template?: Maybe<{
+      __typename?: string
+      templateName?: Maybe<string>
+      pageBuilder?: Maybe<{
+        slug?: Maybe<string>
+        /** Layouts this build does not know arrive with only `__typename`. */
+        pageComponents?: Maybe<Maybe<CmsPageComponent | { __typename: string }>[]>
+      }>
     }>
   }>
 }
