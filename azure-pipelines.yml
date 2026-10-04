@@ -2,28 +2,39 @@ trigger:
   branches:
     include:
       - dev
-     
+      - stg
 
 variables:
   dockerfilePath: Dockerfile
   imageName: asiangames-fe
   nonProdhubServiceConnection: spn-ucms-dev-secret
-  nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stg') }}:
+    nonProdHubContainerRepository: crqochubqac001.azurecr.io
+  ${{ else }}:
+    nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
 
 stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-    # ==================== Lower ENV JOB ====================
-    - job: BuildDev
-      displayName: Build job for Lower ENV
-      # condition: or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'preprod'))
+    # ==================== Lower ENV JOB (dev / stg) ====================
+    - job: BuildLowerEnv
+      displayName: Build job for Lower ENV ($(Build.SourceBranchName))
       pool:
         name: AgentPool-QOC-Hub
       steps:
-        - script: |
-            echo "NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL)" > .env
-            echo "NEXT_PUBLIC_WP_URL=$(NEXT_PUBLIC_WP_URL)" >> .env   
+        # dev branch -> NEXT_PUBLIC_* variables
+        # stg branch -> stg_NEXT_PUBLIC_* variables
+        - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stg') }}:
+          - script: |
+              echo "NEXT_PUBLIC_API_URL=$(stg_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(stg_NEXT_PUBLIC_WP_URL)" >> .env
+            displayName: 'Write .env (stg)'
+        - ${{ else }}:
+          - script: |
+              echo "NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(NEXT_PUBLIC_WP_URL)" >> .env
+            displayName: 'Write .env (dev)'
         - task: Docker@1
           displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
           inputs:
