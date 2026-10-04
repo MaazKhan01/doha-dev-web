@@ -17,21 +17,27 @@ stages:
     # ==================== Lower ENV JOB (dev / stg) ====================
     - job: BuildLowerEnv
       displayName: Build job for Lower ENV ($(Build.SourceBranchName))
+      condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], 'refs/heads/stg'))
       pool:
         name: AgentPool-QOC-Hub
       steps:
-        # dev branch -> NEXT_PUBLIC_* variables
-        # stg branch -> stg_NEXT_PUBLIC_* variables
-        - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stg') }}:
-          - script: |
-              echo "NEXT_PUBLIC_API_URL=$(stg_NEXT_PUBLIC_API_URL)" > .env
-              echo "NEXT_PUBLIC_WP_URL=$(stg_NEXT_PUBLIC_WP_URL)" >> .env
-            displayName: 'Write .env (stg)'
-        - ${{ else }}:
-          - script: |
-              echo "NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL)" > .env
-              echo "NEXT_PUBLIC_WP_URL=$(NEXT_PUBLIC_WP_URL)" >> .env
-            displayName: 'Write .env (dev)'
+        # dev branch -> DEV_NEXT_PUBLIC_* variables
+        # stg branch -> STG_NEXT_PUBLIC_* variables
+        - script: |
+            if [ "$(Build.SourceBranchName)" = "dev" ]; then
+              echo "Branch is dev: using DEV_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
+              cat .env
+            elif [ "$(Build.SourceBranchName)" = "stg" ]; then
+              echo "Branch is stg: using STG_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(STG_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" >> .env
+              cat .env
+            else
+              echo "No variables are set for this source branch: $(Build.SourceBranchName)"
+            fi
+          displayName: 'Write .env for $(Build.SourceBranchName)'
         - task: Docker@1
           displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
           inputs:
