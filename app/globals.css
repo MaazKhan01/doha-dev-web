@@ -1,160 +1,196 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  font-family: "DM Sans", sans-serif;
-}
+@theme {
+  /* Brand palette */
+  --color-sand: #faf5f0;
+  --color-ink: #1e1e1e;
+  --color-flame: #ff7346;
+  /* Input borders, section rules and quiet notes on sand */
+  --color-stone: #c8b4a0;
+  --color-hairline: color-mix(in srgb, #1e1e1e 14%, transparent);
+  --color-muted: color-mix(in srgb, #1e1e1e 65%, transparent);
 
-body {
-  font-family: "DM Sans", sans-serif;
-  font-weight: 400;
-  direction: ltr;
-    background: rgba(212, 208, 203, 0.123);
+  /* One card radius across the site */
+  --radius-card: 20px;
+  /* Inputs and buttons inside cards and modals */
+  --radius-field: 6px;
 
-}
+  /* Typefaces — the two families are loaded in lib/fonts.ts */
+  --font-display: var(--font-doha), system-ui, sans-serif;
+  --font-body: var(--font-doha), system-ui, sans-serif;
+  --font-arabic: var(--font-noto), system-ui, sans-serif;
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "DM Sans", sans-serif;
-  font-weight: 700;
-}
+  /* Vertical rhythm between major sections — tightens on small screens */
+  --spacing-section: clamp(4rem, 9vw, 7.5rem);
 
-p {
-  font-family: "DM Sans", sans-serif;
-  font-weight: 400;
-}
-
-[lang="ar"] body {
-  direction: rtl;
-}
-
-[lang="ar"] h1,
-[lang="ar"] h2,
-[lang="ar"] h3,
-[lang="ar"] h4,
-[lang="ar"] h5,
-[lang="ar"] h6 {
-  font-family: "DM Sans", sans-serif;
-  font-style: normal;
-  font-weight: 700;
+  /* Shared easing for motion and CSS transitions */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-[lang="ar"] p {
-  font-family: "DM Sans", sans-serif;
-  font-style: normal;
-  font-weight: 400;
+@layer base {
+  html {
+    /* Lenis drives scrolling; native smooth scroll would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    /* Nothing should ever scroll the page sideways on a phone.
+       `clip`, not `hidden`: `hidden` on body forces overflow-y to `auto`,
+       which turns body into a scroll container and stops IntersectionObserver
+       resolving in-flow elements — every scroll-triggered reveal dies with it. */
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--color-sand);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  [dir='rtl'] body {
+    font-family: var(--font-arabic);
+  }
+
+  ::selection {
+    background-color: var(--color-flame);
+    color: var(--color-sand);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-flame);
+    outline-offset: 3px;
+  }
+
+  /* Tailwind v4 resets buttons to the default cursor — put it back. */
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+@layer components {
+  /* Page gutter — every section aligns to this. */
+  .container-page {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* 62px at the 1440 artboard. */
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 3.875rem;
+    }
+  }
+
+  /* The heavy uppercase display voice used for every hero-scale heading. */
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    font-feature-settings: "ss01"; /* ligatures */
+
+    /* Long English words must break rather than push the layout wide. */
+    overflow-wrap: break-word;
+  }
+
+  [dir='rtl'] .type-display {
+    font-family: var(--font-arabic);
+    text-transform: none;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+
+  /* 34px Bold all-caps — the left-hand heading of each supporting section. */
+  .type-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(1rem, 3vw, 2.125rem);
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+
+  [dir='rtl'] .type-eyebrow {
+    font-family: var(--font-arabic);
+    text-transform: none;
+  }
+
+  .type-body {
+    font-size: clamp(0.9375rem, 1.6vw, 1.3rem);
+    /* line-height: 1.65; */
+    font-weight: 300 !important;
+  }
+
+  /* 24px Light — the supporting column beside every section heading, and the
+     FAQ answers. Scales down on narrow screens rather than wrapping badly. */
+  .type-lead {
+    font-size: clamp(0.9375rem, 2.4vw, 1.5rem);
+    font-weight: 300;
+    line-height: 1.45;
+  }
 }
 
-.main-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+@layer components {
+  /* The 404 page's backdrop: a grid of small diamonds — the site's chip motif —
+     with a flame spotlight that follows the pointer. The parent sets --x / --y
+     (pointer position in px) and --spot (0 or 1). The SVG is only a mask, so
+     its fill is irrelevant: colour comes from the brand tokens. */
+  .diamond-field {
+    --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M22 17l5 5-5 5-5-5z'/%3E%3C/svg%3E");
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .diamond-field::before,
+  .diamond-field::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: var(--diamond);
+    mask-image: var(--diamond);
+    -webkit-mask-size: 44px 44px;
+    mask-size: 44px 44px;
+  }
+
+  .diamond-field::before {
+    background-color: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .diamond-field::after {
+    background-color: var(--color-flame);
+    -webkit-mask-image: radial-gradient(circle 15rem at var(--x, 50%) var(--y, 50%), black, transparent 70%), var(--diamond);
+    mask-image: radial-gradient(circle 15rem at var(--x, 50%) var(--y, 50%), black, transparent 70%), var(--diamond);
+    -webkit-mask-size: 100% 100%, 44px 44px;
+    mask-size: 100% 100%, 44px 44px;
+    -webkit-mask-repeat: no-repeat, repeat;
+    mask-repeat: no-repeat, repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+    opacity: var(--spot, 0);
+    transition: opacity 0.6s var(--ease-brand);
+  }
 }
 
-.main-container .content {
-  flex: 1;
-}
-.header-title {
-  font-size: 40px;
-  font-weight: 700;
-  color: #C0392B;
-  margin-bottom: 10px;
-}
-.innerPage-emblem::before {
-/* use top-emblem image here and set on top of div */
-content: "";
-background-image: url("/en/images/dotted-pattern.png");
-background-position: center;
-position: absolute;
-width: 100%;
-max-height: 60px;
-background-repeat: repeat;
-overflow: hidden;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-
-}
-/* Rich content (ClassicEditor output) */
-.rich-content h1,
-.rich-content h2,
-.rich-content h3,
-.rich-content h4,
-.rich-content h5,
-.rich-content h6 {
-  font-weight: 700;
-  margin-top: 1.75rem;
-  margin-bottom: 0.6rem;
-  color: #1a1a1a;
-  line-height: 1.3;
-}
-.rich-content h1 { font-size: 2rem; }
-.rich-content h2 { font-size: 1.5rem; }
-.rich-content h3 { font-size: 1.25rem; }
-.rich-content h4 { font-size: 1.1rem; }
-.rich-content p  { margin-bottom: 1rem; }
-.rich-content ul,
-.rich-content ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-.rich-content ul { list-style: disc; }
-.rich-content ol { list-style: decimal; }
-.rich-content li { margin-bottom: 0.4rem; }
-.rich-content a  { color: #b3331d; text-decoration: underline; }
-.rich-content a:hover { opacity: 0.8; }
-.rich-content strong { font-weight: 700; }
-.rich-content em { font-style: italic; }
-.rich-content blockquote {
-  border-left: 3px solid #b3331d;
-  padding-left: 1rem;
-  margin: 1.5rem 0;
-  color: #555;
-  font-style: italic;
-}
-.rich-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1.25rem;
-  font-size: 0.9rem;
-}
-.rich-content th,
-.rich-content td {
-  border: 1px solid rgba(0,0,0,0.1);
-  padding: 0.6rem 0.9rem;
-  text-align: left;
-}
-.rich-content th { background: #f5f3f0; font-weight: 700; }
-.rich-content tr:nth-child(even) td { background: #fafaf9; }
-
-.innerPage-emblem {
-  position: relative;
-}
-.innerPage-emblem::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0; /* stick to bottom */
-
-  width: 100%;
-  height: 60px; /* use height instead of max-height */
-
-  background-image: url("/en/images/dotted-pattern.png");
-  background-repeat: repeat;
-  background-position: center;
-
-  pointer-events: none;
-}
-.container-fluid {
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 3rem;
-  padding-right: 3rem;
-  width: 100%;
+/* Honour the reader's reduced-motion preference everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
