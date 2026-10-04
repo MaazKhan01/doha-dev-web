@@ -9,6 +9,10 @@ import { CMS_GRAPHQL_ENDPOINT } from './lib/cms/config'
 const cmsHost = CMS_GRAPHQL_ENDPOINT ? new URL(CMS_GRAPHQL_ENDPOINT).hostname : undefined
 
 const nextConfig: NextConfig = {
+  // CMS calls run on the server, so they never show in the browser's Network
+  // tab. This prints each one (full URL, cache hit or miss) in the terminal.
+  logging: { fetches: { fullUrl: true } },
+
   // Required by the Dockerfile, which runs the standalone server.js build.
   output: 'standalone',
 
