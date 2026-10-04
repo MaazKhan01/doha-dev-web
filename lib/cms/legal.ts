@@ -23,15 +23,18 @@ const staticLegal: Record<Locale, LegalPage[]> = {
 export const legalSlugs = legalEn.map((page) => page.slug)
 
 /**
- * One legal page by slug: the CMS page when it exists on the Legal Notices
- * template, else the static copy, else `null` (the route 404s).
+ * One legal page by slug: the CMS page — Legal Notices template, or Default
+ * template with content (the privacy policy) — else the static copy, else
+ * `null` (the route 404s).
  *
  * The slug is the WordPress page URI (`legal-notices`), and the query is
  * locale-independent, so `/en/…` and `/ar/…` share one Data Cache entry.
  */
 export const getLegalPage = cache(async (locale: Locale, slug: string): Promise<LegalPage | null> => {
-  const fallback = staticLegal[locale].find((page) => page.slug === slug) ?? null
+  const pages = staticLegal[locale]
+  const fallback = pages.find((page) => page.slug === slug) ?? null
   const raw = await queryCms<CmsLegalPageQuery>({ ...LEGAL_PAGE_QUERY, variables: { uri: slug } })
 
-  return mapLegalPage(raw, { locale, slug, fallback }) ?? fallback
+  // Every legal page shares one help card; Default-template pages borrow it.
+  return mapLegalPage(raw, { locale, slug, fallback, help: pages[0].help }) ?? fallback
 })

@@ -192,7 +192,7 @@ export const homeEn: StaticContent = {
     copyright: '© Qatar Olympic Committee',
     links: [
       { label: 'Legal Notices', href: '/en/legal-notices' },
-      { label: 'Privacy', href: '/en/privacy' },
+      { label: 'Privacy', href: '/en/privacy-policy' },
       { label: 'Transparency', href: '/en/transparency' },
     ],
     media: {

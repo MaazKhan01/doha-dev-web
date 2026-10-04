@@ -190,7 +190,7 @@ export const homeAr: StaticContent = {
     copyright: '© اللجنة الأولمبية القطرية',
     links: [
       { label: 'الإشعارات القانونية', href: '/ar/legal-notices' },
-      { label: 'الخصوصية', href: '/ar/privacy' },
+      { label: 'الخصوصية', href: '/ar/privacy-policy' },
       { label: 'الشفافية', href: '/ar/transparency' },
     ],
     media: {

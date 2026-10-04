@@ -67,7 +67,7 @@ export const legalAr: LegalPage[] = [
     help,
   },
   {
-    slug: 'privacy',
+    slug: 'privacy-policy',
     meta: {
       title: 'الخصوصية - الدوحة 2036',
       description: 'كيف يتعامل موقع الدوحة 2036 مع البيانات الشخصية.',

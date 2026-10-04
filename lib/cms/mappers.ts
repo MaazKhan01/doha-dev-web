@@ -350,20 +350,36 @@ export function mapSections(raw: CmsPageQuery | null, ctx: Ctx): PageSection[] |
 
 // ─── Legal pages ─────────────────────────────────────────────────────────────
 
-/**
- * A legal page. `null` when the CMS has no page at that slug or the page is not
- * on the Legal Notices template — the loader then serves the static copy.
- * `fallback` (the static page for the slug, if any) supplies the metadata and
- * the help card's copy where the CMS leaves them empty.
- */
-export function mapLegalPage(
-  raw: CmsLegalPageQuery | null,
-  { locale, slug, fallback }: { locale: Locale; slug: string; fallback: LegalPage | null },
-): LegalPage | null {
-  const page = raw?.page
-  const fields = page?.template?.legalNoticesPageFields
-  if (!page || !fields) return null
+type LegalCtx = {
+  locale: Locale
+  slug: string
+  /** The static page for this slug, if there is one: metadata and copy where the CMS is empty. */
+  fallback: LegalPage | null
+  /** The help card's copy for pages that do not model it (Default template). */
+  help: LegalPage['help']
+}
 
+/**
+ * A legal page. `null` when the CMS has no page at that slug, or the page has
+ * neither the Legal Notices fields nor any content — the loader then serves
+ * the static copy.
+ */
+export function mapLegalPage(raw: CmsLegalPageQuery | null, ctx: LegalCtx): LegalPage | null {
+  const page = raw?.page
+  if (!page) return null
+
+  const fields = page.template?.legalNoticesPageFields
+  if (fields) return mapLegalNotices(page, fields, ctx)
+  return page.content ? mapContentPage(page, ctx) : null
+}
+
+/** Legal Notices template: bilingual, structured fields. */
+function mapLegalNotices(
+  page: NonNullable<CmsLegalPageQuery['page']>,
+  fields: NonNullable<NonNullable<NonNullable<CmsLegalPageQuery['page']>['template']>['legalNoticesPageFields']>,
+  { locale, slug, fallback, help }: LegalCtx,
+): LegalPage {
+  const helpFallback = fallback?.help ?? help
   const title = toLines(pick(locale, fields.mainTitle, fields.mainTitleAr))
   const intro = toPlainText(pick(locale, fields.topNoticeText, fields.topNoticeTextAr))
   const heading = title.join(' ') || toPlainText(page.title)
@@ -385,9 +401,50 @@ export function mapLegalPage(
       }
     }),
     help: {
-      title: toPlainText(pick(locale, fields.ctaBannerTitle, fields.ctaBannerTitleAr)) || (fallback?.help.title ?? ''),
-      body: toPlainText(pick(locale, fields.ctaBannerSubtitle, fields.ctaBannerSubtitleAr)) || (fallback?.help.body ?? ''),
-      cta: toPlainText(pick(locale, fields.ctaButtonLabel, fields.ctaButtonLabelAr)) || (fallback?.help.cta ?? ''),
+      title: toPlainText(pick(locale, fields.ctaBannerTitle, fields.ctaBannerTitleAr)) || helpFallback.title,
+      body: toPlainText(pick(locale, fields.ctaBannerSubtitle, fields.ctaBannerSubtitleAr)) || helpFallback.body,
+      cta: toPlainText(pick(locale, fields.ctaButtonLabel, fields.ctaButtonLabelAr)) || helpFallback.cta,
     },
   }
 }
+
+/**
+ * Default template (e.g. the privacy policy): the block-editor `content`, cut
+ * into numbered sections at each `<h2>`/`<h3>`. Anything before the first
+ * heading becomes the intro. English only — the template has no Arabic field.
+ */
+function mapContentPage(
+  page: NonNullable<CmsLegalPageQuery['page']>,
+  { slug, fallback, help }: LegalCtx,
+): LegalPage {
+  // WordPress's sample privacy policy labels each block "Suggested text:" for
+  // editors; that label is never meant for readers.
+  const html = (page.content ?? '').replace(
+    /<strong[^>]*class="[^"]*privacy-policy-tutorial[^"]*"[^>]*>[\s\S]*?<\/strong>/gi,
+    '',
+  )
+  const [lead, ...chunks] = html.split(/<h[23][^>]*>/i)
+  const title = toPlainText(page.title)
+  const intro = toBlocks(lead).join(' ')
+
+  return {
+    slug,
+    meta: fallback?.meta ?? { title: `${title} - Doha 2036`, description: intro || title },
+    title: [title],
+    intro,
+    sections: chunks.flatMap((chunk, index) => {
+      const [heading, body = ''] = chunk.split(/<\/h[23]>/i)
+      const sectionTitle = toPlainText(heading)
+      if (!sectionTitle) return []
+      return { id: `section-${index + 1}`, title: sectionTitle, paragraphs: toBlocks(body) }
+    }),
+    help: fallback?.help ?? help,
+  }
+}
+
+/** Block HTML to one string per paragraph, list item or minor heading. */
+const toBlocks = (html: string | undefined) =>
+  (html ?? '')
+    .split(/<\/(?:p|li|h[4-6]|blockquote)>|<br\s*\/?>/i)
+    .map(toPlainText)
+    .filter(Boolean)

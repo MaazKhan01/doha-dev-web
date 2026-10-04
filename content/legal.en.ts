@@ -70,7 +70,7 @@ export const legalEn: LegalPage[] = [
     help,
   },
   {
-    slug: 'privacy',
+    slug: 'privacy-policy',
     meta: {
       title: 'Privacy - Doha 2036',
       description: 'How the Doha 2036 website handles personal data.',

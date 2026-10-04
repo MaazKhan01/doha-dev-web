@@ -149,6 +149,8 @@ export interface CmsLegalPageQuery {
     slug?: Maybe<string>
     title?: Maybe<string>
     status?: Maybe<string>
+    /** Block-editor HTML; what a Default-template page carries instead of the legal fields. */
+    content?: Maybe<string>
     /** Only `Template_LegalNotices` carries the fields; others arrive with just `__typename`. */
     template?: Maybe<{
       __typename?: string

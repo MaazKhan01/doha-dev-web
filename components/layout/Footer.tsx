@@ -30,7 +30,7 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
       className="relative isolate flex min-h-[32rem] flex-col overflow-hidden bg-ink text-sand lg:min-h-[min(63.03vw,56.75rem)]"
     >
       <Media asset={data.media.backdrop} className="absolute inset-0 -z-10" />
-      <div aria-hidden className="absolute inset-0 -z-10 bg-ink/45" />
+      <div aria-hidden className="absolute inset-0 -z-10" />
 
       <div className="container-page flex flex-1 flex-col justify-between gap-12 py-8 md:gap-16 md:py-12">
         <div className="flex flex-row items-start justify-between gap-6">

@@ -27,9 +27,11 @@ export function LegalContent({ data }: { data: LegalPage }) {
               ))}
             </h1>
           </Reveal>
-          <Reveal delay={0.12}>
-            <p className="max-w-xl text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.65] md:pt-4">{data.intro}</p>
-          </Reveal>
+          {data.intro && (
+            <Reveal delay={0.12}>
+              <p className="max-w-xl text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.65] md:pt-4">{data.intro}</p>
+            </Reveal>
+          )}
         </header>
 
         <ol className="mt-12 border-t border-ink md:mt-20">
