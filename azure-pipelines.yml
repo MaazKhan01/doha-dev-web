@@ -16,7 +16,7 @@ stages:
   jobs:
     # ==================== Lower ENV JOB (dev / stg) ====================
     - job: BuildLowerEnv
-      displayName: Build job for Lower ENV ($(Build.SourceBranchName))
+      displayName: Build job for Lower ENV (${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }})
       condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], 'refs/heads/stg'))
       pool:
         name: AgentPool-QOC-Hub
