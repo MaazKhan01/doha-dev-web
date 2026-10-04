@@ -8,10 +8,7 @@ variables:
   dockerfilePath: Dockerfile
   imageName: asiangames-fe
   nonProdhubServiceConnection: spn-ucms-dev-secret
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/stg') }}:
-    nonProdHubContainerRepository: crqochubqac001.azurecr.io
-  ${{ else }}:
-    nonProdHubContainerRepository: crucmsqocdevqc01.azurecr.io
+  nonProdHubContainerRepository: crqochubqac001.azurecr.io
 
 stages:
 - stage: Build
