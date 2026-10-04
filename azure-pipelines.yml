@@ -1,8 +1,8 @@
 trigger:
   branches:
     include:
+      - dev
       - stg
-     
 
 variables:
   dockerfilePath: Dockerfile
@@ -14,16 +14,30 @@ stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-    # ==================== Lower STG ENV JOB ..... ====================
-    - job: BuildDev
-      displayName: Build job for Lower ENV
-      # condition: or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['Build.SourceBranchName'], 'preprod'))
+    # ==================== Lower ENV JOB (dev / stg) ====================
+    - job: BuildLowerEnv
+      displayName: Build job for Lower ENV (${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }})
+      condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], 'refs/heads/stg'))
       pool:
         name: AgentPool-QOC-Hub
       steps:
+        # dev branch -> DEV_NEXT_PUBLIC_* variables
+        # stg branch -> STG_NEXT_PUBLIC_* variables
         - script: |
-            echo "NEXT_PUBLIC_API_URL=$(NEXT_PUBLIC_API_URL)" > .env
-            echo "NEXT_PUBLIC_WP_URL=$(NEXT_PUBLIC_WP_URL)" >> .env   
+            if [ "$(Build.SourceBranchName)" = "dev" ]; then
+              echo "Branch is dev: using DEV_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
+              cat .env
+            elif [ "$(Build.SourceBranchName)" = "stg" ]; then
+              echo "Branch is stg: using STG_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(STG_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" >> .env
+              cat .env
+            else
+              echo "No variables are set for this source branch: $(Build.SourceBranchName)"
+            fi
+          displayName: 'Write .env for $(Build.SourceBranchName)'
         - task: Docker@1
           displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
           inputs:
