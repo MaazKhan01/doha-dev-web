@@ -22,17 +22,23 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
   }
 
   return (
-    <footer
-      // No `id="contact"`: that hash opens the contact modal, and an anchor
-      // here would make a `/en#contact` deep link jump the page to the footer.
-      // Desktop matches the design's 1440 × 907.58 band (63.03% of width),
-      // capped so it stops growing past the 1440 artboard.
-      className="relative isolate flex min-h-[32rem] flex-col overflow-hidden bg-ink text-sand lg:min-h-[min(63.03vw,56.75rem)]"
-    >
-      <Media asset={data.media.backdrop} className="absolute inset-0 -z-10" />
-      <div aria-hidden className="absolute inset-0 -z-10" />
+    // No `id="contact"`: that hash opens the contact modal, and an anchor here
+    // would make a `/en#contact` deep link jump the page to the footer.
+    <footer className="relative isolate flex flex-col overflow-hidden bg-ink text-sand">
+      {/* The design's photo band (Figma 1:1460): 1440 × 907.58 at the artboard,
+          scaling with the width and capped there. The photo is cropped from the
+          top — its bottom edge stays put — and the bar below overlaps its last
+          48.19px. On smaller screens it simply fills the band above the bar. */}
+      <div className="absolute inset-x-0 top-0 -z-10 h-full lg:h-[min(63.0261vw,56.7235rem)]">
+        <Media asset={data.media.backdrop} position="object-bottom" className="size-full" />
+        {/* #030303 at 30%, as drawn. */}
+        <div aria-hidden className="absolute inset-0 bg-scrim/30" />
+      </div>
 
-      <div className="container-page flex flex-1 flex-col justify-between gap-12 py-8 md:gap-16 md:py-12">
+      {/* 859.39px at 1440: the photo band less the bar's overlap. The footer's
+          content sits 64px in (the rest of the site uses 62px), and the
+          wordmark ends 51.36px above the bar — both as drawn. */}
+      <div className="container-page flex min-h-[32rem] flex-1 flex-col justify-between gap-12 py-8 md:gap-16 md:py-12 lg:min-h-[min(59.6797vw,53.7119rem)] lg:px-16 lg:pb-[min(3.5667vw,3.21rem)]">
         <div className="flex flex-row items-start justify-between gap-6">
           <Reveal offset={24}>
             <div className="flex flex-col gap-3">
@@ -69,7 +75,12 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
         </div>
 
         <Reveal>
-          <p className="type-display text-[clamp(2.25rem,8vw,4rem)] text-sand">
+          {/* Figma 1:1595: Doha 2036 Bold 114px, line-height 80%, tracking 0,
+              in a 566px column so the CMS's one-line headline wraps to three
+              lines. Size and width scale together below 1440 to keep the same
+              break. Latin only: Arabic keeps the taller line height its glyphs
+              need (see .type-display in globals.css). */}
+          <p className="type-display max-w-[min(39.3056vw,35.375rem)] text-[clamp(2.75rem,7.9167vw,7.125rem)] text-sand ltr:leading-[0.8] ltr:tracking-normal">
             {data.wordmark.map((line, index) => (
               <span key={index} className="block">
                 {line}
@@ -87,8 +98,9 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
 
 function FooterBar({ data }: { data: FooterSection }) {
   return (
-    <div className="bg-ink">
-      <div className="container-page flex flex-col items-center gap-1.5 py-4 text-base text-sand/80 sm:flex-row sm:justify-between sm:py-5">
+    // 108.10px tall at the artboard (Figma 1:1511).
+    <div className="bg-ink lg:min-h-[6.7565rem]">
+      <div className="container-page flex flex-col items-center gap-1.5 py-4 text-base text-sand/80 sm:flex-row sm:justify-between sm:py-5 lg:min-h-[6.7565rem] lg:px-16">
         <p>{data.copyright}</p>
         <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           {data.links.map((link) => (

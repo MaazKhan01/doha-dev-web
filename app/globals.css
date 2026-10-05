@@ -7,6 +7,8 @@
   --color-flame: #ff7346;
   /* Input borders, section rules and quiet notes on sand */
   --color-stone: #c8b4a0;
+  /* Photo scrims (the footer's 30% darkening layer) */
+  --color-scrim: #030303;
   --color-hairline: color-mix(in srgb, #1e1e1e 14%, transparent);
   --color-muted: color-mix(in srgb, #1e1e1e 65%, transparent);
 

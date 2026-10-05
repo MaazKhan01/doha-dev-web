@@ -8,6 +8,8 @@ type MediaProps = {
   className?: string
   sizes?: string
   priority?: boolean
+  /** Which part of the image stays in view when it is cropped, e.g. 'object-bottom'. */
+  position?: string
 }
 
 /**
@@ -15,7 +17,7 @@ type MediaProps = {
  * still being exported from design. Every art-directed image on the site goes
  * through here so the fill/sizes behaviour stays consistent.
  */
-export function Media({ asset, className, sizes = '100vw', priority = false }: MediaProps) {
+export function Media({ asset, className, sizes = '100vw', priority = false, position }: MediaProps) {
   if (!asset.src) {
     return (
       <div
@@ -41,7 +43,7 @@ export function Media({ asset, className, sizes = '100vw', priority = false }: M
         fill
         sizes={sizes}
         priority={priority}
-        className="object-cover"
+        className={cn('object-cover', position)}
       />
     </div>
   )
