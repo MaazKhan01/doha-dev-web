@@ -6,7 +6,7 @@ import { buttonClass, fieldClass } from '@/components/ui/formStyles'
 import { cn } from '@/lib/utils/cn'
 
 /**
- * Email + password, checked by POST /api/auth/signin. Sent as JSON from the
+ * The shared preview password, checked by POST /api/auth/signin. Sent as JSON from the
  * browser — not as a server action, whose multipart body the site's WAF
  * blocks (see that route).
  */
@@ -24,7 +24,7 @@ export function SignInForm({ next }: { next: string }) {
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.get('email'), password: form.get('password'), next }),
+        body: JSON.stringify({ password: form.get('password'), next }),
       })
       const result = (await response.json().catch(() => null)) as { ok?: boolean; next?: string; error?: string } | null
 
@@ -45,28 +45,10 @@ export function SignInForm({ next }: { next: string }) {
       <p className="text-[0.9375rem] font-bold text-flame uppercase">Restricted access</p>
       <h1 className="type-display mt-1.5 text-[clamp(2rem,5vw,2.875rem)]">Sign in</h1>
       <p className="mt-4 text-base leading-normal text-muted">
-        This site is not public yet. Sign in with the access details you were given.
+        This site is not public yet. Enter the password you were given.
       </p>
 
       <div className="mt-8 flex flex-col gap-2">
-        <label htmlFor="signin-email" className="text-[0.8125rem] font-bold uppercase">
-          Email
-        </label>
-        <input
-          id="signin-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          autoFocus
-          placeholder="your@email.com"
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? 'signin-error' : undefined}
-          className={cn(fieldClass, 'h-13')}
-        />
-      </div>
-
-      <div className="mt-5 flex flex-col gap-2">
         <label htmlFor="signin-password" className="text-[0.8125rem] font-bold uppercase">
           Password
         </label>
@@ -75,6 +57,7 @@ export function SignInForm({ next }: { next: string }) {
           name="password"
           type="password"
           required
+          autoFocus
           autoComplete="current-password"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? 'signin-error' : undefined}
