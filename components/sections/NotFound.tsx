@@ -7,7 +7,7 @@ import { useRef, type PointerEvent } from 'react'
 
 import { Reveal } from '@/components/motion/Reveal'
 import { buttonClass } from '@/components/ui/formStyles'
-import { notFoundCopy } from '@/content/notFound'
+import { uiStrings } from '@/content/ui'
 import { defaultLocale, isLocale } from '@/lib/i18n/config'
 import { cn } from '@/lib/utils/cn'
 
@@ -25,7 +25,7 @@ const TILT = 28
 export function NotFound() {
   const params = useParams<{ locale?: string }>()
   const locale = params?.locale && isLocale(params.locale) ? params.locale : defaultLocale
-  const copy = notFoundCopy[locale]
+  const copy = uiStrings[locale].notFound
 
   const reduceMotion = useReducedMotion()
   const field = useRef<HTMLDivElement>(null)

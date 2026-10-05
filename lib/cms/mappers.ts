@@ -37,18 +37,18 @@ import type {
   SiteModals,
   SocialLink,
   StatementSection,
-  StaticContent,
+  UiStrings,
   ValuePropsSection,
 } from '@/types/content'
 
 /**
  * WPGraphQL response → `types/content.ts`. Pure functions: no fetching, no
- * React. `fallback` is the locale's static content, used only for values the
- * CMS does not model (alt text, placeholders, socials) — never to paper over a
- * field an editor deliberately left empty.
+ * React. The CMS is the only source of content: a field an editor leaves empty
+ * renders empty. `ui` supplies only interface text the CMS has no field for
+ * (form labels, status lines, accessible names) — never content.
  */
 
-type Ctx = { locale: Locale; fallback: StaticContent }
+type Ctx = { locale: Locale; ui: UiStrings }
 
 /** A section before it is given its position id. Distributes, so `type` still narrows `data`. */
 type SectionPayload = PageSection extends infer S ? (S extends PageSection ? Omit<S, 'id'> : never) : never
@@ -58,16 +58,14 @@ const compact = <T>(list: (T | null | undefined)[] | null | undefined): T[] =>
 
 // ─── Header / footer ─────────────────────────────────────────────────────────
 
-export function mapHeader(raw: CmsHeaderQuery | null, { locale, fallback }: Ctx): HeaderSection {
-  const fields = raw?.header?.headerFields
-  if (!fields) return fallback.header
-
-  const logo = pickMedia(locale, fields.logoEn, fields.logoAr)
+export function mapHeader(raw: CmsHeaderQuery, { locale, ui }: Ctx): HeaderSection {
+  const fields = raw.header?.headerFields
+  const logo = pickMedia(locale, fields?.logoEn, fields?.logoAr)
 
   return {
-    // Media titles are file names ("logo"), so the static alt stands in for a missing one.
-    logo: toMedia(logo, fallback.header.logo.alt),
-    menus: compact(fields.menus).flatMap((menu) => {
+    // Logo uploads carry no alt text; an empty src renders the bundled /logo.svg.
+    logo: toMedia(logo, ui.logoAlt),
+    menus: compact(fields?.menus).flatMap((menu) => {
       const label = toPlainText(pick(locale, menu.labelEn, menu.labelAr))
       if (!label) return []
       return {
@@ -85,31 +83,29 @@ export function mapHeader(raw: CmsHeaderQuery | null, { locale, fallback }: Ctx)
   }
 }
 
-export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx): FooterSection {
-  const fields = raw?.footer?.footerFields
-  const base = fallback.footer
-  if (!fields) return base
-
-  const cta = fields.callToAction
+export function mapFooter(raw: CmsFooterQuery, { locale, ui }: Ctx): FooterSection {
+  const fields = raw.footer?.footerFields
+  const cta = fields?.callToAction
   const en = cta?.ctaButton
   const ar = cta?.ctaButtonAr
 
   return {
     newsletter: {
       label: toPlainText(pick(locale, cta?.ctaLabel, cta?.ctaLabelAr)),
-      cta: toPlainText(pick(locale, en?.buttonLabel, ar?.buttonLabel)) || base.newsletter.cta,
+      cta: toPlainText(pick(locale, en?.buttonLabel, ar?.buttonLabel)),
       // Only an external sign-up page replaces the newsletter modal; there is no internal one.
       href: externalOnly(pick(locale, en?.buttonLink, ar?.buttonLink)),
     },
-    socials: compact(fields.socials).flatMap((social) => {
+    socials: compact(fields?.socials).flatMap((social) => {
       const id = toSocialId(social.platform)
       const href = pick(locale, social.urlEn, social.urlAr)
       if (!id || !href) return []
-      return { id, href, label: base.socials.find((item) => item.id === id)?.label ?? id }
+      // The CMS stores the platform only; the accessible name is interface text.
+      return { id, href, label: ui.socialLabels[id] }
     }),
-    wordmark: toLines(pick(locale, fields.headlineEn, fields.headlineAr)),
-    copyright: toPlainText(pick(locale, fields.copyrightText, fields.copyrightTextAr)),
-    links: compact(fields.footerLinks).flatMap((item) => {
+    wordmark: toLines(pick(locale, fields?.headlineEn, fields?.headlineAr)),
+    copyright: toPlainText(pick(locale, fields?.copyrightText, fields?.copyrightTextAr)),
+    links: compact(fields?.footerLinks).flatMap((item) => {
       const label = toPlainText(
         pick(locale, item.footerLink?.footerLinkText, item.footerLinkAr?.footerLinkText),
       )
@@ -122,54 +118,40 @@ export function mapFooter(raw: CmsFooterQuery | null, { locale, fallback }: Ctx)
       }
     }),
     media: {
-      backdrop: toMedia(
-        pickMedia(locale, fields.backgroundMediaEn, fields.backgroundMediaAr),
-        base.media.backdrop.alt,
-      ),
+      // Decorative: the wordmark carries the meaning, so no alt text is invented.
+      backdrop: toMedia(pickMedia(locale, fields?.backgroundMediaEn, fields?.backgroundMediaAr), ''),
     },
   }
 }
 
 /**
  * Modal copy: contact from the header's fields, newsletter from the footer's.
- * Each modal falls back to its static copy as a whole if its group is missing,
- * and field by field for what the CMS does not model (form labels, statuses).
+ * Every visible line of copy is the CMS's; `ui` adds only the form labels,
+ * placeholders and status lines, which have no CMS fields.
  */
-export function mapModals(
-  header: CmsHeaderQuery | null,
-  footer: CmsFooterQuery | null,
-  { locale, fallback }: Ctx,
-): SiteModals {
-  const base = fallback.modals
-  const contact = header?.header?.contactModalFields
-  const newsletter = footer?.footer?.newsletterModalFields
-  const text = (en: string | null | undefined, ar: string | null | undefined, otherwise: string) =>
-    toPlainText(pick(locale, en, ar)) || otherwise
+export function mapModals(header: CmsHeaderQuery, footer: CmsFooterQuery, { locale, ui }: Ctx): SiteModals {
+  const contact = header.header?.contactModalFields
+  const newsletter = footer.footer?.newsletterModalFields
+  const text = (en: string | null | undefined, ar: string | null | undefined) => toPlainText(pick(locale, en, ar))
 
   return {
-    newsletter: newsletter
-      ? {
-          ...base.newsletter,
-          eyebrow: text(newsletter.badgeLabel, newsletter.badgeLabelAr, base.newsletter.eyebrow),
-          heading: nonEmpty(toLines(pick(locale, newsletter.title, newsletter.titleAr)), base.newsletter.heading),
-          body: text(newsletter.description, newsletter.descriptionAr, base.newsletter.body),
-          submit: text(newsletter.buttonLabel, newsletter.buttonLabelAr, base.newsletter.submit),
-          consent: text(newsletter.consentText, newsletter.consentTextAr, base.newsletter.consent),
-        }
-      : base.newsletter,
-    contact: contact
-      ? {
-          ...base.contact,
-          heading: nonEmpty(toLines(pick(locale, contact.title, contact.titleAr)), base.contact.heading),
-          body: text(contact.subtitle, contact.subtitleAr, base.contact.body),
-          submit: text(contact.submitButtonLabel, contact.submitButtonLabelAr, base.contact.submit),
-          note: text(contact.footerNote, contact.footerNoteAr, base.contact.note),
-        }
-      : base.contact,
+    newsletter: {
+      ...ui.newsletter,
+      eyebrow: text(newsletter?.badgeLabel, newsletter?.badgeLabelAr),
+      heading: toLines(pick(locale, newsletter?.title, newsletter?.titleAr)),
+      body: text(newsletter?.description, newsletter?.descriptionAr),
+      submit: text(newsletter?.buttonLabel, newsletter?.buttonLabelAr),
+      consent: text(newsletter?.consentText, newsletter?.consentTextAr),
+    },
+    contact: {
+      ...ui.contact,
+      heading: toLines(pick(locale, contact?.title, contact?.titleAr)),
+      body: text(contact?.subtitle, contact?.subtitleAr),
+      submit: text(contact?.submitButtonLabel, contact?.submitButtonLabelAr),
+      note: text(contact?.footerNote, contact?.footerNoteAr),
+    },
   }
 }
-
-const nonEmpty = <T>(list: T[], otherwise: T[]) => (list.length ? list : otherwise)
 
 const externalOnly = (url: string | undefined) =>
   url && /^https?:\/\//i.test(url.trim()) ? url.trim() : undefined
@@ -193,18 +175,21 @@ function toSocialId(value: CmsSocial['platform']): SocialLink['id'] | null {
 
 // ─── Page-builder sections ───────────────────────────────────────────────────
 
-function mapHero(raw: CmsHeroBanner, { locale, fallback }: Ctx): HeroSection {
+function mapHero(raw: CmsHeroBanner, { locale }: Ctx): HeroSection {
   const media = pickMedia(locale, raw.heroBgMedia, raw.heroBgMediaAr)
   const url = toPublicUrl(media?.node?.mediaItemUrl || media?.node?.sourceUrl)
   // One field takes either a video or a still; the still becomes the poster.
   const isVideo = media?.node?.mimeType?.startsWith('video/') ?? false
 
+  const heading = toHeadingLines(pick(locale, raw.heroHeading, raw.heroHeadingAr))
+
   return {
-    heading: toHeadingLines(pick(locale, raw.heroHeading, raw.heroHeadingAr)),
+    heading,
     video: {
       src: isVideo ? url : '',
       poster: isVideo ? '' : url,
-      alt: fallback.hero.video.alt,
+      // The CMS has no description for the footage; name it by the heading it sits under.
+      alt: heading.map((line) => line.text).join(' '),
     },
   }
 }
@@ -329,11 +314,8 @@ function isKnownComponent(component: { __typename: string }): component is CmsPa
  * The page's components, in the editor's order. Layouts this build does not
  * know are skipped (with a warning in development) rather than breaking the page.
  */
-export function mapSections(raw: CmsPageQuery | null, ctx: Ctx): PageSection[] | null {
-  const components = raw?.pageBy?.template?.pageBuilder?.pageComponents
-  if (!components) return null
-
-  return compact(components).flatMap((component, index) => {
+export function mapSections(raw: CmsPageQuery, ctx: Ctx): PageSection[] {
+  return compact(raw.pageBy?.template?.pageBuilder?.pageComponents).flatMap((component, index) => {
     if (!isKnownComponent(component)) {
       if (process.env.NODE_ENV !== 'production') {
         console.warn(`[cms] no section mapped for ${component.__typename}; skipping`)
@@ -350,22 +332,20 @@ export function mapSections(raw: CmsPageQuery | null, ctx: Ctx): PageSection[] |
 
 // ─── Legal pages ─────────────────────────────────────────────────────────────
 
-type LegalCtx = {
-  locale: Locale
-  slug: string
-  /** The static page for this slug, if there is one: metadata and copy where the CMS is empty. */
-  fallback: LegalPage | null
-  /** The help card's copy for pages that do not model it (Default template). */
-  help: LegalPage['help']
-}
+type LegalCtx = { locale: Locale; slug: string; ui: UiStrings }
+
+/** "Legal Notices - Doha 2036": the CMS page title plus the site name. */
+const pageMeta = (title: string, description: string, ui: UiStrings) => ({
+  title: title ? `${title} - ${ui.siteName}` : ui.meta.title,
+  description: description || ui.meta.description,
+})
 
 /**
  * A legal page. `null` when the CMS has no page at that slug, or the page has
- * neither the Legal Notices fields nor any content — the loader then serves
- * the static copy.
+ * neither the Legal Notices fields nor any content — the route then 404s.
  */
-export function mapLegalPage(raw: CmsLegalPageQuery | null, ctx: LegalCtx): LegalPage | null {
-  const page = raw?.page
+export function mapLegalPage(raw: CmsLegalPageQuery, ctx: LegalCtx): LegalPage | null {
+  const page = raw.page
   if (!page) return null
 
   const fields = page.template?.legalNoticesPageFields
@@ -377,16 +357,15 @@ export function mapLegalPage(raw: CmsLegalPageQuery | null, ctx: LegalCtx): Lega
 function mapLegalNotices(
   page: NonNullable<CmsLegalPageQuery['page']>,
   fields: NonNullable<NonNullable<NonNullable<CmsLegalPageQuery['page']>['template']>['legalNoticesPageFields']>,
-  { locale, slug, fallback, help }: LegalCtx,
+  { locale, slug, ui }: LegalCtx,
 ): LegalPage {
-  const helpFallback = fallback?.help ?? help
   const title = toLines(pick(locale, fields.mainTitle, fields.mainTitleAr))
   const intro = toPlainText(pick(locale, fields.topNoticeText, fields.topNoticeTextAr))
   const heading = title.join(' ') || toPlainText(page.title)
 
   return {
     slug,
-    meta: fallback?.meta ?? { title: `${heading} - Doha 2036`, description: intro },
+    meta: pageMeta(heading, intro, ui),
     title: title.length ? title : [heading],
     intro,
     sections: compact(fields.legalSections).flatMap((section, index) => {
@@ -400,13 +379,17 @@ function mapLegalNotices(
         paragraphs: toLines(pick(locale, section.sectionContent, section.sectionContentAr)),
       }
     }),
-    help: {
-      title: toPlainText(pick(locale, fields.ctaBannerTitle, fields.ctaBannerTitleAr)) || helpFallback.title,
-      body: toPlainText(pick(locale, fields.ctaBannerSubtitle, fields.ctaBannerSubtitleAr)) || helpFallback.body,
-      cta: toPlainText(pick(locale, fields.ctaButtonLabel, fields.ctaButtonLabelAr)) || helpFallback.cta,
-    },
+    help: mapHelp(
+      toPlainText(pick(locale, fields.ctaBannerTitle, fields.ctaBannerTitleAr)),
+      toPlainText(pick(locale, fields.ctaBannerSubtitle, fields.ctaBannerSubtitleAr)),
+      toPlainText(pick(locale, fields.ctaButtonLabel, fields.ctaButtonLabelAr)),
+    ),
   }
 }
+
+/** The help card renders only when the CMS gives it a button to show. */
+const mapHelp = (title: string, body: string, cta: string): LegalPage['help'] =>
+  cta ? { title, body, cta } : undefined
 
 /**
  * Default template (e.g. the privacy policy): the block-editor `content`, cut
@@ -415,7 +398,7 @@ function mapLegalNotices(
  */
 function mapContentPage(
   page: NonNullable<CmsLegalPageQuery['page']>,
-  { slug, fallback, help }: LegalCtx,
+  { slug, ui }: LegalCtx,
 ): LegalPage {
   // WordPress's sample privacy policy labels each block "Suggested text:" for
   // editors; that label is never meant for readers.
@@ -429,7 +412,7 @@ function mapContentPage(
 
   return {
     slug,
-    meta: fallback?.meta ?? { title: `${title} - Doha 2036`, description: intro || title },
+    meta: pageMeta(title, intro, ui),
     title: [title],
     intro,
     sections: chunks.flatMap((chunk, index) => {
@@ -438,7 +421,7 @@ function mapContentPage(
       if (!sectionTitle) return []
       return { id: `section-${index + 1}`, title: sectionTitle, paragraphs: toBlocks(body) }
     }),
-    help: fallback?.help ?? help,
+    // The Default template has no help-card fields, so the page has no card.
   }
 }
 

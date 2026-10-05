@@ -47,18 +47,54 @@ export type CmsQuery = {
   variables: Record<string, unknown>
 }
 
+/** Thrown when the CMS cannot answer. The message says which query and why. */
+export class CmsError extends Error {
+  override name = 'CmsError'
+}
+
 /**
- * Runs a query from `graphQlQueries.js`. Resolves to `null` when the CMS is not
- * configured or the request fails; the loaders then serve the static content,
- * so the site never renders empty during the build-out.
+ * Collapses a query onto one line. The Application Gateway WAF in front of the
+ * CMS has rejected bodies containing `\n` ("Blocked by the WAF Policy", 403),
+ * and the queries are written across many lines for readability. Whitespace is
+ * insignificant in GraphQL; string literals are left untouched.
  */
-export async function queryCms<TData>({ query, variables }: CmsQuery): Promise<TData | null> {
-  if (!cmsClient) return null
+const toSingleLine = (query: string) =>
+  query.replace(/"(?:\\.|[^"\\])*"|\s+/g, (match) => (match.startsWith('"') ? match : ' ')).trim()
+
+/** The operation name, for error messages: "GetHeader". */
+const operationName = (query: string) => /\b(?:query|mutation)\s+(\w+)/.exec(query)?.[1] ?? 'query'
+
+/** graphql-request's error, reduced to what a build log needs. */
+function describe(error: unknown): string {
+  const response = (error as { response?: { status?: number; errors?: { message: string }[]; body?: unknown } })
+    ?.response
+  if (response) {
+    const reason =
+      response.errors?.map((e) => e.message).join('; ') ||
+      (typeof response.body === 'string' ? response.body.slice(0, 200) : '')
+    return `HTTP ${response.status}${reason ? ` — ${reason}` : ''}`
+  }
+  const cause = (error as { cause?: { code?: string } })?.cause?.code
+  return cause ?? (error instanceof Error ? error.message : String(error))
+}
+
+/**
+ * Runs a query from `graphQlQueries.js`. The CMS is the only source of
+ * content, so there is nothing to fall back to: an unset URL or a failed
+ * request throws a `CmsError`. At build that fails the pipeline with the
+ * reason; at runtime Next keeps serving the last good render of the page.
+ */
+export async function queryCms<TData>({ query, variables }: CmsQuery): Promise<TData> {
+  const name = operationName(query)
+  if (!cmsClient) {
+    throw new CmsError(`[cms] ${name}: NEXT_PUBLIC_WP_URL is not set, so there is no CMS to read from.`)
+  }
 
   try {
-    return await cmsClient.request<TData>(query, variables)
+    return await cmsClient.request<TData>(toSingleLine(query), variables)
   } catch (error) {
-    console.error('[cms] query failed, serving static fallback', error)
-    return null
+    throw new CmsError(`[cms] ${name} failed against ${CMS_GRAPHQL_ENDPOINT}: ${describe(error)}`, {
+      cause: error,
+    })
   }
 }

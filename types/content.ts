@@ -1,8 +1,7 @@
 /**
- * The shape every section renders against.
- *
- * Static content in `content/` and the CMS loaders in `lib/cms/` both resolve
- * to these types, so swapping the data source never touches a component.
+ * The shape every section renders against. All content comes from the CMS
+ * through the loaders in `lib/cms/`; the only text in the codebase is the
+ * interface vocabulary in `content/ui.ts` (`UiStrings`, below).
  */
 
 export interface MediaAsset {
@@ -115,8 +114,13 @@ export interface FooterSection {
   }
 }
 
+/** Accessible names for the page furniture around every page. */
 export interface SiteChrome {
   skipToContent: string
+  /** Names the header navigation for screen readers. */
+  mainNav: string
+  /** Names the EN | AR switcher for screen readers. */
+  languageNav: string
 }
 
 /** Copy shared by every form: status lines and the dialog's close button. */
@@ -173,7 +177,8 @@ export interface LegalPage {
   title: string[]
   intro: string
   sections: LegalSection[]
-  help: {
+  /** The "questions about this page?" card. Only the Legal Notices template models it. */
+  help?: {
     title: string
     body: string
     cta: string
@@ -214,8 +219,30 @@ export interface HomeContent {
 }
 
 /**
- * The static copy in `content/`, authored section by section in the design's
- * default order. It is what renders while the CMS is unset or unreachable, and
- * the source for values the CMS does not model (alt text, placeholders, socials).
+ * Interface text the CMS has no field for — labels, placeholders, status
+ * lines, accessible names. Not content: nothing here ever stands in for a CMS
+ * field. Lives in `content/ui.ts`; move a string to the CMS once it has a field.
  */
-export type StaticContent = SiteContent & SectionDataMap
+export interface UiStrings {
+  /** Default <title>/description — the CMS has no SEO fields yet. */
+  meta: { title: string; description: string }
+  /** Appended to a page's own title: "Legal Notices - Doha 2036". */
+  siteName: string
+  chrome: SiteChrome
+  /** Logo uploads carry no alt text in the CMS. */
+  logoAlt: string
+  socialLabels: Record<SocialLink['id'], string>
+  newsletter: Pick<
+    NewsletterModalContent,
+    'emailLabel' | 'emailPlaceholder' | 'submitting' | 'success' | 'error' | 'close'
+  >
+  contact: Pick<ContactModalContent, 'eyebrow' | 'fields' | 'submitting' | 'success' | 'error' | 'close'>
+  notFound: {
+    metaTitle: string
+    eyebrow: string
+    title: string
+    body: string
+    home: string
+    contact: string
+  }
+}

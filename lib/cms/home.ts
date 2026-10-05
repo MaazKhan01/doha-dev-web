@@ -2,10 +2,10 @@ import 'server-only'
 
 import { cache } from 'react'
 
+import { uiStrings } from '@/content/ui'
 import { queryCms } from '@/lib/cms/client'
 import { HOMEPAGE_QUERY } from '@/lib/cms/graphQlQueries'
 import { mapSections } from '@/lib/cms/mappers'
-import { staticContent, staticHomeSections } from '@/lib/cms/static'
 import type { Locale } from '@/lib/i18n/config'
 import type { CmsPageQuery } from '@/types/cms'
 import type { HomeContent } from '@/types/content'
@@ -15,14 +15,10 @@ import type { HomeContent } from '@/types/content'
  * in the order editors arranged them in the CMS.
  *
  * `cache()` deduplicates within one render pass; cross-request caching is the
- * Data Cache's job, configured in `client.ts`. When the CMS is unset or the
- * request fails, the static sections render in the design's order.
+ * Data Cache's job, configured in `client.ts`. A failed query throws — the
+ * page never renders hardcoded sections in place of the CMS's.
  */
 export const getHomeContent = cache(async (locale: Locale): Promise<HomeContent> => {
-  const fallback = staticContent[locale]
   const page = await queryCms<CmsPageQuery>(HOMEPAGE_QUERY)
-
-  return {
-    sections: mapSections(page, { locale, fallback }) ?? staticHomeSections(fallback),
-  }
+  return { sections: mapSections(page, { locale, ui: uiStrings[locale] }) }
 })

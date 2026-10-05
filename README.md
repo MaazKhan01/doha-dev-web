@@ -35,7 +35,7 @@ Three rules keep it clean:
 
 1. **Sections never fetch.** The page loads content once and passes typed props down.
 2. **Content is data, not markup.** Accent colours, line breaks and ordering all live in
-   `content/` (and later the CMS), so editors control them without a deploy.
+   the CMS, so editors control them without a deploy. The codebase holds no content.
 3. **One of everything.** One reveal animation, one card radius, one display heading
    component. Variants are props, not new files.
 
@@ -45,7 +45,7 @@ Data flows one way, server-side, one request per query:
 
 ```
 lib/cms/graphQlQueries.js   every query + its variables (HEADER / FOOTER / HOMEPAGE)
-        │  queryCms()        lib/cms/client.ts — cached, tagged 'cms', null on failure
+        │  queryCms()        lib/cms/client.ts — cached, tagged 'cms', throws on failure
         ▼
 types/cms.ts                raw WPGraphQL response shapes
         │  lib/cms/mappers.ts — pure: picks En/Ar, strips HTML, __typename → section
@@ -61,24 +61,29 @@ PageBuilder                 section type → component, in the order editors set
 - **Arabic falls back to English** per field while translations are authored.
 - **Rich text is flattened.** A line break starts a new heading line; a **bold** line in a
   heading is an accent (flame) line. The statement lights its first line by default.
-- **Fallback.** If the endpoint is unset or a query fails, that query's part of the page
-  renders the static copy in `content/`. Unknown `__typename`s are skipped with a dev warning.
+- **No hardcoded content.** The CMS is the only source. A field left empty renders empty;
+  a failed query throws a `CmsError` naming the query and the reason (e.g. `HTTP 403 — Blocked
+  by the WAF Policy`). At build that fails the pipeline; at runtime Next keeps serving the last
+  good render. Legal pages are the exception: a failure logs and 404s that page only.
+- **Interface strings** the CMS has no field for — form labels, placeholders, status lines,
+  accessible names, the 404 page, default SEO — live in `content/ui.ts`. Move one to the CMS
+  when it gains a field. Unknown `__typename`s are skipped with a dev warning.
 
 **Adding a page-builder layout:** fragment in `graphQlQueries.js` → raw type in
 `types/cms.ts` → mapper + `sectionMappers` entry in `mappers.ts` → (new section only)
 `SectionDataMap` in `types/content.ts` and the `PageBuilder` map. The types make each step
 fail the build until the next one is done.
 
-The backend address is a constant, `CMS_URL` in `lib/cms/config.ts`, not an env var, so
-deployments need no configuration. Change it there and redeploy; set it to `''` to serve
-the static content. Only secrets stay in env (see `.env.example`):
+The backend address comes from `NEXT_PUBLIC_WP_URL` (base URL, no `/graphql`) — in
+`.env.local` locally, written to `.env` per branch by the Azure pipeline. See `.env.example`:
 
 ```
+NEXT_PUBLIC_WP_URL=https://ucms.qocevents.qa
 CMS_GRAPHQL_TOKEN=
 REVALIDATE_SECRET=
 ```
 
-`queryCms` falls back to the static content if the URL is empty or the request fails.
+Without `NEXT_PUBLIC_WP_URL` there is no content, and `queryCms` throws saying so.
 
 ## Caching
 
@@ -163,7 +168,7 @@ Defined once in `app/globals.css` under `@theme`:
 ## Still outstanding
 
 - **Imagery and hero video.** Every `MediaAsset.src` is empty, which renders a labelled
-  placeholder. Fill them in `content/` or from the CMS.
+  placeholder. Upload them in the CMS.
 - **Newsletter endpoint.** The email input is currently commented out and the submit
   handler is a stub; wire both to the provider.
 - **Arabic copy.** Draft translations, for layout review only.

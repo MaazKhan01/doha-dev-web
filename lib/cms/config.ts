@@ -5,8 +5,8 @@
  *
  * Set `NEXT_PUBLIC_WP_URL` in `.env.local` locally; the Azure pipeline writes
  * it to `.env` per branch (DEV_/STG_NEXT_PUBLIC_WP_URL). The base URL only —
- * `/graphql` is added below. Without it the site renders the static content
- * in `content/`.
+ * `/graphql` is added below. Without it there is no content: every CMS query
+ * throws, naming the missing variable.
  *
  * Plain module, no `server-only`: `next.config.ts` imports it too, and Next
  * loads the env files before reading that config.

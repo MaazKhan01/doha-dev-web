@@ -54,21 +54,28 @@ export function LegalContent({ data }: { data: LegalPage }) {
           ))}
         </ol>
 
-        <Reveal
-          offset={24}
-          className="mt-14 flex flex-col gap-6 rounded-card bg-white px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-14 sm:py-10 md:mt-[4.5rem]"
-        >
-          <div>
-            <h2 className="text-[clamp(1.25rem,1.8vw,1.625rem)] leading-tight font-bold uppercase">
-              {data.help.title}
-            </h2>
-            <p className="mt-2 text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.65]">{data.help.body}</p>
-          </div>
-          {/* `#contact` opens the contact modal — see ModalHost. */}
-          <a href="#contact" className={cn(buttonClass, 'h-13 w-45')}>
-            {data.help.cta}
-          </a>
-        </Reveal>
+        {/* Only when the CMS supplies it — the Default template has no card fields. */}
+        {data.help && (
+          <Reveal
+            offset={24}
+            className="mt-14 flex flex-col gap-6 rounded-card bg-white px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-14 sm:py-10 md:mt-[4.5rem]"
+          >
+            <div>
+              {data.help.title && (
+                <h2 className="text-[clamp(1.25rem,1.8vw,1.625rem)] leading-tight font-bold uppercase">
+                  {data.help.title}
+                </h2>
+              )}
+              {data.help.body && (
+                <p className="mt-2 text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.65]">{data.help.body}</p>
+              )}
+            </div>
+            {/* `#contact` opens the contact modal — see ModalHost. */}
+            <a href="#contact" className={cn(buttonClass, 'h-13 w-45')}>
+              {data.help.cta}
+            </a>
+          </Reveal>
+        )}
       </div>
     </article>
   )

@@ -50,7 +50,7 @@ export default async function LocaleLayout({
           {content.chrome.skipToContent}
         </a>
 
-        <Header locale={locale} data={content.header} />
+        <Header locale={locale} data={content.header} chrome={content.chrome} />
         {/* Each route group's layout renders <main> and its own footer variant. */}
         {children}
         <ModalHost modals={content.modals} />

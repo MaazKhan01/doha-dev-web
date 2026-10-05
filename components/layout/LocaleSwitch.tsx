@@ -11,14 +11,14 @@ import { cn } from '@/lib/utils/cn'
  * A client component only because the header lives in the shared layout,
  * which does not know the current path.
  */
-export function LocaleSwitch({ locale }: { locale: Locale }) {
+export function LocaleSwitch({ locale, label }: { locale: Locale; label: string }) {
   const pathname = usePathname()
   // Everything after the locale segment.
   const rest = pathname.replace(/^\/[^/]+/, '')
 
   return (
     <nav
-      aria-label="Language"
+      aria-label={label}
       className="flex items-center gap-1.5 justify-self-end text-xs md:gap-2 md:text-lg"
     >
       {locales.map((item, index) => (

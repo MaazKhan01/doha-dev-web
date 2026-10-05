@@ -2,8 +2,7 @@ import 'server-only'
 
 import { cache } from 'react'
 
-import { legalAr } from '@/content/legal.ar'
-import { legalEn } from '@/content/legal.en'
+import { uiStrings } from '@/content/ui'
 import { queryCms } from '@/lib/cms/client'
 import { LEGAL_PAGE_QUERY } from '@/lib/cms/graphQlQueries'
 import { mapLegalPage } from '@/lib/cms/mappers'
@@ -11,30 +10,30 @@ import type { Locale } from '@/lib/i18n/config'
 import type { CmsLegalPageQuery } from '@/types/cms'
 import type { LegalPage } from '@/types/content'
 
-const staticLegal: Record<Locale, LegalPage[]> = {
-  en: legalEn,
-  ar: legalAr,
-}
-
 /**
- * Slugs to prerender at build. Any other slug is still tried on request, so a
- * new Legal Notices page in the CMS appears without a code change.
+ * Slugs to prerender at build — the WordPress page URIs the footer links to.
+ * Any other slug is still tried on request, so a new legal page published in
+ * the CMS appears without a code change.
  */
-export const legalSlugs = legalEn.map((page) => page.slug)
+export const legalSlugs = ['legal-notices', 'privacy-policy']
 
 /**
- * One legal page by slug: the CMS page — Legal Notices template, or Default
- * template with content (the privacy policy) — else the static copy, else
- * `null` (the route 404s).
+ * One legal page by slug, from the CMS: the Legal Notices template, or the
+ * Default template with content (the privacy policy). `null` — the route
+ * 404s — when the CMS has no such page.
  *
- * The slug is the WordPress page URI (`legal-notices`), and the query is
- * locale-independent, so `/en/…` and `/ar/…` share one Data Cache entry.
+ * Unlike the home page and layout, a failed query does not throw: it logs the
+ * reason and 404s. A legal page the CMS cannot serve (e.g. its field group is
+ * not exposed to GraphQL) should not take down the build or the rest of the
+ * site. The query is locale-independent, so `/en/…` and `/ar/…` share one
+ * Data Cache entry.
  */
 export const getLegalPage = cache(async (locale: Locale, slug: string): Promise<LegalPage | null> => {
-  const pages = staticLegal[locale]
-  const fallback = pages.find((page) => page.slug === slug) ?? null
-  const raw = await queryCms<CmsLegalPageQuery>({ ...LEGAL_PAGE_QUERY, variables: { uri: slug } })
-
-  // Every legal page shares one help card; Default-template pages borrow it.
-  return mapLegalPage(raw, { locale, slug, fallback, help: pages[0].help }) ?? fallback
+  try {
+    const raw = await queryCms<CmsLegalPageQuery>({ ...LEGAL_PAGE_QUERY, variables: { uri: slug } })
+    return mapLegalPage(raw, { locale, slug, ui: uiStrings[locale] })
+  } catch (error) {
+    console.error(`[cms] legal page "${slug}" unavailable, serving 404:`, (error as Error).message)
+    return null
+  }
 })
