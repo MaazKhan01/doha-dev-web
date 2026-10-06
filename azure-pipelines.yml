@@ -22,11 +22,17 @@ stages:
       steps:
         # doha-2036-dev branch -> DEV_DOHA2036_NEXT_PUBLIC_* variables
         - script: |
-            echo "Branch is doha-2036-dev: using DEV_DOHA2036_ variables"
-            echo "NEXT_PUBLIC_API_URL=$(DEV_DOHA2036_NEXT_PUBLIC_API_URL)" > .env
-            echo "NEXT_PUBLIC_WP_URL=$(DEV_DOHA2036_NEXT_PUBLIC_API_URL)" >> .env
-            cat .env
+            if [ "$(Build.SourceBranchName)" = "doha-2036-dev" ]; then
+              echo "Branch is doha-2036-dev: using DEV_DOHA2036_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(DEV_DOHA2036_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(DEV_DOHA2036_NEXT_PUBLIC_API_URL)" >> .env
+              cat .env
+            else
+              echo "##vso[task.logissue type=error]No variables are set for this source branch: $(Build.SourceBranchName)"
+              exit 1
+            fi
           displayName: 'Write .env for $(Build.SourceBranchName)'
+
         - task: Docker@1
           displayName: 'Build Image $(imageName):$(Build.BuildId)'
           inputs:
@@ -36,6 +42,7 @@ stages:
             command: 'Build an image'
             dockerFile: '$(dockerfilePath)'
             imageName: '$(imageName):$(Build.BuildId)'
+
         - task: Docker@1
           displayName: 'Push Image $(imageName):$(Build.BuildId)'
           inputs:
