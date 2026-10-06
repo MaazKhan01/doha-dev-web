@@ -1,12 +1,11 @@
 trigger:
   branches:
     include:
-      - dev
-      - stg
+      - doha-2036-dev
 
 variables:
   dockerfilePath: Dockerfile
-  imageName: asiangames-fe
+  imageName: doha2036-fe
   nonProdhubServiceConnection: spn-ucms-dev-secret
   nonProdHubContainerRepository: crqochubqac001.azurecr.io
 
@@ -14,45 +13,33 @@ stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-    # ==================== Lower ENV JOB (dev / stg) ====================
-    - job: BuildLowerEnv
-      displayName: Build job for Lower ENV (${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }})
-      condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], 'refs/heads/stg'))
+    - job: BuildDev
+      displayName: Build job (doha-2036-dev)
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/doha-2036-dev')
       pool:
         name: AgentPool-QOC-Hub
       steps:
-        # dev branch -> DEV_NEXT_PUBLIC_* variables
-        # stg branch -> STG_NEXT_PUBLIC_* variables
         - script: |
-            if [ "$(Build.SourceBranchName)" = "dev" ]; then
-              echo "Branch is dev: using DEV_ variables"
-              echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
-              echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
-              cat .env
-            elif [ "$(Build.SourceBranchName)" = "stg" ]; then
-              echo "Branch is stg: using STG_ variables"
-              echo "NEXT_PUBLIC_API_URL=$(STG_NEXT_PUBLIC_API_URL)" > .env
-              echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" >> .env
-              cat .env
-            else
-              echo "No variables are set for this source branch: $(Build.SourceBranchName)"
-            fi
-          displayName: 'Write .env for $(Build.SourceBranchName)'
+            echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
+            echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
+          displayName: 'Write .env'
+
         - task: Docker@1
-          displayName: 'Build Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+          displayName: 'Build Image $(imageName):$(Build.BuildId)'
           inputs:
             containerregistrytype: 'Azure Container Registry'
             azureSubscriptionEndpoint: $(nonProdhubServiceConnection)
             azureContainerRegistry: $(nonProdHubContainerRepository)
             command: 'Build an image'
             dockerFile: '$(dockerfilePath)'
-            imageName: '$(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+            imageName: '$(imageName):$(Build.BuildId)'
+
         - task: Docker@1
-          displayName: 'Push Image $(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+          displayName: 'Push Image $(imageName):$(Build.BuildId)'
           inputs:
             command: 'Push an image'
             containerregistrytype: 'Azure Container Registry'
             azureSubscriptionEndpoint: $(nonProdhubServiceConnection)
             azureContainerRegistry: $(nonProdHubContainerRepository)
             dockerFile: $(dockerfilePath)
-            imageName: '$(imageName)-$(Build.SourceBranchName):$(Build.BuildId)'
+            imageName: '$(imageName):$(Build.BuildId)'
