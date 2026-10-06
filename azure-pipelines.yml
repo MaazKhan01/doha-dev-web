@@ -20,11 +20,20 @@ stages:
         name: AgentPool-QOC-Hub
       steps:
         - script: |
-            echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" > .env
-            echo "CMS_GRAPHQL_TOKEN=$CMS_GRAPHQL_TOKEN" >> .env
-          displayName: 'Write .env (STG CMS)'
-          env:
-            CMS_GRAPHQL_TOKEN: $(CMS_GRAPHQL_TOKEN)
+            if [ "$(Build.SourceBranchName)" = "dev" ]; then
+              echo "Branch is dev: using DEV_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
+              cat .env
+            elif [ "$(Build.SourceBranchName)" = "stg" ]; then
+              echo "Branch is stg: using STG_ variables"
+              echo "NEXT_PUBLIC_API_URL=$(STG_NEXT_PUBLIC_API_URL)" > .env
+              echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" >> .env
+              cat .env
+            else
+              echo "No variables are set for this source branch: $(Build.SourceBranchName)"
+            fi
+          displayName: 'Write .env for $(Build.SourceBranchName)'
 
 
         - task: Docker@1
