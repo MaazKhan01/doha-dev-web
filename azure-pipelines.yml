@@ -20,8 +20,7 @@ stages:
         name: AgentPool-QOC-Hub
       steps:
         - script: |
-            echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
-            echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
+            echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" > .env
           displayName: 'Write .env'
 
         - task: Docker@1
