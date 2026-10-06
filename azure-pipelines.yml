@@ -5,7 +5,7 @@ trigger:
 
 variables:
   dockerfilePath: Dockerfile
-  imageName: doha2036-fe
+  imageName: doha2036-fe-dev
   nonProdhubServiceConnection: spn-ucms-dev-secret
   nonProdHubContainerRepository: crqochubqac001.azurecr.io
 
@@ -20,21 +20,17 @@ stages:
         name: AgentPool-QOC-Hub
       steps:
         - script: |
-            if [ "$(Build.SourceBranchName)" = "dev" ]; then
-              echo "Branch is dev: using DEV_ variables"
-              echo "NEXT_PUBLIC_API_URL=$(DEV_NEXT_PUBLIC_API_URL)" > .env
-              echo "NEXT_PUBLIC_WP_URL=$(DEV_NEXT_PUBLIC_WP_URL)" >> .env
-              cat .env
-            elif [ "$(Build.SourceBranchName)" = "stg" ]; then
-              echo "Branch is stg: using STG_ variables"
-              echo "NEXT_PUBLIC_API_URL=$(STG_NEXT_PUBLIC_API_URL)" > .env
-              echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" >> .env
-              cat .env
-            else
-              echo "No variables are set for this source branch: $(Build.SourceBranchName)"
-            fi
-          displayName: 'Write .env for $(Build.SourceBranchName)'
-
+            case "$WP_URL" in
+              ''|'$('*)
+                echo "##vso[task.logissue type=error]DEV_DOHA2036_NEXT_PUBLIC_API_URL is not defined or empty"
+                exit 1
+                ;;
+            esac
+            echo "Using CMS: $WP_URL"
+            echo "NEXT_PUBLIC_WP_URL=$WP_URL" > .env
+          displayName: 'Write .env'
+          env:
+            WP_URL: $(DEV_DOHA2036_NEXT_PUBLIC_API_URL)
 
         - task: Docker@1
           displayName: 'Build Image $(imageName):$(Build.BuildId)'
