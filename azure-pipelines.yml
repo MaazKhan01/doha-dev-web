@@ -13,25 +13,20 @@ stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-    - job: BuildDev
-      displayName: Build job (doha-2036-dev)
+    # ==================== Doha 2036 DEV JOB ====================
+    - job: BuildDohaDev
+      displayName: Build job for Doha 2036 (${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }})
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/doha-2036-dev')
       pool:
         name: AgentPool-QOC-Hub
       steps:
+        # doha-2036-dev branch -> DEV_DOHA2036_NEXT_PUBLIC_* variables
         - script: |
-            case "$WP_URL" in
-              ''|'$('*)
-                echo "##vso[task.logissue type=error]DEV_DOHA2036_NEXT_PUBLIC_API_URL is not defined or empty"
-                exit 1
-                ;;
-            esac
-            echo "Using CMS: $WP_URL"
-            echo "NEXT_PUBLIC_WP_URL=$WP_URL" > .env
-          displayName: 'Write .env'
-          env:
-            WP_URL: $(DEV_DOHA2036_NEXT_PUBLIC_API_URL)
-
+            echo "Branch is doha-2036-dev: using DEV_DOHA2036_ variables"
+            echo "NEXT_PUBLIC_API_URL=$(DEV_DOHA2036_NEXT_PUBLIC_API_URL)" > .env
+            echo "NEXT_PUBLIC_WP_URL=$(DEV_DOHA2036_NEXT_PUBLIC_API_URL)" >> .env
+            cat .env
+          displayName: 'Write .env for $(Build.SourceBranchName)'
         - task: Docker@1
           displayName: 'Build Image $(imageName):$(Build.BuildId)'
           inputs:
@@ -41,7 +36,6 @@ stages:
             command: 'Build an image'
             dockerFile: '$(dockerfilePath)'
             imageName: '$(imageName):$(Build.BuildId)'
-
         - task: Docker@1
           displayName: 'Push Image $(imageName):$(Build.BuildId)'
           inputs:
