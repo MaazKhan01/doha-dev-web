@@ -21,7 +21,11 @@ stages:
       steps:
         - script: |
             echo "NEXT_PUBLIC_WP_URL=$(STG_NEXT_PUBLIC_WP_URL)" > .env
-          displayName: 'Write .env'
+            echo "CMS_GRAPHQL_TOKEN=$CMS_GRAPHQL_TOKEN" >> .env
+          displayName: 'Write .env (STG CMS)'
+          env:
+            CMS_GRAPHQL_TOKEN: $(CMS_GRAPHQL_TOKEN)
+
 
         - task: Docker@1
           displayName: 'Build Image $(imageName):$(Build.BuildId)'
