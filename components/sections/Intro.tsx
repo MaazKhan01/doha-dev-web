@@ -6,14 +6,15 @@ import type { IntroSection } from '@/types/content'
 
 export function Intro({ data }: { data: IntroSection }) {
   return (
-    <section className="container-page pt-section">
+    <section className="container-page py-section">
       <div className="grid gap-8 md:grid-cols-2 md:gap-16">
         <Reveal>
           {/* 64px at full width, scaling down rather than wrapping awkwardly. */}
-          <DisplayHeading lines={data.heading} className="text-[clamp(2.25rem,6.5vw,4rem)]" />
+          <DisplayHeading lines={data.heading} className="lg:px-12 text-[clamp(2.25rem,6.5vw,4rem)]" />
         </Reveal>
 
-        <div className="type-lead flex flex-col gap-6">
+        {/* Light (300) suits Doha 2036; Noto Sans Arabic Light reads too thin, so Arabic is set at 400. */}
+        <div className="type-lead flex flex-col gap-6 rtl:font-normal">
           {data.paragraphs.map((paragraph, index) => (
             <Reveal key={index} delay={0.1 + index * 0.1} offset={28}>
               <p className="max-w-2xl">{paragraph}</p>
@@ -22,7 +23,7 @@ export function Intro({ data }: { data: IntroSection }) {
 
           {data.attribution && (
             <Reveal delay={0.1 + data.paragraphs.length * 0.1} offset={28}>
-              <p className="max-w-2xl text-sm leading-snug text-flame">
+              <p className="max-w-2xl text-[24px] leading-snug text-flame">
                 {data.attribution.href ? (
                   <Link href={data.attribution.href} className="transition-opacity duration-300 hover:opacity-70">
                     <span className="block">{data.attribution.name}</span>
