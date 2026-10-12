@@ -32,7 +32,7 @@ export function Hero({ data }: { data: HeroSection }) {
           <h1 className="type-display text-center text-[clamp(2.25rem,8vw,8rem)] text-sand">
             {data.heading.map((line, index) => (
               <Reveal key={index} delay={0.15 + index * 0.12} offset={32}>
-                <span className="block">{line.text}</span>
+                <span className="block lg:px-24 rtl:px-0">{line.text}</span>
               </Reveal>
             ))}
           </h1>
