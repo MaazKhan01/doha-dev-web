@@ -30,7 +30,7 @@ function Marker({ open }: { open: boolean }) {
 }
 
 export function Accordion({ items }: { items: FaqItem[] }) {
-  const [openValue, setOpenValue] = useState<string>(items[0]?.id ?? '')
+  const [openValue, setOpenValue] = useState<string>('')
   const shouldReduceMotion = useReducedMotion()
 
   return (
@@ -57,7 +57,7 @@ export function Accordion({ items }: { items: FaqItem[] }) {
                   'transition-colors duration-300 hover:text-flame',
                 )}
               >
-                <span className="text-sm leading-snug md:text-lg">{item.question}</span>
+                <span className="text-[24px] leading-snug">{item.question}</span>
                 <Marker open={open} />
               </AccordionPrimitive.Trigger>
             </AccordionPrimitive.Header>

@@ -8,7 +8,7 @@ export function Statement({ data }: { data: StatementSection }) {
       <LitHeading
         lines={data.heading}
         // 144px at the 1440 artboard.
-        className="mx-auto max-w-6xl text-center text-[clamp(2.25rem,10vw,9rem)]"
+        className="mx-auto max-w-7xl text-center text-[clamp(2.25rem,10vw,9rem)]"
       />
     </section>
   )

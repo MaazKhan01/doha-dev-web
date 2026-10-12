@@ -31,8 +31,6 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
           48.19px. On smaller screens it simply fills the band above the bar. */}
       <div className="absolute inset-x-0 top-0 -z-10 h-full lg:h-[min(63.0261vw,56.7235rem)]">
         <Media asset={data.media.backdrop} position="object-bottom" className="size-full" />
-        {/* #030303 at 30%, as drawn. */}
-        <div aria-hidden className="absolute inset-0 bg-scrim/30" />
       </div>
 
       {/* 859.39px at 1440: the photo band less the bar's overlap. The footer's
@@ -42,11 +40,11 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
         <div className="flex flex-row items-start justify-between gap-6">
           <Reveal offset={24}>
             <div className="flex flex-col gap-3">
-              <p className="text-sm text-sand/90">{data.newsletter.label}</p>
+              <p className="text-xl text-sand/90">{data.newsletter.label}</p>
               {/* `#newsletter` opens the modal (see ModalHost); a CMS URL links out instead. */}
               <a
                 href={data.newsletter.href || '#newsletter'}
-                className="grid h-9 w-fit place-items-center rounded-md bg-sand px-4 text-sm text-ink transition-colors duration-300 hover:bg-flame hover:text-sand"
+                className="grid h-9 w-fit place-items-center rounded-md bg-sand px-6 text-xl text-ink transition-colors duration-300 hover:bg-flame hover:text-sand"
               >
                 {data.newsletter.cta}
               </a>
@@ -79,8 +77,13 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
               in a 566px column so the CMS's one-line headline wraps to three
               lines. Size and width scale together below 1440 to keep the same
               break. Latin only: Arabic keeps the taller line height its glyphs
-              need (see .type-display in globals.css). */}
-          <p className="type-display max-w-[min(39.3056vw,35.375rem)] text-[clamp(2.75rem,7.9167vw,7.125rem)] text-sand ltr:leading-[0.8] ltr:tracking-normal">
+              need (see .type-display in globals.css). Pinned to the left in
+              both locales by design — a deliberate exception to the
+              logical-properties rule: `ms-auto` pushes the box to the left
+              edge under RTL, and `text-left` keeps its lines flush left.
+              Arabic gets a wider column (792px at 1440) so its headline
+              wraps into fewer, fuller lines. */}
+          <p className="type-display max-w-[min(39.3056vw,38.375rem)] text-[clamp(2.75rem,7.9167vw,7.125rem)] text-sand ltr:leading-[0.8] ltr:tracking-normal rtl:ms-auto rtl:max-w-[min(55vw,49.5rem)]">
             {data.wordmark.map((line, index) => (
               <span key={index} className="block">
                 {line}
@@ -99,8 +102,8 @@ export function Footer({ data, variant = 'full' }: FooterProps) {
 function FooterBar({ data }: { data: FooterSection }) {
   return (
     // 108.10px tall at the artboard (Figma 1:1511).
-    <div className="bg-ink lg:min-h-[6.7565rem]">
-      <div className="container-page flex flex-col items-center gap-1.5 py-4 text-base text-sand/80 sm:flex-row sm:justify-between sm:py-5 lg:min-h-[6.7565rem] lg:px-16">
+    <div className="bg-black lg:min-h-[6.7565rem]">
+      <div className="container-page flex flex-col items-center gap-1.5 py-4 text-[24px] text-sand/80 sm:flex-row sm:justify-between sm:py-5 lg:min-h-[6.7565rem] lg:px-16">
         <p>{data.copyright}</p>
         <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           {data.links.map((link) => (

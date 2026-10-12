@@ -4,7 +4,7 @@ import type { FaqSection } from '@/types/content'
 
 export function Faq({ data }: { data: FaqSection }) {
   return (
-    <section id="faq" className="container-page pt-section pb-section">
+    <section id="faq" className="container-page pt-section pb-section mt-8">
       <Reveal>
         <h2 className="type-eyebrow max-w-xs">{data.title}</h2>
       </Reveal>
