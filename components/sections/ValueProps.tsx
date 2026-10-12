@@ -17,7 +17,7 @@ export function ValueProps({ data }: { data: ValuePropsSection }) {
       <ul className="mt-10 grid gap-5 sm:grid-cols-2 md:mt-24 md:gap-6 lg:grid-cols-3 lg:gap-[3.625rem]">
         {data.items.map((item, index) => (
           <Reveal key={item.id} delay={0.24 + index * 0.12} className="h-full">
-            <li className="flex h-full flex-col overflow-hidden rounded-card bg-white/55">
+            <li className="flex h-full flex-col overflow-hidden rounded-card bg-white">
               <div className="relative">
                 <Media
                   asset={item.image}
@@ -25,7 +25,7 @@ export function ValueProps({ data }: { data: ValuePropsSection }) {
                   className="aspect-[3.5/3] w-full"
                 />
                 {/* Keeps the centred title legible over any crop. */}
-                <h3 className="type-display absolute inset-0 grid place-items-center px-5 text-center text-[clamp(1.4rem,4.5vw,3rem)] text-sand">
+                <h3 className="type-display absolute inset-0 grid place-items-center px-5 text-center text-[clamp(1.4rem,4.5vw,3rem)] text-sand rtl:text-[clamp(1.4rem,4.5vw,2.25rem)]">
                   {item.title}
                 </h3>
               </div>
