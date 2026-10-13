@@ -129,7 +129,9 @@ export interface CmsLegalSection {
   sectionContentAr?: Maybe<string>
 }
 
-export interface CmsLegalNoticesFields {
+/** The page builder's "Legal Notices Section" layout. */
+export interface CmsLegalNoticesSection {
+  __typename: 'PageBuilderPageComponentsLegalNoticesSectionLayout'
   mainTitle?: Maybe<string>
   mainTitleAr?: Maybe<string>
   topNoticeText?: Maybe<string>
@@ -139,23 +141,26 @@ export interface CmsLegalNoticesFields {
   ctaBannerTitleAr?: Maybe<string>
   ctaBannerSubtitle?: Maybe<string>
   ctaBannerSubtitleAr?: Maybe<string>
-  ctaButtonLabel?: Maybe<string>
-  ctaButtonLabelAr?: Maybe<string>
+  legalNoticesSectionCtaButton?: Maybe<{ ctaButtonLabel?: Maybe<string>; ctaButtonLink?: Maybe<string> }>
+  legalNoticesSectionCtaButtonAr?: Maybe<{
+    ctaButtonLabelArabic?: Maybe<string>
+    ctaButtonLinkArabic?: Maybe<string>
+  }>
 }
 
 export interface CmsLegalPageQuery {
-  page?: Maybe<{
+  pageBy?: Maybe<{
+    id?: Maybe<string>
     uri?: Maybe<string>
     slug?: Maybe<string>
     title?: Maybe<string>
     status?: Maybe<string>
-    /** Block-editor HTML; what a Default-template page carries instead of the legal fields. */
+    /** Block-editor HTML; what a plain page (the privacy policy) carries instead of components. */
     content?: Maybe<string>
-    /** Only `Template_LegalNotices` carries the fields; others arrive with just `__typename`. */
-    template?: Maybe<{
-      __typename?: string
-      templateName?: Maybe<string>
-      legalNoticesPageFields?: Maybe<CmsLegalNoticesFields>
+    pageBuilder?: Maybe<{
+      slug?: Maybe<string>
+      /** Other layouts arrive with only `__typename`. */
+      pageComponents?: Maybe<Maybe<CmsLegalNoticesSection | { __typename: string }>[]>
     }>
   }>
 }
@@ -269,15 +274,10 @@ export interface CmsPageQuery {
     uri?: Maybe<string>
     title?: Maybe<string>
     status?: Maybe<string>
-    /** The page builder hangs off the "Dynamic Sections" template; other templates have none. */
-    template?: Maybe<{
-      __typename?: string
-      templateName?: Maybe<string>
-      pageBuilder?: Maybe<{
-        slug?: Maybe<string>
-        /** Layouts this build does not know arrive with only `__typename`. */
-        pageComponents?: Maybe<Maybe<CmsPageComponent | { __typename: string }>[]>
-      }>
+    pageBuilder?: Maybe<{
+      slug?: Maybe<string>
+      /** Layouts this build does not know arrive with only `__typename`. */
+      pageComponents?: Maybe<Maybe<CmsPageComponent | { __typename: string }>[]>
     }>
   }>
 }

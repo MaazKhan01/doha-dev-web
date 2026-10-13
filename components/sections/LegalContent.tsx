@@ -70,8 +70,8 @@ export function LegalContent({ data }: { data: LegalPage }) {
                 <p className="mt-2 text-[clamp(1rem,1.4vw,1.25rem)] leading-[1.65]">{data.help.body}</p>
               )}
             </div>
-            {/* `#contact` opens the contact modal — see ModalHost. */}
-            <a href="#contact" className={cn(buttonClass, 'h-13 w-45')}>
+            {/* `#contact` (the default) opens the contact modal — see ModalHost. */}
+            <a href={data.help.href} className={cn(buttonClass, 'h-13 w-45')}>
               {data.help.cta}
             </a>
           </Reveal>

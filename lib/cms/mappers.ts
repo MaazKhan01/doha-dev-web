@@ -17,6 +17,7 @@ import type {
   CmsFooterQuery,
   CmsHeaderQuery,
   CmsHeroBanner,
+  CmsLegalNoticesSection,
   CmsLegalPageQuery,
   CmsOverviewSection,
   CmsPageComponent,
@@ -315,7 +316,7 @@ function isKnownComponent(component: { __typename: string }): component is CmsPa
  * know are skipped (with a warning in development) rather than breaking the page.
  */
 export function mapSections(raw: CmsPageQuery, ctx: Ctx): PageSection[] {
-  return compact(raw.pageBy?.template?.pageBuilder?.pageComponents).flatMap((component, index) => {
+  return compact(raw.pageBy?.pageBuilder?.pageComponents).flatMap((component, index) => {
     if (!isKnownComponent(component)) {
       if (process.env.NODE_ENV !== 'production') {
         console.warn(`[cms] no section mapped for ${component.__typename}; skipping`)
@@ -340,25 +341,28 @@ const pageMeta = (title: string, description: string, ui: UiStrings) => ({
   description: description || ui.meta.description,
 })
 
+type CmsLegalPage = NonNullable<CmsLegalPageQuery['pageBy']>
+
+const isLegalNoticesSection = (component: { __typename: string } | null | undefined): component is CmsLegalNoticesSection =>
+  component?.__typename === 'PageBuilderPageComponentsLegalNoticesSectionLayout'
+
 /**
  * A legal page. `null` when the CMS has no page at that slug, or the page has
- * neither the Legal Notices fields nor any content — the route then 404s.
+ * neither a Legal Notices Section nor any content — the route then 404s.
  */
 export function mapLegalPage(raw: CmsLegalPageQuery, ctx: LegalCtx): LegalPage | null {
-  const page = raw.page
+  const page = raw.pageBy
   if (!page) return null
 
-  const fields = page.template?.legalNoticesPageFields
-  if (fields) return mapLegalNotices(page, fields, ctx)
+  const section = page.pageBuilder?.pageComponents?.find(isLegalNoticesSection)
+  if (section) return mapLegalNotices(page, section, ctx)
   return page.content ? mapContentPage(page, ctx) : null
 }
 
-/** Legal Notices template: bilingual, structured fields. */
-function mapLegalNotices(
-  page: NonNullable<CmsLegalPageQuery['page']>,
-  fields: NonNullable<NonNullable<NonNullable<CmsLegalPageQuery['page']>['template']>['legalNoticesPageFields']>,
-  { locale, slug, ui }: LegalCtx,
-): LegalPage {
+/** The page builder's "Legal Notices Section": bilingual, structured fields. */
+function mapLegalNotices(page: CmsLegalPage, fields: CmsLegalNoticesSection, { locale, slug, ui }: LegalCtx): LegalPage {
+  const button = fields.legalNoticesSectionCtaButton
+  const buttonAr = fields.legalNoticesSectionCtaButtonAr
   const title = toLines(pick(locale, fields.mainTitle, fields.mainTitleAr))
   const intro = toPlainText(pick(locale, fields.topNoticeText, fields.topNoticeTextAr))
   const heading = title.join(' ') || toPlainText(page.title)
@@ -382,14 +386,16 @@ function mapLegalNotices(
     help: mapHelp(
       toPlainText(pick(locale, fields.ctaBannerTitle, fields.ctaBannerTitleAr)),
       toPlainText(pick(locale, fields.ctaBannerSubtitle, fields.ctaBannerSubtitleAr)),
-      toPlainText(pick(locale, fields.ctaButtonLabel, fields.ctaButtonLabelAr)),
+      toPlainText(pick(locale, button?.ctaButtonLabel, buttonAr?.ctaButtonLabelArabic)),
+      // An empty link or "#" keeps the button on the contact modal.
+      toHref(locale, pick(locale, button?.ctaButtonLink, buttonAr?.ctaButtonLinkArabic)) ?? '#contact',
     ),
   }
 }
 
 /** The help card renders only when the CMS gives it a button to show. */
-const mapHelp = (title: string, body: string, cta: string): LegalPage['help'] =>
-  cta ? { title, body, cta } : undefined
+const mapHelp = (title: string, body: string, cta: string, href: string): LegalPage['help'] =>
+  cta ? { title, body, cta, href } : undefined
 
 /**
  * Default template (e.g. the privacy policy): the block-editor `content`, cut
@@ -397,7 +403,7 @@ const mapHelp = (title: string, body: string, cta: string): LegalPage['help'] =>
  * heading becomes the intro. English only — the template has no Arabic field.
  */
 function mapContentPage(
-  page: NonNullable<CmsLegalPageQuery['page']>,
+  page: CmsLegalPage,
   { slug, ui }: LegalCtx,
 ): LegalPage {
   // WordPress's sample privacy policy labels each block "Suggested text:" for

@@ -182,6 +182,8 @@ export interface LegalPage {
     title: string
     body: string
     cta: string
+    /** `#contact` opens the contact modal; anything else is followed. */
+    href: string
   }
 }
 
